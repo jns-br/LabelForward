@@ -4,12 +4,12 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import TweetModal from './Tweet';
 import Navigation from './Navigation';
+import Login from './Login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Navigation />
-    <TweetModal />
+    <Login />
   </React.StrictMode>,
   document.getElementById('root')
 );
