@@ -40,9 +40,7 @@ class TweetModal extends Component {
     return;
   }
 
-  updateLabel(e) {
-    this.setState({ selectedLabel: e.target.value });
-  }
+  updateLabel = event => this.setState({ selectedLabel: event.target.value });
 
   render() {
     return (
@@ -55,7 +53,7 @@ class TweetModal extends Component {
           onSubmit={this.handleSubmit()}
           onIgnore={this.handleIgnore()}
           onReturn={this.handleReturn()}
-          onSelect={e => this.updateLabel(e)}
+          onSelect={this.updateLabel}
         />
       </div>
     )

@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import TweetModal from './Tweet';
+import Navigation from './Navigation';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
+    <Navigation />
     <TweetModal />
   </React.StrictMode>,
   document.getElementById('root')
