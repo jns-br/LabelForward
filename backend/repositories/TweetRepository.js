@@ -17,14 +17,25 @@ class TweetRepository {
     try {
       const statment = `SELECT headline, category, description FROM news WHERE news_id = ${++this.tweetCounter}`;
       const result = await this.pgClient.query(statment);
-      const response = {
-        tweet: result.rows[0].headline + ": " + result.rows[0].description,
-        category: result.rows[0].category  
-      };
+      const response = result.rows[0].headline + ": " + result.rows[0].description
       return response;
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
+    }
+  }
+
+  async insertLabeledTweet(tweet, label) {
+    try {
+      const statement = "INSERT INTO results(news, label) VALUES($1, $2)";
+      const result = await this.pgClient.query(statement, [tweet, label]);
+      if(result.rowCount !== 1) {
+        throw new Error('Insertion failed');
+      }
+      return result;
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw message;
     }
   }
 

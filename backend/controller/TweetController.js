@@ -21,4 +21,15 @@ router.get('/labels', async (req, res) => {
   }
 });
 
+router.post('/tweet', async (req, res) => {
+  try {
+    const label = req.body.label;
+    const tweet = req.body.tweet;
+    await TweetRepository.insertLabeledTweet(tweet, label);
+    res.status(201);
+  } catch (err) {
+    res.status(500).json({msg: err.message});
+  }
+});
+
 module.exports = router;
