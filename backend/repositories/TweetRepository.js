@@ -18,7 +18,20 @@ class TweetRepository {
     }
   }
 
-  
+  async getLabels() {
+    try {
+      const statement = "SELECT category FROM news";
+      const result = await this.pgClient.query(statement);
+      return result.rows.filter((val, index, self) => {
+        return self.indexOf(val) === index;
+      })
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
+
+
   async init() {
     try {
       this.pgClient = new Pool({
