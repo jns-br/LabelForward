@@ -1,9 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
 import Settings from './Settings';
 import TweetModal from './Tweet';
 import Login from './Login';
-import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import {Switch, Route} from 'react-router-dom';
 
 function App() {
   return (
