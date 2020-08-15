@@ -7,10 +7,11 @@ import Navigation from './Navigation';
 import Login from './Login';
 import Settings from './Settings';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Settings />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Form, Button} from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
+import Navigation from './Navigation';
 import './Tweet.css';
 
 class TweetModal extends Component {
@@ -43,17 +44,20 @@ class TweetModal extends Component {
 
   render() {
     return (
-      <div className='TweetModal'>
-        <Tweet
-          value={this.state.tweet}
-        />
-        <LabelForm
-          value={this.state.labels}
-          onSubmit={this.handleSubmit()}
-          onIgnore={this.handleIgnore()}
-          onReturn={this.handleReturn()}
-          onSelect={this.updateLabel}
-        />
+      <div className="TweetMain">
+        <Navigation></Navigation>
+        <div className='TweetModal'>
+          <Tweet
+            value={this.state.tweet}
+          />
+          <LabelForm
+            value={this.state.labels}
+            onSubmit={this.handleSubmit()}
+            onIgnore={this.handleIgnore()}
+            onReturn={this.handleReturn()}
+            onSelect={this.updateLabel}
+          />
+        </div>
       </div>
     )
   }
