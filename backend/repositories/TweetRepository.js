@@ -30,11 +30,9 @@ class TweetRepository {
 
   async getLabels() {
     try {
-      const statement = "SELECT category FROM news";
-      const result = await this.pgClient.query(statement);
-      return result.rows.filter((val, index, self) => {
-        return self.indexOf(val) === index;
-      })
+      const statement = "SELECT DISTINCT category FROM news";
+      const results = await this.pgClient.query(statement);
+      return Array.from(results.rows, result => result.category);
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
