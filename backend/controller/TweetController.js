@@ -11,7 +11,7 @@ router.get('/tweet', (req, res) => {
   }
 });
 
-router.get('/lables', (req, res) => {
+router.get('/labels', (req, res) => {
   try {
     const sampleLables = {lables: ["some", "example", "lables", "from the server"]};
     res.status(200).json(sampleLables)
