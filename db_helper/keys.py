@@ -1,7 +1,8 @@
 import os
 
-host = os.getenv('PG_HOST')
-dbname = os.getenv('PG_DB')
-user = os.getenv('PG_USER')
-password = os.getenv('PG_PASSWORD')
+host = os.getenv('PGHOST')
+dbname = os.getenv('PGDATABASE')
+user = os.getenv('PGUSER')
+password = os.getenv('PGPASSWORD')
+port = os.getenv('PGPORT')
 file_name = 'News_Category_Dataset_v2.json'

@@ -7,7 +7,7 @@ def connect():
     conn = None
     try:
         print('Connecting to Postgres database')
-        conn = psycopg2.connect(host=keys.host, dbname=keys.dbname, user=keys.user, password=keys.password)
+        conn = psycopg2.connect(host=keys.host, dbname=keys.dbname, user=keys.user, password=keys.password, port=keys.port)
 
         cur = conn.cursor()
 
