@@ -4,14 +4,24 @@ const { Pool } = require('pg');
 class TweetRepository {
   constructor() {
     this.tweetCounter = 0;
-    this.pgClient = null;
+    this.pgClient = new Pool({
+      user: keys.pgUser,
+      host: keys.pgHost,
+      database: keys.pgDatabase,
+      password: keys.pgPassword,
+      port: keys.pgPort
+    });
   }
 
   async getNextTweet() {
     try {
       const statment = `SELECT headline, category, description FROM news WHERE news_id = ${++this.tweetCounter}`;
-      const result = await this.pgClien.query(statment);
-      return result;
+      const result = await this.pgClient.query(statment);
+      const response = {
+        tweet: result.rows[0].headline + ": " + result.rows[0].description,
+        category: result.rows[0].category  
+      };
+      return response;
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
@@ -32,7 +42,7 @@ class TweetRepository {
   }
 
 
-  async init() {
+  init() {
     try {
       this.pgClient = new Pool({
         user: keys.pgUser,

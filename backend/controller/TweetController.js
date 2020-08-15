@@ -1,20 +1,21 @@
 const express = require('express');
 const { restart } = require('nodemon');
 const router = express.Router();
+const TweetRepository = require('../repositories/TweetRepository');
 
-router.get('/tweet', (req, res) => {
+router.get('/tweet', async (req, res) => {
   try {
-    const sampleTweet = {tweet: "This is a sample tweet from the server"};
-    res.status(200).json(sampleTweet);
+    const nextTweet = await TweetRepository.getNextTweet();
+    res.status(200).json({tweet: nextTweet});
   } catch (err) {
     res.status(500).json({msg: err.message});
   }
 });
 
-router.get('/labels', (req, res) => {
+router.get('/labels', async (req, res) => {
   try {
-    const sampleLables = {lables: ["some", "example", "lables", "from the server"]};
-    res.status(200).json(sampleLables)
+    const labels = await TweetRepository.getLabels();
+    res.status(200).json({labels: labels});
   } catch (error) {
     res.status(500).json({msg: err.message});
   }
