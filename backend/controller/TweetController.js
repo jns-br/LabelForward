@@ -1,6 +1,6 @@
 const express = require('express');
 const { restart } = require('nodemon');
-const router = express.router();
+const router = express.Router();
 
 router.get('/tweet', (req, res) => {
   try {
