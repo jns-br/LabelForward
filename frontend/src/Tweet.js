@@ -2,41 +2,65 @@ import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import Navigation from './Navigation';
 import './Tweet.css';
+import axios from 'axios';
 
 class TweetModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tweet: null,
-      labels: null,
-      selectedLabel: null
+      tweet: "",
+      labels: ['label'],
+      selectedLabel: ""
     }
   }
 
-  componentWillMount() {
-    this.fetchLables();
-    this.fetchTweet();
+  async componentDidMount() {
+    await this.fetchLables();
+    await this.fetchTweet();
   }
 
-  fetchLables() {
-    const exampleLabels = ['some', 'example', 'lables'];
-    this.setState({ labels: exampleLabels });
+  async fetchLables() {
+    try {
+      const labels = await axios.get('http://localhost:8080/tweets/labels');
+      this.setState({ labels: labels.data.labels });
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
-  fetchTweet() {
-    const exampleTweet = 'this is an example tweet'
-    this.setState({ tweet: exampleTweet });
+  async fetchTweet() {
+    try {
+      const tweet = await axios.get('http://localhost:8080/tweets/tweet');
+      this.setState({ tweet: tweet.data.tweet });
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
-  handleSubmit() {
-    return;
+  handleSubmit = async event =>   {
+    event.preventDefault();
+    try {
+      await axios.post('http://localhost:8080/tweets/tweet', {
+        tweet: this.state.tweet,
+        label: this.state.selectedLabel
+      });
+      await this.fetchTweet();
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
-  handleIgnore() {
-    return
+  handleIgnore = async event => {
+    event.preventDefault();
+    try {
+      await this.fetchTweet();
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
-  handleReturn() {
+  handleReturn = event => {
+    event.preventDefault();
     return;
   }
 
@@ -52,9 +76,9 @@ class TweetModal extends Component {
           />
           <LabelForm
             value={this.state.labels}
-            onSubmit={this.handleSubmit()}
-            onIgnore={this.handleIgnore()}
-            onReturn={this.handleReturn()}
+            onSubmit={this.handleSubmit}
+            onIgnore={this.handleIgnore}
+            onReturn={this.handleReturn}
             onSelect={this.updateLabel}
           />
         </div>
