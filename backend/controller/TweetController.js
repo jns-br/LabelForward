@@ -26,7 +26,7 @@ router.post('/tweet', async (req, res) => {
     const label = req.body.label;
     const tweet = req.body.tweet;
     await TweetRepository.insertLabeledTweet(tweet, label);
-    res.status(201);
+    res.status(201).json();
   } catch (err) {
     res.status(500).json({msg: err.message});
   }
