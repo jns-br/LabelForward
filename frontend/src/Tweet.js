@@ -87,7 +87,7 @@ class LabelForm extends Component {
         </Form.Group>
         <Button variant="primary" onClick={this.props.onSubmit}>Submit</Button>
         <Button variant="danger" onClick={this.props.onIgnore}>Ignore</Button>
-        <Button variant="secondary" onClick={this.props.onReturn}>Return</Button>
+        <Button variant="secondary" onClick={this.props.onReturn}>Previous</Button>
       </Form>
     )
   }
