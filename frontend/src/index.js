@@ -5,11 +5,12 @@ import * as serviceWorker from './serviceWorker';
 import TweetModal from './Tweet';
 import Navigation from './Navigation';
 import Login from './Login';
+import Settings from './Settings';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Login />
+    <Settings />
   </React.StrictMode>,
   document.getElementById('root')
 );

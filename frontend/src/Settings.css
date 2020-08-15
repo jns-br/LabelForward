@@ -1,0 +1,16 @@
+.Settings {
+    margin-top: 10vh;
+    margin-left: 30vw;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.EmailForm {
+    margin-bottom: 20px;
+}
+
+.PasswordForm {
+    margin: 20pxpx;
+}
