@@ -25,4 +25,18 @@ services:
       context: ./nginx
     ports: 
       - '3050:80'
-      
+  api:
+    depends_on: 
+      - postgres
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    volumes: 
+      - /app/node_modules
+      - ./backend:/app
+    environment: 
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
