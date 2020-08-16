@@ -28,7 +28,7 @@ def connect():
 
 
 def create_table(conn):
-    statement_news = """
+    statements = ("""
         CREATE TABLE IF NOT EXISTS news(
             news_id SERIAL PRIMARY KEY,
             category VARCHAR(255) NOT NULL,
@@ -38,19 +38,27 @@ def create_table(conn):
             description VARCHAR (2000) NOT NULL,
             publish_date VARCHAR (50) NOT NULL 
         )
+    """,
     """
+        CREATE TABLE IF NOT EXISTS users(
+            user_id SERIAL PRIMARY KEY,
+            user_name VARCHAR(30) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR (50) NOT NULL
+        )
+    """,
 
-    statement_results = """
+    """
         CREATE TABLE IF NOT EXISTS results(
             result_id SERIAL PRIMARY KEY,
             news VARCHAR(2000) NOT NULL,
             label VARCHAR (100) NOT NULL
         )
-    """
+    """)
     try:
         cur = conn.cursor()
-        cur.execute(statement_news)
-        cur.execute(statement_results)
+        for statement in statements:
+            cur.execute(statement)
         cur.close()
         conn.commit()
         print('Created tables!')
@@ -104,4 +112,4 @@ def read_news_json(fn, conn):
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
-    read_news_json(keys.file_name, conn)
+    #read_news_json(keys.file_name, conn)
