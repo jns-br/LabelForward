@@ -21,7 +21,7 @@ class TweetModal extends Component {
 
   async fetchLables() {
     try {
-      const labels = await axios.get('http://localhost:8080/tweets/labels');
+      const labels = await axios.get('/api/tweets/labels');
       this.setState({ labels: labels.data.labels });
     } catch (err) {
       console.error(err.message);
@@ -30,7 +30,7 @@ class TweetModal extends Component {
 
   async fetchTweet() {
     try {
-      const tweet = await axios.get('http://localhost:8080/tweets/tweet');
+      const tweet = await axios.get('/api/tweets/tweet');
       this.setState({ tweet: tweet.data.tweet });
     } catch (err) {
       console.error(err.message);
@@ -40,7 +40,7 @@ class TweetModal extends Component {
   handleSubmit = async event =>   {
     event.preventDefault();
     try {
-      await axios.post('http://localhost:8080/tweets/tweet', {
+      await axios.post('/api/tweets/tweet', {
         tweet: this.state.tweet,
         label: this.state.selectedLabel
       });
