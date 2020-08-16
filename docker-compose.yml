@@ -28,6 +28,7 @@ services:
   api:
     depends_on: 
       - postgres
+      - dbhelper
     build:
       dockerfile: Dockerfile.dev
       context: ./backend
@@ -40,8 +41,13 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
+      - NODE_PORT=5000
   client:
     stdin_open: true
+    depends_on: 
+      - postgres
+      - api
+      - dbhelper
     build: 
       dockerfile: Dockerfile.dev
       context: ./frontend
