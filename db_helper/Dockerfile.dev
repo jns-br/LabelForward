@@ -1,0 +1,11 @@
+FROM postgres:latest
+WORKDIR '/app'
+RUN apt-get update && apt-get install -y python3 python3-pip
+RUN apt-get -y install postgresql-server-dev-10 gcc python3-dev musl-dev
+RUN pip3 install psycopg2 ijson
+USER postgres
+EXPOSE 5432
+VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+COPY . .
+RUN python3 db_driver.py
+CMD ["postgres"]
