@@ -14,9 +14,12 @@ class UserRepository {
 
   async findUserById(id) {
     try {
-      const statement = `SELECT user_id FROM users WHERE user_id = ${id}`;
+      const statement = `SELECT * FROM users WHERE user_id = ${id}`;
       const result = await this.pgClient.query(statement);
-      return result.rowCount === 1;
+      if (result.rowCount !== 1) {
+        return null;
+      }
+      return result.rows[0];
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
