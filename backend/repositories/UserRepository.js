@@ -1,4 +1,5 @@
 const keys = require('../keys');
+const UserService = require('../services/UserService');
 const { Pool } = require('pg');
 
 class UserRepository {
@@ -10,6 +11,27 @@ class UserRepository {
       password: keys.pgPassword,
       port: keys.pgPort
     });
+  }
+
+  async createUser(email, password) {
+    try {
+      const statementAccess = `SELECT * FROM accessors WHERE email = ${email}`;
+      const result = await this.pgClient.query(statementAccess);
+      if (result.rowCount !== 1) {
+        return false;
+      }
+      
+      const hashedPassword = await UserService.hashPassword(password);
+      const statementInsert = `INSERT INTO users(user_name, email, password) VALUES (${email}, ${email}, ${hashedPassword})`;
+      await this.pgClient.query(statementInsert);
+
+      const statementDelete = `DELETE FROM accessors WHERE email = ${email}`;
+      await this.pgClient.query(statementDelete);
+
+      return true;
+    } catch (err) {
+      
+    }
   }
 
   async findUserById(id) {
