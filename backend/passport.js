@@ -49,6 +49,8 @@ class Passport {
         done(err, false);
       }
     }));
+
+    console.log('Passport initialized');
   }
 }
 
