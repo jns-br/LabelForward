@@ -1,7 +1,5 @@
 const express = require('express');
 const JWTService = require('../services/JWTService');
-const { ExtractJwt } = require('passport-jwt');
-
 const router = express.Router();
 
 router.post('/', JWTService.requireCredentials(), async (req, res) => {
