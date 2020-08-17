@@ -1,14 +1,14 @@
 import React from 'react';
 import Settings from './Settings';
 import TweetModal from './Tweet';
-import Login from './Login';
+import Start from './Start';
 import {Switch, Route} from 'react-router-dom';
 
 function App() {
   return (
     <main>
       <Switch>
-        <Route path="/" component={Login} exact />
+        <Route path="/" component={Start} exact />
         <Route path="/home" component={TweetModal} />
         <Route path="/settings" component={Settings} />
       </Switch>
