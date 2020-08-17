@@ -42,6 +42,7 @@ services:
       - PGPASSWORD=postgres_password
       - PGPORT=5432
       - NODE_PORT=5000
+      - JWT_SECRET=need_a_better_secret
   client:
     stdin_open: true
     depends_on: 
