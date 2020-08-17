@@ -1,12 +1,15 @@
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
 const JWT_SECRET = process.env.JWT_SECRET;
 const UserRepository = require('./repositories/UserRepository');
-const ExtractJWT = require('passport-jwt').ExtractJwt;
+const UserService = require('./services/UserService');
 
 class Passport {
   async init() {
+
+    //authorization
     passport.use(new JwtStrategy({
       jwtFromRequest: ExtractJWT.fromHeader('authorization'),
       secretOrKey: JWT_SECRET
@@ -23,5 +26,30 @@ class Passport {
         done(err, false);
       }
     }));
+
+    //authentication
+    passport.use(new LocalStrategy({
+      usernameField: 'email'
+    }, async (email, password, done) => {
+      try {
+        const user = await UserRepository.findUserByEmail(email);
+
+        if(!user) {
+          done(null, false);
+        }
+
+        const isMatch = await UserService.compareHashed(password, user.password);
+
+        if(!isMatch) {
+          return done(null, false);
+        }
+
+        done(null, user);
+      } catch (err) {
+        done(err, false);
+      }
+    }))
   }
 }
+
+module.exports = new Passport();
