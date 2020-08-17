@@ -15,29 +15,30 @@ class UserRepository {
 
   async createUser(email, password) {
     try {
-      const statementAccess = `SELECT * FROM accessors WHERE email = ${email}`;
-      const result = await this.pgClient.query(statementAccess);
+      const statementAccess = "SELECT * FROM accessors WHERE email = $1";
+      const result = await this.pgClient.query(statementAccess, [email]);
       if (result.rowCount !== 1) {
         return false;
       }
       
       const hashedPassword = await UserService.hashPassword(password);
-      const statementInsert = `INSERT INTO users(user_name, email, password) VALUES (${email}, ${email}, ${hashedPassword})`;
-      await this.pgClient.query(statementInsert);
+      const statementInsert = "INSERT INTO users(email, password) VALUES ($1, $2)";
+      await this.pgClient.query(statementInsert, [email, hashedPassword]);
 
-      const statementDelete = `DELETE FROM accessors WHERE email = ${email}`;
-      await this.pgClient.query(statementDelete);
+      const statementDelete = "DELETE FROM accessors WHERE email = $1";
+      await this.pgClient.query(statementDelete, [email]);
 
       return true;
     } catch (err) {
-      
+      console.error('DB error', err.message);
+      throw err;
     }
   }
 
   async findUserById(id) {
     try {
-      const statement = `SELECT * FROM users WHERE user_id = ${id}`;
-      const result = await this.pgClient.query(statement);
+      const statement = "SELECT * FROM users WHERE user_id = $1";
+      const result = await this.pgClient.query(statement, [id]);
       if (result.rowCount !== 1) {
         return null;
       }
@@ -50,8 +51,8 @@ class UserRepository {
 
   async findUserByEmail(email) {
     try {
-      const statement = `SELECT * FROM users WHERE email = ${email}`;
-      const result = await this.pgClient.query(statement);
+      const statement = "SELECT * FROM users WHERE email = $1";
+      const result = await this.pgClient.query(statement, [email]);
       if(result.rowCount !== 1) {
         return null;
       }
