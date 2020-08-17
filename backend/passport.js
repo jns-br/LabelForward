@@ -13,11 +13,11 @@ class Passport {
     passport.use(new JwtStrategy({
       jwtFromRequest: ExtractJWT.fromHeader('authorization'),
       secretOrKey: JWT_SECRET
-    }, async(payload, done) => {
+    }, async (payload, done) => {
       try {
         const user = await UserRepository.findUserById(payload.sub);
 
-        if(!user) {
+        if (!user) {
           return done(null, false);
         }
 
@@ -34,13 +34,13 @@ class Passport {
       try {
         const user = await UserRepository.findUserByEmail(email);
 
-        if(!user) {
+        if (!user) {
           done(null, false);
         }
 
         const isMatch = await UserService.compareHashed(password, user.password);
 
-        if(!isMatch) {
+        if (!isMatch) {
           return done(null, false);
         }
 
@@ -48,7 +48,7 @@ class Passport {
       } catch (err) {
         done(err, false);
       }
-    }))
+    }));
   }
 }
 
