@@ -47,6 +47,12 @@ def create_table(conn):
             password VARCHAR (50) NOT NULL
         )
     """,
+    """
+        CREATE TABLE IF NOT EXISTS accessors(
+            acc_id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL
+        )
+    """,
 
     """
         CREATE TABLE IF NOT EXISTS results(
