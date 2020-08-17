@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Tabs, Tab } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
 import './Login.css'
 
 class Login extends Component {
@@ -44,6 +45,14 @@ class Login extends Component {
     console.log('email: ', this.state.email);
     console.log('password: ', this.state.password)
     this.setRedirect();
+  }
+
+  handleSignup = event => {
+    console.log('email: ', this.state.emai);
+    console.log('pw: ', this.state.password);
+    console.log('controlpw: ', this.state.controlPassword);
+    //send req to backend to check for emai
+    //if email exists in accessors, send signup request with hashed pw
   }
 
   render() {
