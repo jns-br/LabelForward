@@ -71,6 +71,20 @@ def create_table(conn):
         print('error: ', error)
 
 
+def create_test_accessors(conn):
+    statement = "INSERT INTO accessors(email) VALUES (%s)"
+    cur = conn.cursor()
+    test_felix = "felix@test.com"
+    test_jonas = "jonas@test.com"
+    try:
+        cur.execute(statement, (test_felix,))
+        cur.execute(statement, (test_jonas,))
+        cur.close()
+        conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print('error: ', error)
+
+
 def read_news_json(fn, conn):
     events = ijson.parse(open(fn), multiple_values=True)
     cur = conn.cursor()
@@ -117,4 +131,5 @@ def read_news_json(fn, conn):
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
+    create_test_accessors(conn)
     #read_news_json(keys.file_name, conn)
