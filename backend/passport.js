@@ -15,7 +15,7 @@ class Passport {
       secretOrKey: JWT_SECRET
     }, async (payload, done) => {
       try {
-        const user = await UserRepository.findUserById(payload.sub);
+        const user = await UserRepository.findUserById(payload.sub.user_id);
 
         if (!user) {
           return done(null, false);
