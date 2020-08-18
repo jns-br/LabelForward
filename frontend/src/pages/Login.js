@@ -3,7 +3,6 @@ import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import AuthService from '../services/AuthService';
 import '../styles/Login.css'
-import AuthService from '../services/AuthService';
 
 class Login extends Component {
 
@@ -15,11 +14,11 @@ class Login extends Component {
   }
 
   setRedirect = () => {
-    this.setState({ redirect: !redirect });
+    this.setState({ redirect: !this.state.redirect });
   }
 
   setAlert = () => {
-    this.setState({ alert: !alert });
+    this.setState({ alert: !this.state.alert });
   }
 
   renderRedirect = () => {
