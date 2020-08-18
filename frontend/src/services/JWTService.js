@@ -2,11 +2,11 @@ const JWT = require('jsonwebtoken');
 
 class JWTService {
   storeJWT(token) {
-    localStorage.setItem('jwt', token);
+    localStorage.setItem('covid-state-jwt', token);
   }
 
   getJWT() {
-    return localStorage.getItem('jwt');
+    return localStorage.getItem('covid-state-jwt');
   }
 
   getPayload() {
@@ -15,7 +15,7 @@ class JWTService {
   }
 
   removeJWT(){
-    return localStorage.removeItem('jwt');
+    return localStorage.removeItem('covid-state-jwt');
   }
 }
 
