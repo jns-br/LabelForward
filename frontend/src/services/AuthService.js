@@ -4,7 +4,22 @@ import JWTService from './JWTService';
 class AuthService {
   constructor() {
     // if axios detects 401 -> logout
+    axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error && error.response && error.response.status === 401) this.logout();
+        return Promise.reject(error);
+      }
+    );
 
+    //if authticated add authorization header
+    axios.interceptors.request.use(
+      config => {
+        if (this.isAuthenticated()) config.headers.authorization = JWTService.getJWT();
+        return config;
+      },
+      error => Promise.reject(error)
+    );
   }
 
   async login(email, password) {
@@ -17,6 +32,11 @@ class AuthService {
     } catch (err) {
       throw err;
     }
+  }
+
+  getUser() {
+    const { sub } = JWTService.getPayload();
+    return {userId: sub};
   }
 
   isAuthenticated() {
