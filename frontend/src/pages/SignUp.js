@@ -8,7 +8,8 @@ class SignUp extends Component {
     email: "",
     password: "",
     controlPassword: "",
-    alert: ""
+    alert: "",
+    pwAlert: false
   }
 
   setRedirect = () => {
@@ -17,6 +18,10 @@ class SignUp extends Component {
 
   setAlert = alert => {
     this.setState({ alert: alert });
+  }
+
+  setPwAlert = () => {
+    this.setState({pwAlert: !this.state.pwAlert});
   }
 
   renderRedirect = () => {
@@ -49,6 +54,18 @@ class SignUp extends Component {
     }
   }
 
+  renderAlertPassword = () => {
+    if (this.state.pwAlert === true) {
+      return <Alert variant="light" className="AlertPW" onClose={() => this.setPwAlert()} dismissible>
+        <Alert.Heading>Password not matching</Alert.Heading>
+        <hr />
+        <p>
+          The password you chose and the control password must match.
+        </p>
+      </Alert>
+    }
+  }
+
   handlePasswordChange = async event => {
     const crypto_pw = await this.digestPassword(event.target.value);
     this.setState({
@@ -68,8 +85,16 @@ class SignUp extends Component {
     console.log('email: ', this.state.emai);
     console.log('pw: ', this.state.password);
     console.log('controlpw: ', this.state.controlPassword);
-    //send req to backend to check for emai
-    //if email exists in accessors, send signup request with hashed pw
+    if(this.state.password !== this.state.controlPassword) {
+      this.setPwAlert();
+      this.setState({
+        password: "",
+        controlPassword: ""
+      });
+      return;
+    }
+
+
     this.setAlert('success');
   }
   async digestPassword(password) {
@@ -85,6 +110,7 @@ class SignUp extends Component {
       <div className="SignUpForm">
         {this.renderAlertRegisterSuccess()}
         {this.renderAlertRegisterFailure()}
+        {this.renderAlertPassword()}
         <h2 className="SignUpHeader">CovidState Registration</h2>
         <Form>
           <Form.Group controlId="formSignupEmail">
@@ -94,7 +120,7 @@ class SignUp extends Component {
           <Form.Group controlId="formSignupPassword">
             <Form.Label>Enter password</Form.Label>
             <Form.Control type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-            <Form.Text>Password must be at least 8 characters long and contain upper and lowercase letters, at least one number and at least one symbol(!?+).</Form.Text>
+            <Form.Text>Password must be at least 8 characters long and contain at least one of the following: lower case letter, upper case letter, digit</Form.Text>
           </Form.Group>
           <Form.Group controlId="formSignupControlPassword">
             <Form.Label>Enter password again</Form.Label>
