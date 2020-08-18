@@ -2,8 +2,9 @@ const express = require('express');
 const { restart } = require('nodemon');
 const router = express.Router();
 const TweetRepository = require('../repositories/TweetRepository');
+const JWTService = require('../services/JWTService');
 
-router.get('/tweet', async (req, res) => {
+router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
   try {
     const nextTweet = await TweetRepository.getNextTweet();
     res.status(200).json({tweet: nextTweet});
@@ -12,7 +13,7 @@ router.get('/tweet', async (req, res) => {
   }
 });
 
-router.get('/labels', async (req, res) => {
+router.get('/labels', JWTService.requireJWT(), async (req, res) => {
   try {
     const labels = await TweetRepository.getLabels();
     res.status(200).json({labels: labels});
@@ -21,7 +22,7 @@ router.get('/labels', async (req, res) => {
   }
 });
 
-router.post('/tweet', async (req, res) => {
+router.post('/tweet', JWTService.requireJWT(), async (req, res) => {
   try {
     const label = req.body.label;
     const tweet = req.body.tweet;
