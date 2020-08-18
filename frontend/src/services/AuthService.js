@@ -34,6 +34,15 @@ class AuthService {
     }
   }
 
+  async checkToken() {
+    try {
+      const res = await axios.get('/api/login/');
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   getUser() {
     const { sub } = JWTService.getPayload();
     return {userId: sub};
