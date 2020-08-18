@@ -132,4 +132,4 @@ if __name__ == '__main__':
     conn = connect()
     create_table(conn)
     create_test_accessors(conn)
-    #read_news_json(keys.file_name, conn)
+    read_news_json(keys.file_name, conn)
