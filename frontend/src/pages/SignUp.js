@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 class SignUp extends Component {
   state = {
@@ -66,6 +67,12 @@ class SignUp extends Component {
     }
   }
 
+  handleEmailChange = event => {
+    this.setState({
+      email: event.target.value
+    })
+  }
+
   handlePasswordChange = async event => {
     const crypto_pw = await this.digestPassword(event.target.value);
     this.setState({
@@ -80,11 +87,8 @@ class SignUp extends Component {
     })
   }
 
-  handleSignup = event => {
+  handleSignup = async event => {
     event.preventDefault();
-    console.log('email: ', this.state.emai);
-    console.log('pw: ', this.state.password);
-    console.log('controlpw: ', this.state.controlPassword);
     if(this.state.password !== this.state.controlPassword) {
       this.setPwAlert();
       this.setState({
@@ -94,8 +98,22 @@ class SignUp extends Component {
       return;
     }
 
-
-    this.setAlert('success');
+    try {
+      const res = await axios.post('/api/users/signup', {
+        email: this.state.email,
+        password: this.state.password
+      });
+  
+      this.setAlert('success');
+    } catch (err) {
+      if(err.response) {
+        console.log(err.response.status)
+        if(err.response.status === 403) {
+          this.setAlert('failure');
+        }
+      }
+      console.error(err.message);
+    }
   }
   async digestPassword(password) {
     const pwUint8 = new TextEncoder().encode(password);
