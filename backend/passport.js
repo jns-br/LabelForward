@@ -2,7 +2,7 @@ const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = require('./keys').jwtSecret;
 const UserRepository = require('./repositories/UserRepository');
 const UserService = require('./services/UserService');
 
