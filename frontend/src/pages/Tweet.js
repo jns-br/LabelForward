@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import Navigation from './Navigation';
-import './Tweet.css';
+import '../styles/Tweet.css';
 import axios from 'axios';
 
 class TweetModal extends Component {

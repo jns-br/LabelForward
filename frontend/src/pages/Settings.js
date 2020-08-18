@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import Navigation from './Navigation';
-import './Settings.css';
+import '../styles/Settings.css';
 
 
 

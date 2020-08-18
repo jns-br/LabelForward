@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import './Login.css'
+import '../styles/Login.css'
 
 class Login extends Component {
 
