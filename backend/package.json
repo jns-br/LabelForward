@@ -1,11 +1,16 @@
 {
   "dependencies": {
-    "express": "4.16.3",
-    "pg": "8.0.3",
-    "redis": "2.8.0",
+    "bcrypt": "^5.0.0",
+    "body-parser": "*",
     "cors": "2.8.4",
+    "express": "4.16.3",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "1.18.3",
-    "body-parser": "*"
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "pg": "8.0.3",
+    "redis": "2.8.0"
   },
   "scripts": {
     "dev": "nodemon",

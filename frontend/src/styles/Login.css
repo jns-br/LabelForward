@@ -1,0 +1,19 @@
+.LoginForm {
+    margin-top: 20vh;
+    margin-left: 30vw;
+    width: 40%;
+}
+
+.LoginHeader {
+    margin-bottom: 20px;
+}
+
+.SignUpForm {
+    margin-top: 20vh;
+    margin-left: 30vw;
+    width: 40%;
+}
+
+.SignUpHeader {
+    margin-bottom: 20px;
+}

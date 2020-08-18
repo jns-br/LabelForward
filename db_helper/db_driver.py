@@ -42,9 +42,14 @@ def create_table(conn):
     """
         CREATE TABLE IF NOT EXISTS users(
             user_id SERIAL PRIMARY KEY,
-            user_name VARCHAR(30) NOT NULL,
             email VARCHAR(255) UNIQUE NOT NULL,
-            password VARCHAR (50) NOT NULL
+            password VARCHAR (255) NOT NULL
+        )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS accessors(
+            acc_id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL
         )
     """,
 
@@ -62,6 +67,20 @@ def create_table(conn):
         cur.close()
         conn.commit()
         print('Created tables!')
+    except (Exception, psycopg2.DatabaseError) as error:
+        print('error: ', error)
+
+
+def create_test_accessors(conn):
+    statement = "INSERT INTO accessors(email) VALUES (%s)"
+    cur = conn.cursor()
+    test_felix = "felix@test.com"
+    test_jonas = "jonas@test.com"
+    try:
+        cur.execute(statement, (test_felix,))
+        cur.execute(statement, (test_jonas,))
+        cur.close()
+        conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print('error: ', error)
 
@@ -112,4 +131,5 @@ def read_news_json(fn, conn):
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
-    #read_news_json(keys.file_name, conn)
+    create_test_accessors(conn)
+    read_news_json(keys.file_name, conn)
