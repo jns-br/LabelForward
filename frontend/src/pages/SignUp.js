@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
-import axios from 'axios';
+import UserService from '../services/UserService';
 
 class SignUp extends Component {
   state = {
@@ -99,11 +99,7 @@ class SignUp extends Component {
     }
 
     try {
-      const res = await axios.post('/api/users/signup', {
-        email: this.state.email,
-        password: this.state.password
-      });
-  
+      await UserService.register(this.state.email, this.state.password);
       this.setAlert('success');
     } catch (err) {
       if(err.response) {
