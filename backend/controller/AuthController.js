@@ -5,10 +5,18 @@ const router = express.Router();
 router.post('/', JWTService.requireCredentials(), async (req, res) => {
   try {
     const token = await JWTService.signToken(req.user);
-    return res.status(200).json({token});
+    res.status(200).json({token});
   } catch (err) {
     res.status(500).json({msg: err.message});
   }
 });
+
+router.get('/', JWTService.requireJWT(), async (req,res) => {
+  try {
+    res.status(200).json();
+  } catch (err) {
+    res.status(403).json();
+  }
+})
 
 module.exports = router;

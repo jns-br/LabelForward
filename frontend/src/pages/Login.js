@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
-import axios from 'axios';
+import AuthService from '../services/AuthService';
 import '../styles/Login.css'
 
 class Login extends Component {
@@ -10,15 +10,15 @@ class Login extends Component {
     redirect: false,
     email: "",
     password: "",
-    alert: ""
+    alert: false
   }
 
   setRedirect = () => {
-    this.setState({ redirect: true });
+    this.setState({ redirect: !this.state.redirect });
   }
 
-  setAlert = alert => {
-    this.setState({ alert: alert });
+  setAlert = () => {
+    this.setState({ alert: !this.state.alert });
   }
 
   renderRedirect = () => {
@@ -33,6 +33,18 @@ class Login extends Component {
     })
   }
 
+  renderLoginAlert = () => {
+    if (this.state.alert) {
+      return <Alert variant="light" className="AlertLogin" onClose={() => this.setAlert()} dismissible>
+        <Alert.Heading>Login failed</Alert.Heading>
+        <hr />
+        <p>
+          No user with this email and/or password.
+        </p>
+      </Alert>
+    }
+  }
+
   handlePasswordChange = async event => {
     const crypto_pw = await this.digestPassword(event.target.value);
     this.setState({
@@ -40,11 +52,16 @@ class Login extends Component {
     })
   }
 
-  handleLogin = event => {
+  handleLogin = async event => {
     event.preventDefault();
-    console.log('email: ', this.state.email);
-    console.log('password: ', this.state.password)
-    this.setRedirect();
+    try {
+      await AuthService.login(this.state.email, this.state.password);
+      this.setRedirect()
+    } catch (err) {
+      console.error(err.response.status);
+      console.error(err.message);
+      this.setAlert();
+    }
   }
   
   async digestPassword(password) {
@@ -59,6 +76,7 @@ class Login extends Component {
     return (
       <div className="LoginForm">
         {this.renderRedirect()}
+        {this.renderLoginAlert()}
         <h2 className="LoginHeader">CovidState Login</h2>
         <Form>
           <Form.Group controlId="formBasicEmail">
