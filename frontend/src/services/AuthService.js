@@ -18,4 +18,14 @@ class AuthService {
       throw err;
     }
   }
+
+  isAuthenticated() {
+    return !!JWTService.getJWT();
+  }
+
+  logout() {
+    JWTService.removeJWT();
+  }
 }
+
+export default new AuthService();
