@@ -1,15 +1,37 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 import Navigation from './Navigation';
 import '../styles/Settings.css';
+import AuthService from '../services/AuthService';
 
 
 
 class Settings extends Component {
 
+  state = {
+    redirect: false
+  }
+
+  async componentDidMount() {
+    try {
+      await AuthService.checkToken();
+    } catch (err) {
+      console.log(err.message);
+      this.setState({ redirect: true});
+    }
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to='/' />;
+    }
+  }
+
   render() {
     return (
       <div className="SettingsMain">
+        {this.renderRedirect()}
         <Navigation></Navigation>
         <div className="Settings">
           <Form className="EmailForm">

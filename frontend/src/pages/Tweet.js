@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom'
 import Navigation from './Navigation';
 import '../styles/Tweet.css';
 import axios from 'axios';
+import AuthService from '../services/AuthService';
 
 class TweetModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      redirect: false,
       tweet: "",
       labels: ['label'],
       selectedLabel: ""
@@ -15,8 +18,14 @@ class TweetModal extends Component {
   }
 
   async componentDidMount() {
-    await this.fetchLables();
-    await this.fetchTweet();
+    try {
+      await AuthService.checkToken();
+      await this.fetchLables();
+      await this.fetchTweet();
+    } catch (err) {
+      console.log(err.message);
+      this.setState({redirect: true});
+    }
   }
 
   async fetchLables() {
@@ -34,6 +43,12 @@ class TweetModal extends Component {
       this.setState({ tweet: tweet.data.tweet });
     } catch (err) {
       console.error(err.message);
+    }
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to='/' />;
     }
   }
 
@@ -69,6 +84,7 @@ class TweetModal extends Component {
   render() {
     return (
       <div className="TweetMain">
+        {this.renderRedirect()}
         <Navigation></Navigation>
         <div className='TweetModal'>
           <Tweet
@@ -98,7 +114,8 @@ function Tweet(props) {
 class LabelForm extends Component {
   render() {
     return (
-      <Form className='LabelForm'>
+      <div>
+        <Form className='LabelForm'>
         <Form.Group controlId="lableForm.ControlSelect">
           <Form.Label>Select a label</Form.Label>
           <Form.Control as="select" onChange={this.props.onSelect}>
@@ -113,6 +130,7 @@ class LabelForm extends Component {
         <Button variant="danger" onClick={this.props.onIgnore}>Ignore</Button>
         <Button variant="secondary" onClick={this.props.onReturn}>Previous</Button>
       </Form>
+      </div>
     )
   }
 }

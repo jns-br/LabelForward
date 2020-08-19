@@ -45,10 +45,9 @@ class Login extends Component {
     }
   }
 
-  handlePasswordChange = async event => {
-    const crypto_pw = await this.digestPassword(event.target.value);
+  handlePasswordChange = event => {
     this.setState({
-      password: crypto_pw
+      password: event.target.value
     })
   }
 
@@ -62,14 +61,6 @@ class Login extends Component {
       console.error(err.message);
       this.setAlert();
     }
-  }
-  
-  async digestPassword(password) {
-    const pwUint8 = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', pwUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
   }
 
   render() {

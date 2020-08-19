@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import AuthService from '../services/AuthService';
 
 class Navigation extends Component {
 
@@ -22,7 +23,7 @@ class Navigation extends Component {
 
   handleClickLogout = event => {
     event.preventDefault();
-    console.log('Clicked Logout Button');
+    AuthService.logout();
     this.setState({redirect: '/'})
   }
 
