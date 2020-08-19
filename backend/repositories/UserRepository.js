@@ -80,7 +80,29 @@ class UserRepository {
       }
 
     } catch (err) {
-      console.error('DB error', err);
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
+
+  async updatePassword(email, oldPassword, newPassword) {
+    try {
+      const user = await this.findUserByEmail(email);
+      if(user) {
+        const isMatch = await UserService.compareHashed(oldPassword, user.password);
+        if(!isMatch) {
+          return false;
+        }
+
+        const statement = "UPDATE users SET password = $1 WHERE user_id = $2";
+        const hashedNew = await UserService.hashPassword(newPassword);
+        await this.pgClient.query(statement, [hashedNew, user.user_id]);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.error('DB error', err.message);
       throw err;
     }
   }
