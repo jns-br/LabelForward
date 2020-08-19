@@ -23,6 +23,17 @@ class UserService {
       throw err;
     }
   }
+
+  async updatePassword(oldPassword, newPassword) {
+    try {
+      await axios.post('/api/users/password', {
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      })
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default new UserService();
