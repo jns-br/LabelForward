@@ -12,10 +12,11 @@ class Settings extends Component {
   state = {
     redirect: false,
     emailAlert: "",
-    email: "",
+    emailOld: "",
     emailNew: "",
     emailControl: "",
-    password: "",
+    passwordOld: "",
+    passwordNew: "",
     passwordControl: ""
   }
 
@@ -65,9 +66,9 @@ class Settings extends Component {
     }
   }
 
-  handleEmailChange = event => {
+  handleEmailOldChange = event => {
     this.setState({
-      email: event.target.value
+      emailOld: event.target.value
     })
   }
 
@@ -83,9 +84,15 @@ class Settings extends Component {
     })
   }
 
-  handlePasswordChange = event => {
+  handlePasswordOldChange = event => {
     this.setState({
-      password: event.target.value
+      passwordOld: event.target.value
+    })
+  }
+
+  handlePasswordNewChange = event => {
+    this.setState({
+      passwordNew: event.target.value
     })
   }
 
@@ -105,19 +112,19 @@ class Settings extends Component {
             <h3>Change Email</h3>
             <Form.Group controlId="formOldEmail">
               <Form.Label>Old email</Form.Label>
-              <Form.Control type="email" placeholder="Enter old email" />
+              <Form.Control type="email" placeholder="Enter old email" onChange={this.handleEmailOldChange} />
             </Form.Group>
             <Form.Group controlId="formNewEmail">
               <Form.Label>New email</Form.Label>
-              <Form.Control type="email" placeholder="Enter new email" />
+              <Form.Control type="email" placeholder="Enter new email" onChange={this.handleEmailNewChange} />
             </Form.Group>
             <Form.Group controlId="fromNewEmailConfirm">
               <Form.Label>Confirm new email</Form.Label>
-              <Form.Control type="email" placeholder="Enter new email again"></Form.Control>
+              <Form.Control type="email" placeholder="Enter new email again" onChange={this.handleEmailControlChange} />
             </Form.Group>
             <Form.Group controlId="formNewEmailPassword">
               <Form.Label>Confirm with password</Form.Label>
-              <Form.Control type="password" placeholder="Enter password"></Form.Control>
+              <Form.Control type="password" placeholder="Enter password" onChange={this.handlePasswordOldChange} />
             </Form.Group>
             <Button variant="primary" type="submit">
               Submit
@@ -128,16 +135,16 @@ class Settings extends Component {
             <h3>Change password</h3>
             <Form.Group controlId="formNewPassword">
               <Form.Label>New password</Form.Label>
-              <Form.Control type="password" placeholder="Enter new password"></Form.Control>
+              <Form.Control type="password" placeholder="Enter new password" />
               <Form.Text>Password must be at least 8 characters long</Form.Text>
             </Form.Group>
             <Form.Group controlId="formNewPasswordConfirm">
               <Form.Label>Confirm new password</Form.Label>
-              <Form.Control type="password" placeholder="Enter new password again"></Form.Control>
+              <Form.Control type="password" placeholder="Enter new password again" />
             </Form.Group>
             <Form.Group controlId="formOldPassword">
               <Form.Label>Old password</Form.Label>
-              <Form.Control type="password" placeholder="Enter old password"></Form.Control>
+              <Form.Control type="password" placeholder="Enter old password" />
             </Form.Group>
             <Button variant="primary" type="submit">Submit</Button>
           </Form>
