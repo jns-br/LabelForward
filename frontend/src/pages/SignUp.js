@@ -121,9 +121,10 @@ class SignUp extends Component {
           <Form.Group controlId="formSignupEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control type="email" placeholder="Enter email" onChange={this.handleEmailChange} />
+            <Form.Text>Enter the email address the was registered as an accessor email</Form.Text>
           </Form.Group>
           <Form.Group controlId="formSignupPassword">
-            <Form.Label>Enter password</Form.Label>
+            <Form.Label>Choose password</Form.Label>
             <Form.Control type="password" placeholder="Password" onChange={this.handlePasswordChange} />
             <Form.Text>Password must be at least 8 characters long and contain at least one of the following: lower case letter, upper case letter, digit</Form.Text>
           </Form.Group>
