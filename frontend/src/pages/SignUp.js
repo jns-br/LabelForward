@@ -73,17 +73,15 @@ class SignUp extends Component {
     })
   }
 
-  handlePasswordChange = async event => {
-    const crypto_pw = await this.digestPassword(event.target.value);
+  handlePasswordChange = event => {
     this.setState({
-      password: crypto_pw
+      password: event.target.value
     })
   }
 
-  handPasswordControlChange = async event => {
-    const crypto_pw = await this.digestPassword(event.target.value);
+  handPasswordControlChange = event => {
     this.setState({
-      controlPassword: crypto_pw
+      controlPassword: event.target.value
     })
   }
 

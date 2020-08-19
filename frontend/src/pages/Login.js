@@ -45,10 +45,9 @@ class Login extends Component {
     }
   }
 
-  handlePasswordChange = async event => {
-    const crypto_pw = await this.digestPassword(event.target.value);
+  handlePasswordChange = event => {
     this.setState({
-      password: crypto_pw
+      password: event.target.value
     })
   }
 
