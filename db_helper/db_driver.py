@@ -117,7 +117,7 @@ def read_news_json(fn, conn):
                 """
                 cur.execute(statement, (category, headline, authors, link, description, publish_date))
                 doc_counter += 1
-                if doc_counter % 100 == 0:
+                if doc_counter % 10000 == 0:
                     conn.commit()
                     print('Inserted news docs: ', doc_counter)
             except (Exception, psycopg2.DatabaseError) as error:
