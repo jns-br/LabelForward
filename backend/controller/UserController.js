@@ -18,9 +18,9 @@ router.post('/signup', async (req, res) => {
 
 router.post('/email', JWTService.requireJWT(), async (req, res) => {
   try {
-    console.log(req.user);
-    const { email, newEmail, password } = req.body;
-    const isUpdated = await UserRepository.updateEmail(email, newEmail, password);
+    const id = req.user.user_id;
+    const { newEmail, password } = req.body;
+    const isUpdated = await UserRepository.updateEmail(id, newEmail, password);
     if(isUpdated) {
       res.status(200).json();
     } else {
