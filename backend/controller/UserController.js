@@ -18,6 +18,7 @@ router.post('/signup', async (req, res) => {
 
 router.post('/email', JWTService.requireJWT(), async (req, res) => {
   try {
+    console.log(req.user);
     const { email, newEmail, password } = req.body;
     const isUpdated = await UserRepository.updateEmail(email, newEmail, password);
     if(isUpdated) {
@@ -27,6 +28,21 @@ router.post('/email', JWTService.requireJWT(), async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({msg: err.message});
+  }
+});
+
+router.post('/password', JWTService.requireJWT(), async (req, res) => {
+  try {
+    const id = req.user.user_id;
+    const {oldPassword, newPassword} = req.body;
+    const isUpdated = await UserRepository.updatePassword(id, oldPassword, newPassword);
+    if(isUpdated) {
+      res.status(200).json();
+    } else {
+      res.status(403).json();
+    }
+  } catch (err) {
+    res.status(500).json({msg: err.msg});
   }
 });
 

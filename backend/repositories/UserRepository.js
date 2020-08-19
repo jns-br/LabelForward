@@ -85,9 +85,9 @@ class UserRepository {
     }
   }
 
-  async updatePassword(email, oldPassword, newPassword) {
+  async updatePassword(id, oldPassword, newPassword) {
     try {
-      const user = await this.findUserByEmail(email);
+      const user = await this.findUserById(id);
       if(user) {
         const isMatch = await UserService.compareHashed(oldPassword, user.password);
         if(!isMatch) {
