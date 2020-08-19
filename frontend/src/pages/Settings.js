@@ -11,7 +11,12 @@ class Settings extends Component {
 
   state = {
     redirect: false,
-    emailAlert: ""
+    emailAlert: "",
+    email: "",
+    emailNew: "",
+    emailControl: "",
+    password: "",
+    passwordControl: ""
   }
 
   async componentDidMount() {
@@ -58,6 +63,36 @@ class Settings extends Component {
         </p>
       </Alert>
     }
+  }
+
+  handleEmailChange = event => {
+    this.setState({
+      email: event.target.value
+    })
+  }
+
+  handleEmailNewChange = event => {
+    this.setState({
+      emailNew: event.target.value
+    })
+  }
+
+  handleEmailControlChange = event => {
+    this.setState({
+      emailControl: event.target.value
+    })
+  }
+
+  handlePasswordChange = event => {
+    this.setState({
+      password: event.target.value
+    })
+  }
+
+  handPasswordControlChange = event => {
+    this.setState({
+      passwordControl: event.target.value
+    })
   }
 
   render() {
