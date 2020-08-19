@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom'
 import Navigation from './Navigation';
 import '../styles/Tweet.css';
 import axios from 'axios';
@@ -45,7 +46,7 @@ class TweetModal extends Component {
     }
   }
 
-  renderRediret = () => {
+  renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to='/' />;
     }
@@ -83,6 +84,7 @@ class TweetModal extends Component {
   render() {
     return (
       <div className="TweetMain">
+        {this.renderRedirect()}
         <Navigation></Navigation>
         <div className='TweetModal'>
           <Tweet

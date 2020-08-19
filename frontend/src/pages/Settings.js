@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 import Navigation from './Navigation';
 import '../styles/Settings.css';
 import AuthService from '../services/AuthService';
@@ -21,7 +22,7 @@ class Settings extends Component {
     }
   }
 
-  renderRediret = () => {
+  renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to='/' />;
     }
@@ -30,7 +31,7 @@ class Settings extends Component {
   render() {
     return (
       <div className="SettingsMain">
-        {this.renderRediret()}
+        {this.renderRedirect()}
         <Navigation></Navigation>
         <div className="Settings">
           <Form className="EmailForm">
