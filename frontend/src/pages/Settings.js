@@ -16,6 +16,7 @@ class Settings extends Component {
     emailOld: "",
     emailNew: "",
     emailControl: "",
+    passwordAlert: "",
     passwordOld: "",
     passwordNew: "",
     passwordControl: ""
@@ -26,7 +27,7 @@ class Settings extends Component {
       await AuthService.checkToken();
     } catch (err) {
       console.log(err.message);
-      this.setState({ redirect: true});
+      this.setState({ redirect: true });
     }
   }
 
@@ -36,12 +37,42 @@ class Settings extends Component {
     }
   }
 
+  setPasswordAlert = alert => {
+    this.setState({ passwordAlert: alert });
+  }
+
   setEmailAlert = alert => {
-    this.setState({ emailAlert: alert});
+    this.setState({ emailAlert: alert });
+  }
+
+  renderPasswordAlert = () => {
+    if (this.state.passwordAlert === 'success') {
+      return <Alert variant="light" className="AlertPassword" onClose={() => this.setPasswordAlert("")} dismissible>
+        <Alert.Heading>Password change successful</Alert.Heading>
+        <hr />
+        <p>
+          Your password has been updated.
+        </p>
+      </Alert>
+    }
+
+    if (this.state.passwordAlert === 'failure') {
+      return <Alert variant="light" className="AlterPassword" onClose={() => this.setPasswordAlert("")} dismissible>
+        <Alert.Heading>Password change unsuccessful</Alert.Heading>
+        <hr />
+        <div>
+          <p>Your password has not been updated for one of the following reasons:</p>
+          <ul>
+            <li>Your old password was incorrect</li>
+            <li>The new passwords did not match</li>
+          </ul>
+        </div>
+      </Alert>
+    }
   }
 
   renderEmailAlert = () => {
-    if(this.state.emailAlert === 'success') {
+    if (this.state.emailAlert === 'success') {
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change successful</Alert.Heading>
         <hr />
@@ -51,18 +82,18 @@ class Settings extends Component {
       </Alert>
     }
 
-    if(this.state.emailAlert === 'failure') {
+    if (this.state.emailAlert === 'failure') {
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change unsuccessful</Alert.Heading>
         <hr />
-        <p>
-          Your email address has not been updated for one of the following reasons:
+        <div>
+          <p>Your email address has not been updated for one of the following reasons:</p>
           <ul>
             <li>Your old email address was incorrect</li>
             <li>The new email addresses did not match</li>
             <li>Your password was incorrect</li>
           </ul>
-        </p>
+        </div>
       </Alert>
     }
   }
@@ -105,7 +136,7 @@ class Settings extends Component {
 
   handleEmailSubmission = async event => {
     event.preventDefault();
-    if(this.state.emailNew !== this.state.emailControl) {
+    if (this.state.emailNew !== this.state.emailControl) {
       this.setEmailAlert('failure');
       return;
     }
@@ -119,6 +150,28 @@ class Settings extends Component {
     }
   }
 
+  handlePasswordSubmission = async event => {
+    event.preventDefault();
+    if(this.state.passwordNew !== this.state.passwordControl) {
+      this.setPasswordAlert('failure');
+      this.resetPasswordForm();
+      return;
+    }
+
+    try {
+      await UserService.updatePassword(this.state.passwordOld, this.state.passwordNew);
+      this.resetPasswordForm();
+      this.setPasswordAlert('success');
+    } catch (err) {
+      console.error(err.message);
+      this.setPasswordAlert('failure');
+    }
+  }
+
+  resetPasswordForm = () => {
+    document.getElementById('pw-form').reset();
+  }
+
   render() {
     return (
       <div className="SettingsMain">
@@ -126,7 +179,8 @@ class Settings extends Component {
         <Navigation></Navigation>
         <div className="Settings">
           {this.renderEmailAlert()}
-          <Form className="EmailForm">
+          {this.renderPasswordAlert()}
+          <Form className="EmailForm" id="email-form">
             <h3>Change Email</h3>
             <Form.Group controlId="formOldEmail">
               <Form.Label>Old email</Form.Label>
@@ -149,22 +203,22 @@ class Settings extends Component {
           </Button>
           </Form>
 
-          <Form className="PasswordForm">
+          <Form className="PasswordForm" id="pw-form">
             <h3>Change password</h3>
             <Form.Group controlId="formNewPassword">
               <Form.Label>New password</Form.Label>
-              <Form.Control type="password" placeholder="Enter new password" />
+              <Form.Control type="password" placeholder="Enter new password" onChange={this.handlePasswordNewChange}/>
               <Form.Text>Password must be at least 8 characters long</Form.Text>
             </Form.Group>
             <Form.Group controlId="formNewPasswordConfirm">
               <Form.Label>Confirm new password</Form.Label>
-              <Form.Control type="password" placeholder="Enter new password again" />
+              <Form.Control type="password" placeholder="Enter new password again" onChange={this.handlePasswordControlChange} />
             </Form.Group>
             <Form.Group controlId="formOldPassword">
               <Form.Label>Old password</Form.Label>
-              <Form.Control type="password" placeholder="Enter old password" />
+              <Form.Control type="password" placeholder="Enter old password" onChange={this.handlePasswordOldChange}/>
             </Form.Group>
-            <Button variant="primary" type="submit">Submit</Button>
+            <Button variant="primary" type="submit" onClick={this.handlePasswordSubmission}>Submit</Button>
           </Form>
         </div>
       </div>
