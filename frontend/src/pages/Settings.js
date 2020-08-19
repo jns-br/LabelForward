@@ -13,7 +13,6 @@ class Settings extends Component {
   state = {
     redirect: false,
     emailAlert: "",
-    emailOld: "",
     emailNew: "",
     emailControl: "",
     passwordAlert: "",
@@ -98,12 +97,6 @@ class Settings extends Component {
     }
   }
 
-  handleEmailOldChange = event => {
-    this.setState({
-      emailOld: event.target.value
-    })
-  }
-
   handleEmailNewChange = event => {
     this.setState({
       emailNew: event.target.value
@@ -138,11 +131,13 @@ class Settings extends Component {
     event.preventDefault();
     if (this.state.emailNew !== this.state.emailControl) {
       this.setEmailAlert('failure');
+      this.resertEmailForm();
       return;
     }
 
     try {
-      await UserService.updateEmail(this.state.emailOld, this.state.emailNew, this.state.passwordOld);
+      await UserService.updateEmail(this.state.emailNew, this.state.passwordOld);
+      this.resertEmailForm();
       this.setEmailAlert('success')
     } catch (err) {
       console.error(err.message);
@@ -172,6 +167,10 @@ class Settings extends Component {
     document.getElementById('pw-form').reset();
   }
 
+  resertEmailForm = () => {
+    document.getElementById('email-form').reset();
+  }
+
   render() {
     return (
       <div className="SettingsMain">
@@ -182,10 +181,6 @@ class Settings extends Component {
           {this.renderPasswordAlert()}
           <Form className="EmailForm" id="email-form">
             <h3>Change Email</h3>
-            <Form.Group controlId="formOldEmail">
-              <Form.Label>Old email</Form.Label>
-              <Form.Control type="email" placeholder="Enter old email" onChange={this.handleEmailOldChange} />
-            </Form.Group>
             <Form.Group controlId="formNewEmail">
               <Form.Label>New email</Form.Label>
               <Form.Control type="email" placeholder="Enter new email" onChange={this.handleEmailNewChange} />
