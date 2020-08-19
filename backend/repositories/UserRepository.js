@@ -62,6 +62,28 @@ class UserRepository {
       throw err;
     }
   }
+
+  async updateEmail(oldEmail, newEmail, password) {
+    try {
+      const user = await this.findUserByEmail(oldEmail);
+      if (user) {
+        const isMatch = await UserService.compareHashed(password, user.password);
+        if(!isMatch) {
+          return false;
+        }
+
+        const statement = "UPDATE users SET email = $1 WHERE user_id = $2";
+        await this.pgClient.query(statement, [newEmail, user.user_id]);
+        return true;
+      } else {
+        return false;
+      }
+
+    } catch (err) {
+      console.error('DB error', err);
+      throw err;
+    }
+  }
 }
 
 module.exports = new UserRepository();
