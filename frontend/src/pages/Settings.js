@@ -201,16 +201,16 @@ class Settings extends Component {
             <h3>Change password</h3>
             <Form.Group controlId="formNewPassword">
               <Form.Label>New password</Form.Label>
-              <Form.Control type="password" placeholder="Enter new password" onChange={this.handlePasswordOldChange}/>
+              <Form.Control type="password" placeholder="Enter new password" onChange={this.handlePasswordNewChange}/>
               <Form.Text>Password must be at least 8 characters long</Form.Text>
             </Form.Group>
             <Form.Group controlId="formNewPasswordConfirm">
               <Form.Label>Confirm new password</Form.Label>
-              <Form.Control type="password" placeholder="Enter new password again" onChange={this.handlePasswordNewChange} />
+              <Form.Control type="password" placeholder="Enter new password again" onChange={this.handlePasswordControlChange} />
             </Form.Group>
             <Form.Group controlId="formOldPassword">
               <Form.Label>Old password</Form.Label>
-              <Form.Control type="password" placeholder="Enter old password" onChange={this.handlePasswordControlChange}/>
+              <Form.Control type="password" placeholder="Enter old password" onChange={this.handlePasswordOldChange}/>
             </Form.Group>
             <Button variant="primary" type="submit" onClick={this.handlePasswordSubmission}>Submit</Button>
           </Form>
