@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import Navigation from './Navigation';
 import '../styles/Settings.css';
 import AuthService from '../services/AuthService';
+import UserService from '../services/UserService';
 
 
 
@@ -96,10 +97,26 @@ class Settings extends Component {
     })
   }
 
-  handPasswordControlChange = event => {
+  handlePasswordControlChange = event => {
     this.setState({
       passwordControl: event.target.value
     })
+  }
+
+  handleEmailSubmission = async event => {
+    event.preventDefault();
+    if(this.state.emailNew !== this.state.emailControl) {
+      this.setEmailAlert('failure');
+      return;
+    }
+
+    try {
+      await UserService.updateEmail(this.state.emailOld, this.state.emailNew, this.state.passwordOld);
+      this.setEmailAlert('success')
+    } catch (err) {
+      console.error(err.message);
+      this.setEmailAlert('failure')
+    }
   }
 
   render() {
@@ -108,6 +125,7 @@ class Settings extends Component {
         {this.renderRedirect()}
         <Navigation></Navigation>
         <div className="Settings">
+          {this.renderEmailAlert()}
           <Form className="EmailForm">
             <h3>Change Email</h3>
             <Form.Group controlId="formOldEmail">
