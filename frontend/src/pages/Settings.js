@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import Navigation from './Navigation';
 import '../styles/Settings.css';
@@ -10,7 +10,8 @@ import AuthService from '../services/AuthService';
 class Settings extends Component {
 
   state = {
-    redirect: false
+    redirect: false,
+    emailAlert: ""
   }
 
   async componentDidMount() {
@@ -28,6 +29,37 @@ class Settings extends Component {
     }
   }
 
+  setEmailAlert = alert => {
+    this.setState({ emailAlert: alert});
+  }
+
+  renderEmailAlert = () => {
+    if(this.state.emailAlert == 'success') {
+      return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
+        <Alert.Heading>Email change successful</Alert.Heading>
+        <hr />
+        <p>
+          Your email address has been updated.
+        </p>
+      </Alert>
+    }
+
+    if(this.state.emailAlert == 'failure') {
+      return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
+        <Alert.Heading>Email change unsuccessful</Alert.Heading>
+        <hr />
+        <p>
+          Your email address has not been updated for one of the following reasons:
+          <ul>
+            <li>Your old email address was incorrect</li>
+            <li>The new email addresses did not match</li>
+            <li>Your password was incorrect</li>
+          </ul>
+        </p>
+      </Alert>
+    }
+  }
+
   render() {
     return (
       <div className="SettingsMain">
@@ -36,6 +68,10 @@ class Settings extends Component {
         <div className="Settings">
           <Form className="EmailForm">
             <h3>Change Email</h3>
+            <Form.Group controlId="formOldEmail">
+              <Form.Label>Old email</Form.Label>
+              <Form.Control type="email" placeholder="Enter old email" />
+            </Form.Group>
             <Form.Group controlId="formNewEmail">
               <Form.Label>New email</Form.Label>
               <Form.Control type="email" placeholder="Enter new email" />
