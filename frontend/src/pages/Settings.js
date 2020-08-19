@@ -47,9 +47,6 @@ class Settings extends Component {
 
   renderPasswordAlert = () => {
     if (this.state.passwordAlert === 'success') {
-      if(this.state.emailAlert !== '') {
-        this.setEmailAlert('');
-      }
       return <Alert variant="light" className="AlertPassword" onClose={() => this.setPasswordAlert("")} dismissible>
         <Alert.Heading>Password change successful</Alert.Heading>
         <hr />
@@ -60,28 +57,22 @@ class Settings extends Component {
     }
 
     if (this.state.passwordAlert === 'failure') {
-      if(this.state.emailAlert !== '') {
-        this.setEmailAlert('');
-      }
       return <Alert variant="light" className="AlterPassword" onClose={() => this.setPasswordAlert("")} dismissible>
         <Alert.Heading>Password change unsuccessful</Alert.Heading>
         <hr />
-        <p>
-          Your password has not been updated for one of the following reasons:
+        <div>
+          <p>Your password has not been updated for one of the following reasons:</p>
           <ul>
             <li>Your old password was incorrect</li>
             <li>The new passwords did not match</li>
           </ul>
-        </p>
+        </div>
       </Alert>
     }
   }
 
   renderEmailAlert = () => {
     if (this.state.emailAlert === 'success') {
-      if(this.state.passwordAlert !== '') {
-        this.setPasswordAlert('');
-      }
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change successful</Alert.Heading>
         <hr />
@@ -92,20 +83,17 @@ class Settings extends Component {
     }
 
     if (this.state.emailAlert === 'failure') {
-      if(this.state.passwordAlert !== '') {
-        this.setPasswordAlert('');
-      }
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change unsuccessful</Alert.Heading>
         <hr />
-        <p>
-          Your email address has not been updated for one of the following reasons:
+        <div>
+          <p>Your email address has not been updated for one of the following reasons:</p>
           <ul>
             <li>Your old email address was incorrect</li>
             <li>The new email addresses did not match</li>
             <li>Your password was incorrect</li>
           </ul>
-        </p>
+        </div>
       </Alert>
     }
   }
@@ -166,21 +154,22 @@ class Settings extends Component {
     event.preventDefault();
     if(this.state.passwordNew !== this.state.passwordControl) {
       this.setPasswordAlert('failure');
-      return
+      this.resetPasswordForm();
+      return;
     }
 
     try {
-      this.setState({
-        passwordNew: "",
-        passwordControl: "",
-        passwordNew: ""
-      })
       await UserService.updatePassword(this.state.passwordOld, this.state.passwordNew);
+      this.resetPasswordForm();
       this.setPasswordAlert('success');
     } catch (err) {
       console.error(err.message);
-      this.setEmailAlert('failure');
+      this.setPasswordAlert('failure');
     }
+  }
+
+  resetPasswordForm = () => {
+    document.getElementById('pw-form').reset();
   }
 
   render() {
@@ -191,7 +180,7 @@ class Settings extends Component {
         <div className="Settings">
           {this.renderEmailAlert()}
           {this.renderPasswordAlert()}
-          <Form className="EmailForm">
+          <Form className="EmailForm" id="email-form">
             <h3>Change Email</h3>
             <Form.Group controlId="formOldEmail">
               <Form.Label>Old email</Form.Label>
@@ -214,7 +203,7 @@ class Settings extends Component {
           </Button>
           </Form>
 
-          <Form className="PasswordForm">
+          <Form className="PasswordForm" id="pw-form">
             <h3>Change password</h3>
             <Form.Group controlId="formNewPassword">
               <Form.Label>New password</Form.Label>
