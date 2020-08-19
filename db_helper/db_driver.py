@@ -72,7 +72,7 @@ def create_table(conn):
 
 
 def create_test_accessors(conn):
-    statement = "INSERT INTO accessors(email) VALUES (%s)"
+    statement = "INSERT INTO accessors(email) VALUES (%s) ON CONFLICT DO NOTHING"
     cur = conn.cursor()
     test_felix = "felix@test.com"
     test_jonas = "jonas@test.com"
@@ -113,7 +113,7 @@ def read_news_json(fn, conn):
             try:
                 statement = """
                     INSERT INTO news(category, headline, authors, link, description, publish_date)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
                 """
                 cur.execute(statement, (category, headline, authors, link, description, publish_date))
                 doc_counter += 1
