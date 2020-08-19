@@ -47,6 +47,9 @@ class Settings extends Component {
 
   renderPasswordAlert = () => {
     if (this.state.passwordAlert === 'success') {
+      if(this.state.emailAlert !== '') {
+        this.setEmailAlert('');
+      }
       return <Alert variant="light" className="AlertPassword" onClose={() => this.setPasswordAlert("")} dismissible>
         <Alert.Heading>Password change successful</Alert.Heading>
         <hr />
@@ -57,6 +60,9 @@ class Settings extends Component {
     }
 
     if (this.state.passwordAlert === 'failure') {
+      if(this.state.emailAlert !== '') {
+        this.setEmailAlert('');
+      }
       return <Alert variant="light" className="AlterPassword" onClose={() => this.setPasswordAlert("")} dismissible>
         <Alert.Heading>Password change unsuccessful</Alert.Heading>
         <hr />
@@ -73,6 +79,9 @@ class Settings extends Component {
 
   renderEmailAlert = () => {
     if (this.state.emailAlert === 'success') {
+      if(this.state.passwordAlert !== '') {
+        this.setPasswordAlert('');
+      }
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change successful</Alert.Heading>
         <hr />
@@ -83,6 +92,9 @@ class Settings extends Component {
     }
 
     if (this.state.emailAlert === 'failure') {
+      if(this.state.passwordAlert !== '') {
+        this.setPasswordAlert('');
+      }
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change unsuccessful</Alert.Heading>
         <hr />
@@ -158,6 +170,11 @@ class Settings extends Component {
     }
 
     try {
+      this.setState({
+        passwordNew: "",
+        passwordControl: "",
+        passwordNew: ""
+      })
       await UserService.updatePassword(this.state.passwordOld, this.state.passwordNew);
       this.setPasswordAlert('success');
     } catch (err) {
