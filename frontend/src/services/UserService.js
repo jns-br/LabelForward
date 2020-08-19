@@ -11,6 +11,18 @@ class UserService {
       throw err;
     }
   }
+
+  async updateEmail(oldEmail, newEmail, password) {
+    try {
+      await axios.post('/api/users/email', {
+        oldEmail: oldEmail,
+        newEmail: newEmail,
+        password: password
+      })
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default new UserService();
