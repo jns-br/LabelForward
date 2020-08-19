@@ -41,7 +41,7 @@ class Settings extends Component {
   }
 
   renderEmailAlert = () => {
-    if(this.state.emailAlert == 'success') {
+    if(this.state.emailAlert === 'success') {
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change successful</Alert.Heading>
         <hr />
@@ -51,7 +51,7 @@ class Settings extends Component {
       </Alert>
     }
 
-    if(this.state.emailAlert == 'failure') {
+    if(this.state.emailAlert === 'failure') {
       return <Alert variant="light" className="AlertEmail" onClose={() => this.setEmailAlert("")} dismissible>
         <Alert.Heading>Email change unsuccessful</Alert.Heading>
         <hr />
@@ -144,7 +144,7 @@ class Settings extends Component {
               <Form.Label>Confirm with password</Form.Label>
               <Form.Control type="password" placeholder="Enter password" onChange={this.handlePasswordOldChange} />
             </Form.Group>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" onClick={this.handleEmailSubmission}>
               Submit
           </Button>
           </Form>

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserRepository = require('../repositories/UserRepository');
+const JWTService = require('../services/JWTService');
 
 router.post('/signup', async (req, res) => {
   try {
@@ -15,10 +16,10 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/email', async (req, res) => {
+router.post('/email', JWTService.requireJWT(), async (req, res) => {
   try {
-    const { oldEmail, newEmail, password } = req.body;
-    const isUpdated = await UserRepository.updateEmail(oldEmail, newEmail, password);
+    const { email, newEmail, password } = req.body;
+    const isUpdated = await UserRepository.updateEmail(email, newEmail, password);
     if(isUpdated) {
       res.status(200).json();
     } else {

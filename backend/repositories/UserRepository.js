@@ -72,7 +72,7 @@ class UserRepository {
           return false;
         }
 
-        const statement = "INSERT INTO users(email) VALUES($1) WHERE user_id = $2";
+        const statement = "UPDATE users SET email = $1 WHERE user_id = $2";
         await this.pgClient.query(statement, [newEmail, user.user_id]);
         return true;
       } else {

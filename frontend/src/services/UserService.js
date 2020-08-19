@@ -15,7 +15,7 @@ class UserService {
   async updateEmail(oldEmail, newEmail, password) {
     try {
       await axios.post('/api/users/email', {
-        oldEmail: oldEmail,
+        email: oldEmail,
         newEmail: newEmail,
         password: password
       })
