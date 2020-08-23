@@ -57,6 +57,7 @@ class TweetModal extends Component {
     try {
       await TweetService.postTweet(this.state.tweet, this.state.selectedLabels)
       await this.fetchTweet();
+      this.setState({ selectedLabels: []});
     } catch (err) {
       console.error(err.message);
     }
