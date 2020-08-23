@@ -24,9 +24,9 @@ router.get('/labels', JWTService.requireJWT(), async (req, res) => {
 
 router.post('/tweet', JWTService.requireJWT(), async (req, res) => {
   try {
-    const label = req.body.label;
+    const labels = req.body.labels;
     const tweet = req.body.tweet;
-    await TweetRepository.insertLabeledTweet(tweet, label);
+    await TweetRepository.insertLabeledTweet(tweet, labels);
     res.status(201).json();
   } catch (err) {
     res.status(500).json({msg: err.message});
