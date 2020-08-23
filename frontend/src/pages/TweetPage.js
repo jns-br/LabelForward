@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom'
-import Navigation from './Navigation';
-import '../styles/Tweet.css';
+import Navigation from '../components/Navigation';
+import TweetCard from '../components/TweetCard';
+import '../styles/TweetPage.css';
 import axios from 'axios';
 import AuthService from '../services/AuthService';
 
@@ -13,7 +13,7 @@ class TweetModal extends Component {
       redirect: false,
       tweet: "",
       labels: ['label'],
-      selectedLabel: ""
+      selectedLabel: []
     }
   }
 
@@ -57,7 +57,7 @@ class TweetModal extends Component {
     try {
       await axios.post('/api/tweets/tweet', {
         tweet: this.state.tweet,
-        label: this.state.selectedLabel
+        label: this.state.selectedLabel[0]
       });
       await this.fetchTweet();
     } catch (err) {
@@ -79,7 +79,12 @@ class TweetModal extends Component {
     return;
   }
 
-  updateLabel = event => this.setState({ selectedLabel: event.target.value });
+  updateLabel = event => this.setState({ selectedLabel: this.state.selectedLabel.concat([event.target.value]) });
+
+  deleteLabel = event => {
+    const removed = this.state.selectedLabel.filter(label => label !== event.target.innerHTML);
+    this.setState({ selectedLabel: removed});
+  }
 
   render() {
     return (
@@ -87,49 +92,16 @@ class TweetModal extends Component {
         {this.renderRedirect()}
         <Navigation></Navigation>
         <div className='TweetModal'>
-          <Tweet
-            value={this.state.tweet}
-          />
-          <LabelForm
-            value={this.state.labels}
+          <TweetCard 
+            tweet={this.state.tweet}
+            labels={this.state.labels}
+            selected={this.state.selectedLabel}
             onSubmit={this.handleSubmit}
             onIgnore={this.handleIgnore}
-            onReturn={this.handleReturn}
             onSelect={this.updateLabel}
+            onDeleteLabel={this.deleteLabel}
           />
         </div>
-      </div>
-    )
-  }
-}
-
-function Tweet(props) {
-  return (
-    <div className='Tweet'>
-      <p>{props.value}</p>
-    </div>
-  )
-}
-
-class LabelForm extends Component {
-  render() {
-    return (
-      <div>
-        <Form className='LabelForm'>
-        <Form.Group controlId="lableForm.ControlSelect">
-          <Form.Label>Select a label</Form.Label>
-          <Form.Control as="select" onChange={this.props.onSelect}>
-            {
-              this.props.value.map((label, index) => {
-                return (<option key={index} value={label}>{label}</option>)
-              })
-            }
-          </Form.Control>
-        </Form.Group>
-        <Button variant="primary" onClick={this.props.onSubmit}>Submit</Button>
-        <Button variant="danger" onClick={this.props.onIgnore}>Ignore</Button>
-        <Button variant="secondary" onClick={this.props.onReturn}>Previous</Button>
-      </Form>
       </div>
     )
   }

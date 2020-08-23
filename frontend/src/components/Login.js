@@ -57,7 +57,6 @@ class Login extends Component {
       await AuthService.login(this.state.email, this.state.password);
       this.setRedirect()
     } catch (err) {
-      console.error(err.response.status);
       console.error(err.message);
       this.setAlert();
     }

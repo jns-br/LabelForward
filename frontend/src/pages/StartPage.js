@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Tab, Tabs } from 'react-bootstrap';
-import SignUp from './SignUp';
-import Login from './Login';
+import SignUp from '../components/SignUp';
+import Login from '../components/Login';
 import AuthService from '../services/AuthService';
 
 class Start extends Component {
