@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
-import Navigation from './Navigation';
+import Navigation from '../components/Navigation';
 import '../styles/Settings.css';
 import AuthService from '../services/AuthService';
 import UserService from '../services/UserService';
