@@ -82,10 +82,8 @@ class TweetModal extends Component {
   updateLabel = event => this.setState({ selectedLabel: this.state.selectedLabel.concat([event.target.value]) });
 
   deleteLabel = event => {
-    console.log(event.target.innerHTML)
     const removed = this.state.selectedLabel.filter(label => label !== event.target.innerHTML);
     this.setState({ selectedLabel: removed});
-    console.log(this.state.selectedLabel);
   }
 
   render() {

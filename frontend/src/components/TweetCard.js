@@ -18,6 +18,7 @@ class TweetCard extends Component {
         <br />
         <Card className="SelectorCard">
           <Card.Header>
+            <div>Selected Labels (click label to delete)</div>
             {
               this.props.selected.map((label, index) => {
               return (<Badge pill variant="secondary" key={index} value={label} onClick={this.props.onDeleteLabel}>{label}</Badge>)
