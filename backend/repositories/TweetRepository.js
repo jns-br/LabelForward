@@ -1,5 +1,6 @@
 const keys = require('../keys');
 const { Pool } = require('pg');
+const redis = require('redis');
 
 class TweetRepository {
   constructor() {
@@ -13,9 +14,9 @@ class TweetRepository {
     });
   }
 
-  async getNextTweet() {
+  async getNextTweet(index) {
     try {
-      const statment = `SELECT headline, category, description FROM news WHERE news_id = ${++this.tweetCounter}`;
+      const statment = `SELECT headline, category, description FROM news WHERE news_id = ${index}`;
       const result = await this.pgClient.query(statment);
       const response = result.rows[0].headline + ": " + result.rows[0].description
       return response;
@@ -29,7 +30,7 @@ class TweetRepository {
     try {
       const statement = "INSERT INTO results(news, labels) VALUES($1, $2::text[])";
       const result = await this.pgClient.query(statement, [tweet, labels]);
-      if(result.rowCount !== 1) {
+      if (result.rowCount !== 1) {
         throw new Error('Insertion failed');
       }
       return result;

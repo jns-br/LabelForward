@@ -1,5 +1,7 @@
 version: '3'
-services: 
+services:
+  redis:
+    image: 'redis:latest' 
   postgres:
     image: postgres:latest
     environment: 
@@ -29,6 +31,7 @@ services:
     depends_on: 
       - postgres
       - dbhelper
+      - redis
     build:
       dockerfile: Dockerfile.dev
       context: ./backend
@@ -43,6 +46,8 @@ services:
       - PGPORT=5432
       - NODE_PORT=5000
       - JWT_SECRET=need_a_better_secret
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
   client:
     stdin_open: true
     depends_on: 
