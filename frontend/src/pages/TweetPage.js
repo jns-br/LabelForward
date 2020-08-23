@@ -3,8 +3,8 @@ import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
 import TweetCard from '../components/TweetCard';
 import '../styles/TweetPage.css';
-import axios from 'axios';
 import AuthService from '../services/AuthService';
+import TweetService from '../services/TweetService';
 
 class TweetModal extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class TweetModal extends Component {
       redirect: false,
       tweet: "",
       labels: ['label'],
-      selectedLabel: []
+      selectedLabels: []
     }
   }
 
@@ -30,7 +30,7 @@ class TweetModal extends Component {
 
   async fetchLables() {
     try {
-      const labels = await axios.get('/api/tweets/labels');
+      const labels = await TweetService.getLabels();
       this.setState({ labels: labels.data.labels });
     } catch (err) {
       console.error(err.message);
@@ -39,7 +39,7 @@ class TweetModal extends Component {
 
   async fetchTweet() {
     try {
-      const tweet = await axios.get('/api/tweets/tweet');
+      const tweet = await TweetService.getTweet();
       this.setState({ tweet: tweet.data.tweet });
     } catch (err) {
       console.error(err.message);
@@ -55,11 +55,9 @@ class TweetModal extends Component {
   handleSubmit = async event =>   {
     event.preventDefault();
     try {
-      await axios.post('/api/tweets/tweet', {
-        tweet: this.state.tweet,
-        label: this.state.selectedLabel[0]
-      });
+      await TweetService.postTweet(this.state.tweet, this.state.selectedLabels)
       await this.fetchTweet();
+      this.setState({ selectedLabels: []});
     } catch (err) {
       console.error(err.message);
     }
@@ -79,11 +77,11 @@ class TweetModal extends Component {
     return;
   }
 
-  updateLabel = event => this.setState({ selectedLabel: this.state.selectedLabel.concat([event.target.value]) });
+  updateLabel = event => this.setState({ selectedLabels: this.state.selectedLabels.concat([event.target.value]) });
 
   deleteLabel = event => {
-    const removed = this.state.selectedLabel.filter(label => label !== event.target.innerHTML);
-    this.setState({ selectedLabel: removed});
+    const removed = this.state.selectedLabels.filter(label => label !== event.target.innerHTML);
+    this.setState({ selectedLabels: removed});
   }
 
   render() {
@@ -95,7 +93,7 @@ class TweetModal extends Component {
           <TweetCard 
             tweet={this.state.tweet}
             labels={this.state.labels}
-            selected={this.state.selectedLabel}
+            selected={this.state.selectedLabels}
             onSubmit={this.handleSubmit}
             onIgnore={this.handleIgnore}
             onSelect={this.updateLabel}

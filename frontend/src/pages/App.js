@@ -1,7 +1,7 @@
 import React from 'react';
-import Settings from './Settings';
-import TweetModal from './Tweet';
-import Start from './Start';
+import Settings from './SettingsPage';
+import TweetModal from './TweetPage';
+import Start from './StartPage';
 import {Switch, Route} from 'react-router-dom';
 
 function App() {

@@ -57,7 +57,7 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS results(
             result_id SERIAL PRIMARY KEY,
             news VARCHAR(2000) NOT NULL,
-            label VARCHAR (100) NOT NULL
+            labels TEXT [] NOT NULL
         )
     """)
     try:
