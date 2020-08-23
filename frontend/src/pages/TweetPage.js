@@ -5,6 +5,7 @@ import TweetCard from '../components/TweetCard';
 import '../styles/TweetPage.css';
 import axios from 'axios';
 import AuthService from '../services/AuthService';
+import TweetService from '../services/TweetService';
 
 class TweetModal extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class TweetModal extends Component {
 
   async fetchLables() {
     try {
-      const labels = await axios.get('/api/tweets/labels');
+      const labels = await TweetService.getLabels();
       this.setState({ labels: labels.data.labels });
     } catch (err) {
       console.error(err.message);
