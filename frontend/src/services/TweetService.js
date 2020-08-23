@@ -18,6 +18,17 @@ class TweetService {
       throw err;
     }
   }
+
+  async postTweet(tweet, labels) {
+    try {
+      await axios.post('/api/tweets/tweet', {
+        tweet: tweet,
+        labels: labels
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default new TweetService();
