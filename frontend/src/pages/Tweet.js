@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
-import '../styles/Tweet.css';
+import TweetCard from '../components/TweetCard';
+import '../styles/TweetPage.css';
 import axios from 'axios';
 import AuthService from '../services/AuthService';
 
@@ -87,49 +88,14 @@ class TweetModal extends Component {
         {this.renderRedirect()}
         <Navigation></Navigation>
         <div className='TweetModal'>
-          <Tweet
-            value={this.state.tweet}
-          />
-          <LabelForm
-            value={this.state.labels}
+          <TweetCard 
+            tweet={this.state.tweet}
+            labels={this.state.labels}
             onSubmit={this.handleSubmit}
             onIgnore={this.handleIgnore}
-            onReturn={this.handleReturn}
             onSelect={this.updateLabel}
           />
         </div>
-      </div>
-    )
-  }
-}
-
-function Tweet(props) {
-  return (
-    <div className='Tweet'>
-      <p>{props.value}</p>
-    </div>
-  )
-}
-
-class LabelForm extends Component {
-  render() {
-    return (
-      <div>
-        <Form className='LabelForm'>
-        <Form.Group controlId="lableForm.ControlSelect">
-          <Form.Label>Select a label</Form.Label>
-          <Form.Control as="select" onChange={this.props.onSelect}>
-            {
-              this.props.value.map((label, index) => {
-                return (<option key={index} value={label}>{label}</option>)
-              })
-            }
-          </Form.Control>
-        </Form.Group>
-        <Button variant="primary" onClick={this.props.onSubmit}>Submit</Button>
-        <Button variant="danger" onClick={this.props.onIgnore}>Ignore</Button>
-        <Button variant="secondary" onClick={this.props.onReturn}>Previous</Button>
-      </Form>
       </div>
     )
   }
