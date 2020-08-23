@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, Badge } from 'react-bootstrap';
 import '../styles/TweetCard.css';
 
 class TweetCard extends Component {
@@ -17,7 +17,13 @@ class TweetCard extends Component {
         </Card>
         <br />
         <Card className="SelectorCard">
-          <Card.Header>Selected labels should go here</Card.Header>
+          <Card.Header>
+            {
+              this.props.selected.map((label, index) => {
+              return (<Badge pill variant="secondary" key={index} value={label} onClick={this.props.onDeleteLabel}>{label}</Badge>)
+              })
+            }
+          </Card.Header>
           <Card.Body>
             <Form>
               <Form.Group>

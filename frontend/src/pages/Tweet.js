@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Form, Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
 import TweetCard from '../components/TweetCard';
@@ -14,7 +13,7 @@ class TweetModal extends Component {
       redirect: false,
       tweet: "",
       labels: ['label'],
-      selectedLabel: ""
+      selectedLabel: []
     }
   }
 
@@ -58,7 +57,7 @@ class TweetModal extends Component {
     try {
       await axios.post('/api/tweets/tweet', {
         tweet: this.state.tweet,
-        label: this.state.selectedLabel
+        label: this.state.selectedLabel[0]
       });
       await this.fetchTweet();
     } catch (err) {
@@ -80,7 +79,14 @@ class TweetModal extends Component {
     return;
   }
 
-  updateLabel = event => this.setState({ selectedLabel: event.target.value });
+  updateLabel = event => this.setState({ selectedLabel: this.state.selectedLabel.concat([event.target.value]) });
+
+  deleteLabel = event => {
+    console.log(event.target.innerHTML)
+    const removed = this.state.selectedLabel.filter(label => label !== event.target.innerHTML);
+    this.setState({ selectedLabel: removed});
+    console.log(this.state.selectedLabel);
+  }
 
   render() {
     return (
@@ -91,9 +97,11 @@ class TweetModal extends Component {
           <TweetCard 
             tweet={this.state.tweet}
             labels={this.state.labels}
+            selected={this.state.selectedLabel}
             onSubmit={this.handleSubmit}
             onIgnore={this.handleIgnore}
             onSelect={this.updateLabel}
+            onDeleteLabel={this.deleteLabel}
           />
         </div>
       </div>
