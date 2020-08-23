@@ -1,10 +1,19 @@
 import axios from 'axios';
 
 class TweetService {
-  async fetchLabels() {
+  async getLabels() {
     try {
       const labels = await axios.get('/api/tweets/labels');
       return labels;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getTweet() {
+    try {
+      const tweet = await axios.get('/api/tweets/tweet');
+      return tweet;
     } catch (err) {
       throw err;
     }

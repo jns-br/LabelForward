@@ -40,7 +40,7 @@ class TweetModal extends Component {
 
   async fetchTweet() {
     try {
-      const tweet = await axios.get('/api/tweets/tweet');
+      const tweet = await TweetService.getTweet();
       this.setState({ tweet: tweet.data.tweet });
     } catch (err) {
       console.error(err.message);
