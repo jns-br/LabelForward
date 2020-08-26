@@ -1,5 +1,4 @@
 import axios from 'axios';
-import JWTService from './JWTService';
 
 class AuthService {
   async login(email, password) {
@@ -23,15 +22,6 @@ class AuthService {
     } catch (err) {
       throw err;
     }
-  }
-
-  getUser() {
-    const { sub } = JWTService.getPayload();
-    return {userId: sub};
-  }
-
-  isAuthenticated() {
-    return !!JWTService.getJWT();
   }
 
   async logout() {
