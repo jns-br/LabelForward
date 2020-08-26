@@ -27,6 +27,8 @@ class AuthService {
       const res = await axios.post('/api/login/', {
         email: email,
         password: password
+      }, {
+        withCredentials: true
       });
       JWTService.storeJWT(res.data.token);
     } catch (err) {
