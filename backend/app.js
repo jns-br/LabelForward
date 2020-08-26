@@ -8,7 +8,8 @@ const Passport = require('./passport');
 
 const app = express();
 app.use(cors({
-  origin: 'http://client:3000'
+  origin: 'http://client:3000',
+  credentials: true
 }));
 app.use(bodyParser.json());
 
