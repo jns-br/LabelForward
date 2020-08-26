@@ -5,7 +5,8 @@ const router = express.Router();
 router.post('/', JWTService.requireCredentials(), async (req, res) => {
   try {
     const token = await JWTService.signToken(req.user);
-    res.status(200).json({token});
+    res.cookie('access_token', token);
+    res.status(200).json({success : true});
   } catch (err) {
     res.status(500).json({msg: err.message});
   }
