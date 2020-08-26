@@ -13,6 +13,7 @@ class AuthService {
     );
 
     //if authticated add authorization header
+    /*
     axios.interceptors.request.use(
       config => {
         if (this.isAuthenticated()) config.headers.authorization = JWTService.getJWT();
@@ -20,6 +21,7 @@ class AuthService {
       },
       error => Promise.reject(error)
     );
+    */
   }
 
   async login(email, password) {
@@ -30,7 +32,6 @@ class AuthService {
       }, {
         withCredentials: true
       });
-      JWTService.storeJWT(res.data.token);
     } catch (err) {
       throw err;
     }
@@ -55,7 +56,7 @@ class AuthService {
   }
 
   logout() {
-    JWTService.removeJWT();
+    //JWTService.removeJWT();
   }
 }
 
