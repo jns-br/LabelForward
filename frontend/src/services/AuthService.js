@@ -6,8 +6,8 @@ class AuthService {
     // if axios detects 401 -> logout
     axios.interceptors.response.use(
       response => response,
-      error => {
-        if (error && error.response && error.response.status === 401) this.logout();
+      async error => {
+        if (error && error.response && error.response.status === 401) await this.logout();
         return Promise.reject(error);
       }
     );
@@ -55,8 +55,13 @@ class AuthService {
     return !!JWTService.getJWT();
   }
 
-  logout() {
-    //JWTService.removeJWT();
+  async logout() {
+    try {
+      const res = await axios.get('/api/login/logout');
+      return res;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 

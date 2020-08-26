@@ -21,9 +21,9 @@ class Navigation extends Component {
     this.setState({redirect: '/settings'});
   };
 
-  handleClickLogout = event => {
+  handleClickLogout = async event => {
     event.preventDefault();
-    AuthService.logout();
+    await AuthService.logout();
     this.setState({redirect: '/'})
   }
 
