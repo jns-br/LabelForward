@@ -2,12 +2,17 @@ const keys = require('./keys');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const controller = require('./controller');
 const Passport = require('./passport');
 
 const app = express();
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: 'http://client:3000',
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 const port = keys.node_port || 8080;

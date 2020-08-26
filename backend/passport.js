@@ -6,21 +6,29 @@ const JWT_SECRET = require('./keys').jwtSecret;
 const UserRepository = require('./repositories/UserRepository');
 const UserService = require('./services/UserService');
 
+const cookieExtractor = req => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['access_token'];
+  }
+  return token;
+}
 class Passport {
   async init() {
 
     //authorization
     passport.use(new JwtStrategy({
-      jwtFromRequest: ExtractJWT.fromHeader('authorization'),
-      secretOrKey: JWT_SECRET
-    }, async (payload, done) => {
+      jwtFromRequest: cookieExtractor,
+      secretOrKey: JWT_SECRET,
+      passReqToCallback: true
+    }, async (req, payload, done) => {
       try {
         const user = await UserRepository.findUserById(payload.sub.user_id);
 
         if (!user) {
           return done(null, false);
         }
-
+        req.user = user;
         done(null, user);
       } catch (err) {
         done(err, false);
