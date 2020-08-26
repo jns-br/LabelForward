@@ -7,7 +7,9 @@ const controller = require('./controller');
 const Passport = require('./passport');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'http://client:3000'
+}));
 app.use(bodyParser.json());
 
 const port = keys.node_port || 8080;
