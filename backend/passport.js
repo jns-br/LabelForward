@@ -18,7 +18,7 @@ class Passport {
 
     //authorization
     passport.use(new JwtStrategy({
-      jwtFromRequest: ExtractJWT.fromHeader('authorization'),
+      jwtFromRequest: cookieExtractor,
       secretOrKey: JWT_SECRET,
       passReqToCallback: true
     }, async (req, payload, done) => {
