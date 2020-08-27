@@ -77,7 +77,11 @@ class TweetModal extends Component {
     return;
   }
 
-  updateLabel = event => this.setState({ selectedLabels: this.state.selectedLabels.concat([event.target.value]) });
+  updateLabel = event => {
+    if (!this.state.selectedLabels.includes(event.target.value)) {
+      this.setState({ selectedLabels: this.state.selectedLabels.concat([event.target.value]) });
+    }
+  }
 
   deleteLabel = event => {
     const removed = this.state.selectedLabels.filter(label => label !== event.target.innerHTML);
