@@ -9,6 +9,9 @@ services:
   dbhelper:
     depends_on: 
       - postgres
+      - redis
+      - api
+      - client
     build: 
       dockerfile: Dockerfile.dev
       context: ./db_helper
@@ -30,7 +33,6 @@ services:
   api:
     depends_on: 
       - postgres
-      - dbhelper
       - redis
     build:
       dockerfile: Dockerfile.dev
@@ -53,7 +55,6 @@ services:
     depends_on: 
       - postgres
       - api
-      - dbhelper
     build: 
       dockerfile: Dockerfile.dev
       context: ./frontend
