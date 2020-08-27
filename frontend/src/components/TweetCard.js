@@ -15,7 +15,6 @@ class TweetCard extends Component {
             </Card.Text>
           </Card.Body>
         </Card>
-        <br />
         <Card className="SelectorCard">
           <Card.Header>
             <div>Selected Labels (click label to delete)</div>
