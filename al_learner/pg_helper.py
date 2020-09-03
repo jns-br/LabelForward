@@ -37,3 +37,16 @@ def read_labeled_data():
         df = pd.read_sql_query(data_statement, con=conn, params={"start_index": start_index, "end_index": end_index})
 
     return df
+
+
+def read_all_text():
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT headline, description FROM news
+        """
+        df = pd.read_sql_query(statement, con=conn)
+        df['text'] = df['headline'] + " " + df['description']
+        df = df.drop(['headline', 'description'], axis=1)
+
+    return df
