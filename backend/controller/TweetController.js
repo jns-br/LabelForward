@@ -11,6 +11,7 @@ const redisClient = redis.createClient({
   port: keys.redisPort,
   retry_strategy: () => 1000
 });
+const publisher = redisClient.duplicate();
 
 router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
   redisClient.get('record_index', async (err, redisIndex) => {
@@ -44,7 +45,7 @@ router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
             redisClient.set('record_index', (recordIndex + 1), async (err2, reply2) => {
               try {
                 //save indices to table
-                //publish update msg
+                publisher.publish('learner', 'update');
                 const nextTweet = await TweetRepository.getNextTweet(recordIndex);
                 res.status(200).json({tweet: nextTweet});
               } catch (err) {
