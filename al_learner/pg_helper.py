@@ -62,3 +62,20 @@ def save_countvec(data):
         cur.execute(statement, (data,))
         cur.close()
         conn.commit()
+
+
+def load_last_countvec():
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT countvec FROM countvecs ORDER BY countvec_id DESC LIMIT 1
+        """
+        cur = conn.cursor()
+        cur.execute(statement)
+        data = cur.fetchone()
+        if data is None:
+            return None
+        else:
+            data = cur.fetchone()[0]
+            cur.close()
+            return data
