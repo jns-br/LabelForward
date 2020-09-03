@@ -41,7 +41,7 @@ router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
           res.status(500).json({msg: err.message});
         }
         let start = parseInt(startIndex);
-        if (recordIndex - start === keys.setSize) {
+        if (recordIndex - start === parseInt(keys.setSize)) {
           redisClient.set('start_index', recordIndex, async (err1, reply1) => {
             redisClient.set('record_index', (recordIndex + 1), async (err2, reply2) => {
               try {
