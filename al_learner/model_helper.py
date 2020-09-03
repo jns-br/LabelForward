@@ -23,12 +23,14 @@ def get_last_vectorizer():
 
 
 def create_model(X, y):
-    # look for serialized cont vect, else create new
-    count_vec = create_count_vectorizer()
+    count_vec = get_last_vectorizer()
+    if count_vec is None:
+        count_vec = create_count_vectorizer()
     X_vect = count_vec.transform(X)
     clf = SGDClassifier(random_state=42)
     clf.fit(X_vect, y)
-    #serialize
+    data = pickle.dumps(clf)
+    pg_helper.save_model(data)
     return clf
 
 
