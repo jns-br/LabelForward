@@ -81,6 +81,12 @@ def create_table(conn):
             labels TEXT [] NOT NULL,
             uncertainty FLOAT NOT NULL 
         )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS countvecs(
+            countvec_id SERIAL PRIMARY KEY,
+            countvec BYTEA NOT NULL
+        )
     """
     )
     try:
