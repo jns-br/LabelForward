@@ -76,9 +76,8 @@ def load_last_countvec():
         if data is None:
             return None
         else:
-            data = cur.fetchone()[0]
             cur.close()
-            return data
+            return data[0]
 
 
 def save_model(data):
@@ -91,3 +90,19 @@ def save_model(data):
         cur.execute(statement, (data,))
         cur.close()
         conn.commit()
+
+
+def load_last_model():
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT clf FROM classifiers ORDER BY clf_id DESC LIMIT 1
+        """
+        cur = conn.cursor()
+        cur.execute(statement)
+        data = cur.fetchone()
+        if data is None:
+            return None
+        else:
+            cur.close()
+            return data[0]
