@@ -14,6 +14,14 @@ def create_count_vectorizer():
     return count_vec
 
 
+def get_last_vectorizer():
+    data = pg_helper.load_last_countvec()
+    if data is None:
+        return None
+    count_vec = pickle.loads(data)
+    return CountVectorizer(count_vec)
+
+
 def create_model(X, y):
     # look for serialized cont vect, else create new
     count_vec = create_count_vectorizer()
@@ -22,6 +30,7 @@ def create_model(X, y):
     clf.fit(X_vect, y)
     #serialize
     return clf
+
 
 def update_model(X, y):
     return None
