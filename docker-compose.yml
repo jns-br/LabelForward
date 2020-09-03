@@ -50,7 +50,7 @@ services:
       - JWT_SECRET=need_a_better_secret
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - SET_SIZE=15
+      - SET_SIZE=5
   client:
     stdin_open: true
     depends_on: 
@@ -67,7 +67,6 @@ services:
       - postgres
       - api
       - client
-      - dbhelper
       - redis
     build: 
       dockerfile: Dockerfile.dev
