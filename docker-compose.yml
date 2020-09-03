@@ -68,6 +68,7 @@ services:
       - api
       - client
       - redis
+      - dbhelper
     build: 
       dockerfile: Dockerfile.dev
       context: ./al_learner
