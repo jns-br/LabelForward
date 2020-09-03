@@ -79,3 +79,15 @@ def load_last_countvec():
             data = cur.fetchone()[0]
             cur.close()
             return data
+
+
+def save_model(data):
+    conn = connect()
+    if conn is not None:
+        statement = """
+            INSERT INTO classifiers(clf) VALUES (%s)
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (data,))
+        cur.close()
+        conn.commit()
