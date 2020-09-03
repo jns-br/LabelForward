@@ -28,8 +28,8 @@ def read_labeled_data():
         """
         cur.execute(indices_statement)
         indices_data = cur.fetchone()
-        start_index = indices_data[1]
-        end_index = indices_data[2]
+        start_index = indices_data[0]
+        end_index = indices_data[1]
 
         data_statement = """
             SELECT * FROM results WHERE  result_id >= %(start_index)s AND result_id <= %(end_index)s
