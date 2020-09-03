@@ -59,7 +59,22 @@ def create_table(conn):
             news VARCHAR(2000) NOT NULL,
             labels TEXT [] NOT NULL
         )
-    """)
+    """,
+
+    """
+        CREATE TABLE IF NOT EXISTS result_indices(
+            ri_id SERIAL PRIMARY KEY,
+            start_index INTEGER NOT NULL,
+            end_index INTEGER NOT NULL 
+        )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS classifiers(
+            clf_id SERIAL PRIMARY KEY,
+            clf BYTEA NOT NULL 
+        )
+    """
+    )
     try:
         cur = conn.cursor()
         for statement in statements:
