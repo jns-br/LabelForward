@@ -1,4 +1,6 @@
-import redis, keys, pg_helper
+import keys
+import pg_helper
+import redis
 
 if __name__ == '__main__':
 
@@ -14,6 +16,8 @@ if __name__ == '__main__':
         if new_msg['data'] == 'update':
             df = pg_helper.read_labeled_data()
             print('DF shape', df.shape, flush=True)
+            print('Data frame', df.head(), flush=True)
+            X = df['tweets'].to_numpy()
         # train model
         # save model
         # publish model index
