@@ -19,7 +19,7 @@ def get_last_vectorizer():
     if data is None:
         return None
     count_vec = pickle.loads(data)
-    return CountVectorizer(count_vec)
+    return count_vec
 
 
 def create_model(X, y):
@@ -34,6 +34,23 @@ def create_model(X, y):
     return clf
 
 
+def get_last_model():
+    data = pg_helper.load_last_model()
+    if data is None:
+        return None
+    clf = pickle.loads(data)
+    return clf
+
+
 def update_model(X, y):
-    return None
-    # read model from db, call partial fit
+    clf = get_last_model()
+    if clf is None:
+        return None
+    count_vec = get_last_vectorizer()
+    if count_vec is None:
+        count_vec = create_count_vectorizer()
+    X_vect = count_vec.transform(X)
+    clf.fit(X_vect, y)
+    data = pickle.dumps(clf)
+    pg_helper.save_model(data)
+    return clf
