@@ -50,3 +50,15 @@ def read_all_text():
         df = df.drop(['headline', 'description'], axis=1)
 
     return df
+
+
+def save_countvec(data):
+    conn = connect()
+    if conn is not None:
+        statement = """
+            INSERT INTO countvecs(countvec) VALUES (%s)
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (data,))
+        cur.close()
+        conn.commit()
