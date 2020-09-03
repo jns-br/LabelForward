@@ -7,5 +7,6 @@ module.exports = {
     pgDatabase: process.env.PGDATABASE,
     pgPassword: process.env.PGPASSWORD,
     pgPort: process.env.PGPORT,
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+    setSize: process.env.SET_SIZE
   };
