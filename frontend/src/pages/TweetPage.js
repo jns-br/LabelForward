@@ -66,6 +66,10 @@ class TweetModal extends Component {
   handleIgnore = async event => {
     event.preventDefault();
     try {
+      this.setState({
+        selectedLabels: ['ignored']
+      });
+      await TweetService.postTweet(this.state.tweet, this.state.selectedLabels);
       await this.fetchTweet();
     } catch (err) {
       console.error(err.message);
