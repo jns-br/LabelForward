@@ -3,6 +3,7 @@ const redis = require('redis');
 const { restart } = require('nodemon');
 const router = express.Router();
 const TweetRepository = require('../repositories/TweetRepository');
+const RecordRepository = require('../repositories/RecordRepository');
 const JWTService = require('../services/JWTService');
 const keys = require('../keys');
 
@@ -44,7 +45,7 @@ router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
           redisClient.set('start_index', recordIndex, async (err1, reply1) => {
             redisClient.set('record_index', (recordIndex + 1), async (err2, reply2) => {
               try {
-                //save indices to table
+                await RecordRepository.insertIndices(startIndex, recordIndex);
                 publisher.publish('learner', 'update');
                 const nextTweet = await TweetRepository.getNextTweet(recordIndex);
                 res.status(200).json({tweet: nextTweet});
