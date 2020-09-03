@@ -1,10 +1,8 @@
 const keys = require('../keys');
 const { Pool } = require('pg');
-const redis = require('redis');
 
 class TweetRepository {
   constructor() {
-    this.tweetCounter = 0;
     this.pgClient = new Pool({
       user: keys.pgUser,
       host: keys.pgHost,
