@@ -57,7 +57,7 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS results(
             result_id SERIAL PRIMARY KEY,
             news VARCHAR(2000) NOT NULL,
-            labels TEXT [] NOT NULL
+            label VARCHAR(300) NOT NULL
         )
     """,
 
@@ -78,7 +78,7 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS queries(
             query_id SERIAL PRIMARY KEY,
             tweet VARCHAR (2000) NOT NULL,
-            labels TEXT [] NOT NULL,
+            label VARCHAR(300) NOT NULL,
             uncertainty FLOAT NOT NULL 
         )
     """,
