@@ -18,11 +18,10 @@ if __name__ == '__main__':
         if new_msg['data'] == 'update':
             df = pg_helper.read_labeled_data_full()
             X = df['news'].to_numpy(dtype=str)
-            print('X:', X, flush=True)
             y = df['label'].to_numpy()
-            print('Y:', y, flush=True)
-            model_helper.create_model(X, y)
+            clf, id = model_helper.create_model(X, y)
             print('Model created and saved', flush=True)
-        # train model
-        # save model
+            print('Model index:', id, flush=True)
+            r.publish('predictor', id)
+            print('Model id published on redis')
         # publish model index

@@ -19,6 +19,7 @@ def connect():
     return conn
 
 
+# legacy, maybe usefule if online learning is implemented
 def read_labeled_data_partial():
     print('Reading labeled data partial', flush=True)
     conn = connect()
@@ -102,10 +103,11 @@ def save_model(data):
     conn = connect()
     if conn is not None:
         statement = """
-            INSERT INTO classifiers(clf) VALUES (%s)
+            INSERT INTO classifiers(clf) VALUES (%s) RETURNING clf_id
         """
         cur = conn.cursor()
-        execution = cur.execute(statement, (data,))
-        print('Execution:', execution, flush=True)
-        cur.close()
+        cur.execute(statement, (data,))
         conn.commit()
+        id = cur.fetchone()[0]
+        cur.close()
+        return id

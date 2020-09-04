@@ -33,5 +33,5 @@ def create_model(X, y):
     clf = LogisticRegression(random_state=42)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
-    pg_helper.save_model(data)
-    return clf
+    id = pg_helper.save_model(data)
+    return clf, id
