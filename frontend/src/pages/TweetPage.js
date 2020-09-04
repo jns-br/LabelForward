@@ -13,7 +13,7 @@ class TweetModal extends Component {
       redirect: false,
       tweet: "",
       labels: ['label'],
-      selectedLabels: []
+      selectedLabel: ""
     }
   }
 
@@ -54,10 +54,13 @@ class TweetModal extends Component {
 
   handleSubmit = async event =>   {
     event.preventDefault();
+    if (this.state.selectedLabel === "") {
+      return;
+    }
     try {
-      await TweetService.postTweet(this.state.tweet, this.state.selectedLabels)
+      await TweetService.postTweet(this.state.tweet, this.state.selectedLabel)
       await this.fetchTweet();
-      this.setState({ selectedLabels: []});
+      this.setState({ selectedLabel: ""});
     } catch (err) {
       console.error(err.message);
     }
@@ -67,9 +70,9 @@ class TweetModal extends Component {
     event.preventDefault();
     try {
       this.setState({
-        selectedLabels: ['ignored']
+        selectedLabel: "ignored"
       });
-      await TweetService.postTweet(this.state.tweet, this.state.selectedLabels);
+      await TweetService.postTweet(this.state.tweet, this.state.selectedLabel);
       await this.fetchTweet();
     } catch (err) {
       console.error(err.message);
@@ -82,14 +85,11 @@ class TweetModal extends Component {
   }
 
   updateLabel = event => {
-    if (!this.state.selectedLabels.includes(event.target.value)) {
-      this.setState({ selectedLabels: this.state.selectedLabels.concat([event.target.value]) });
-    }
+    this.setState({ selectedLabel: event.target.value})
   }
 
   deleteLabel = event => {
-    const removed = this.state.selectedLabels.filter(label => label !== event.target.innerHTML);
-    this.setState({ selectedLabels: removed});
+    this.setState({ selectedLabel: ""});
   }
 
   render() {
@@ -101,7 +101,7 @@ class TweetModal extends Component {
           <TweetCard 
             tweet={this.state.tweet}
             labels={this.state.labels}
-            selected={this.state.selectedLabels}
+            selected={this.state.selectedLabel}
             onSubmit={this.handleSubmit}
             onIgnore={this.handleIgnore}
             onSelect={this.updateLabel}
