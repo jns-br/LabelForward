@@ -1,10 +1,11 @@
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import SGDClassifier
+from sklearn.tree import DecisionTreeClassifier
 import pg_helper
 import pickle
 
 
 def create_count_vectorizer():
+    print('Creating new count vectorizer', flush=True)
     df = pg_helper.read_all_text()
     X_text = df.to_numpy()
     count_vec = CountVectorizer()
@@ -15,6 +16,7 @@ def create_count_vectorizer():
 
 
 def get_last_vectorizer():
+    print('Getting last count vectorizer', flush=True)
     data = pg_helper.load_last_countvec()
     if data is None:
         return None
@@ -23,33 +25,12 @@ def get_last_vectorizer():
 
 
 def create_model(X, y):
+    print('Creating new model', flush=True)
     count_vec = get_last_vectorizer()
     if count_vec is None:
         count_vec = create_count_vectorizer()
     X_vect = count_vec.transform(X)
-    clf = SGDClassifier(random_state=42)
-    clf.fit(X_vect, y)
-    data = pickle.dumps(clf)
-    pg_helper.save_model(data)
-    return clf
-
-
-def get_last_model():
-    data = pg_helper.load_last_model()
-    if data is None:
-        return None
-    clf = pickle.loads(data)
-    return clf
-
-
-def update_model(X, y):
-    clf = get_last_model()
-    if clf is None:
-        return None
-    count_vec = get_last_vectorizer()
-    if count_vec is None:
-        count_vec = create_count_vectorizer()
-    X_vect = count_vec.transform(X)
+    clf = DecisionTreeClassifier(random_state=42)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
     pg_helper.save_model(data)

@@ -5,7 +5,7 @@ import pandas as pd
 def connect():
     conn = None
     try:
-        print('Connecting to Postgres database')
+        print('Connecting to Postgres database', flush=True)
         conn = psycopg2.connect(
             host=keys.pg_host,
             dbname=keys.pg_dbname,
@@ -19,7 +19,8 @@ def connect():
     return conn
 
 
-def read_labeled_data():
+def read_labeled_data_partial():
+    print('Reading labeled data partial', flush=True)
     conn = connect()
     if conn is not None:
         cur = conn.cursor()
@@ -39,7 +40,20 @@ def read_labeled_data():
     return df
 
 
+def read_labeled_data_full():
+    print('Reading labeled data full', flush=True)
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT * FROM results
+        """
+        df = pd.read_sql_query(statement, con=conn)
+
+    return df
+
+
 def read_all_text():
+    print('Reading all text data', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
@@ -53,6 +67,7 @@ def read_all_text():
 
 
 def save_countvec(data):
+    print('Saving count vectorizer', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
@@ -65,6 +80,7 @@ def save_countvec(data):
 
 
 def load_last_countvec():
+    print('Loading last countvec', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
@@ -74,6 +90,7 @@ def load_last_countvec():
         cur.execute(statement)
         data = cur.fetchone()
         if data is None:
+            cur.close()
             return None
         else:
             cur.close()
@@ -81,28 +98,14 @@ def load_last_countvec():
 
 
 def save_model(data):
+    print('Saving model', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
             INSERT INTO classifiers(clf) VALUES (%s)
         """
         cur = conn.cursor()
-        cur.execute(statement, (data,))
+        execution = cur.execute(statement, (data,))
+        print('Execution:', execution, flush=True)
         cur.close()
         conn.commit()
-
-
-def load_last_model():
-    conn = connect()
-    if conn is not None:
-        statement = """
-            SELECT clf FROM classifiers ORDER BY clf_id DESC LIMIT 1
-        """
-        cur = conn.cursor()
-        cur.execute(statement)
-        data = cur.fetchone()
-        if data is None:
-            return None
-        else:
-            cur.close()
-            return data[0]

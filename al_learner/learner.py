@@ -1,6 +1,8 @@
 import keys
 import pg_helper
+import model_helper
 import redis
+import numpy as np
 
 if __name__ == '__main__':
 
@@ -14,10 +16,14 @@ if __name__ == '__main__':
         print('Message: ', new_msg['data'], flush=True)
         # read indices, select records to df
         if new_msg['data'] == 'update':
-            df = pg_helper.read_labeled_data()
-            print('DF shape', df.shape, flush=True)
-            print('Data frame', df.head(), flush=True)
-            X = df['tweets'].to_numpy()
+            df = pg_helper.read_labeled_data_full()
+            X = df['news'].to_numpy(dtype=str)
+            print('X:', X, flush=True)
+            y = df['labels'].to_numpy()
+            y = np.array([np.array(x, dtype=str) for x in y])
+            print('Y:', y, flush=True)
+            model_helper.create_model(X, y)
+            print('Model created and saved', flush=True)
         # train model
         # save model
         # publish model index
