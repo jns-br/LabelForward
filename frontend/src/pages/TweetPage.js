@@ -101,7 +101,7 @@ class TweetModal extends Component {
           <TweetCard 
             tweet={this.state.tweet}
             labels={this.state.labels}
-            selected={this.state.selectedLabels}
+            selected={this.state.selectedLabel}
             onSubmit={this.handleSubmit}
             onIgnore={this.handleIgnore}
             onSelect={this.updateLabel}

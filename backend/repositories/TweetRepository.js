@@ -26,7 +26,7 @@ class TweetRepository {
 
   async insertLabeledTweet(tweet, label) {
     try {
-      const statement = "INSERT INTO results(news, labels) VALUES($1, $2)";
+      const statement = "INSERT INTO results(news, label) VALUES($1, $2)";
       const result = await this.pgClient.query(statement, [tweet, label]);
       if (result.rowCount !== 1) {
         throw new Error('Insertion failed');

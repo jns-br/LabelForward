@@ -2,7 +2,7 @@ import keys
 import pg_helper
 import model_helper
 import redis
-import numpy as np
+
 
 if __name__ == '__main__':
 
@@ -19,8 +19,7 @@ if __name__ == '__main__':
             df = pg_helper.read_labeled_data_full()
             X = df['news'].to_numpy(dtype=str)
             print('X:', X, flush=True)
-            y = df['labels'].to_numpy()
-            y = np.array([np.array(x, dtype=str) for x in y])
+            y = df['label'].to_numpy()
             print('Y:', y, flush=True)
             model_helper.create_model(X, y)
             print('Model created and saved', flush=True)

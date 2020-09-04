@@ -1,5 +1,5 @@
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
 import pg_helper
 import pickle
 
@@ -30,7 +30,7 @@ def create_model(X, y):
     if count_vec is None:
         count_vec = create_count_vectorizer()
     X_vect = count_vec.transform(X)
-    clf = DecisionTreeClassifier(random_state=42)
+    clf = LogisticRegression(random_state=42)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
     pg_helper.save_model(data)
