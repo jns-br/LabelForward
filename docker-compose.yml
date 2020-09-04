@@ -80,3 +80,7 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    deploy:
+      resources:
+        reservations:
+          memory: 700M
