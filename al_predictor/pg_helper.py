@@ -1,5 +1,6 @@
 import psycopg2
 import keys
+import pandas as pd
 
 
 def connect():
@@ -34,3 +35,17 @@ def load_last_model():
         else:
             cur.close()
             return data[0]
+
+
+def read_all_text():
+    print('Reading all text data', flush=True)
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT headline, description FROM news
+        """
+        df = pd.read_sql_query(statement, con=conn)
+        df['text'] = df['headline'] + " " + df['description']
+        df = df.drop(['headline', 'description'], axis=1)
+
+    return df
