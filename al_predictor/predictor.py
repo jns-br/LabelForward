@@ -5,7 +5,7 @@ if __name__ == '__main__':
     print('Started al predictor', flush=True)
     r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
     subscriber = r.pubsub()
-    subscriber.subscribe('predictor')
+    subscriber.subscribe('learner')
     print('Intialized redis', flush=True)
 
     for new_msg in subscriber.listen():
