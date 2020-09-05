@@ -49,3 +49,25 @@ def read_all_text():
         df = df.drop(['headline', 'description'], axis=1)
 
     return df
+
+
+def read_batch():
+    return None
+
+
+def save_queries(selection):
+    print('Inserting new queries', flush=True)
+    conn = connect()
+    if conn is not None:
+        truncate_statement = """
+            TRUNCATE TABLE queries
+        """
+        cur = conn.cursor()
+        cur.execute(truncate_statement)
+        conn.commit()
+        insert_statement = """
+            INSERT INTO queries(tweet, uncertainty) VALUES (%s, %s)
+        """
+        for data in selection:
+            cur.execute(insert_statement, (data[0], data[1]))
+        conn.commit()
