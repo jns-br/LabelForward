@@ -50,6 +50,7 @@ class TweetRepository {
             this.redisClient.set('queryflag', 'unavailable', (err, reply) => {
               this.redisClient.publish('predictor', 'update');
             });
+            return null;
         }
       });
     } catch (err) {
@@ -91,6 +92,22 @@ class TweetRepository {
       const statement = "SELECT DISTINCT category FROM news";
       const results = await this.pgClient.query(statement);
       return Array.from(results.rows, result => result.category);
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
+
+  async isQueryTableFull() {
+    try {
+      const statement = "SELECT COUNT(*) AS cnt FROM queries WHERE array_length(labels) <= $1";
+      const result = await this.pgClient.query(statement, [keys.minLabelCount]);
+      const count = parseInt(result.rows[0].cnt);
+      if (count/keys.setSize >= keys.queryThreshold) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
