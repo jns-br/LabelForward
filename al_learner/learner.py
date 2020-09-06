@@ -17,7 +17,9 @@ if __name__ == '__main__':
         # read indices, select records to df
         if new_msg['data'] == 'update':
             df = pg_helper.read_labeled_data_full()
-            X = df['news'].to_numpy(dtype=str)
+            #majority vote 
+            df = model_helper.create_majority_label(df)
+            X = df['tweet'].to_numpy(dtype=str)
             y = df['label'].to_numpy()
             clf, id = model_helper.create_model(X, y)
             print('Model created and saved', flush=True)
