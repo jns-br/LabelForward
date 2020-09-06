@@ -1,4 +1,5 @@
 const keys = require('../keys');
+const redis = require('redis');
 const { Pool } = require('pg');
 
 class TweetRepository {
@@ -9,6 +10,11 @@ class TweetRepository {
       database: keys.pgDatabase,
       password: keys.pgPassword,
       port: keys.pgPort
+    });
+    this.redisClient = redis.createClient({
+      host: keys.redisHost,
+      port: keys.redisPort,
+      retry_strategy: () => 1000
     });
   }
 
@@ -24,6 +30,34 @@ class TweetRepository {
     }
   }
 
+  async getNextTweetNew(email) {
+    try {
+      this.redisClient.get('queryflag', async(err, queryFlag) => {
+        if (err) {
+          console.log('Redis error', err.message);
+          throw err;
+        }
+
+        switch (queryFlag) {
+          case 'available':
+            const statement = "SELECT tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC";
+            const result = await this.pgClient.query(statement, [email]);
+            // handle 'full' query table
+            return result;
+          case 'unavailable':
+            return null;
+          default:
+            this.redisClient.set('queryflag', 'unavailable', (err, reply) => {
+              this.redisClient.publish('predictor', 'update');
+            });
+        }
+      });
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
+  
   async insertLabeledTweet(tweet, label) {
     try {
       const statement = "INSERT INTO results(news, label) VALUES($1, $2)";
