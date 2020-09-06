@@ -17,19 +17,7 @@ class TweetRepository {
     });
   }
 
-  async getNextTweet(index) {
-    try {
-      const statment = `SELECT headline, category, description FROM news WHERE news_id = ${index}`;
-      const result = await this.pgClient.query(statment);
-      const response = result.rows[0].headline + ": " + result.rows[0].description
-      return response;
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async getNextTweetNew(email) {
+  async getNextTweet(email) {
     try {
       const queryFlag = await this.redisClient.get('queryflag');
       switch (queryFlag) {
@@ -40,9 +28,9 @@ class TweetRepository {
         case 'unavailable':
           return null;
         default:
-          this.redisClient.set('queryflag', 'unavailable', (err, reply) => {
-            this.redisClient.publish('predictor', 'update');
-          });
+          await this.redisClient.set('queryflag', 'unavailable');
+          const pub = this.redisClient.duplicate();
+          await pub.publish('predictor', 'update');
           return null;
       }
     } catch (err) {
@@ -51,21 +39,7 @@ class TweetRepository {
     }
   }
 
-  async insertLabeledTweet(tweet, label) {
-    try {
-      const statement = "INSERT INTO results(news, label) VALUES($1, $2)";
-      const result = await this.pgClient.query(statement, [tweet, label]);
-      if (result.rowCount !== 1) {
-        throw new Error('Insertion failed');
-      }
-      return result;
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw message;
-    }
-  }
-
-  async insertLabeledTweetNew(tweet, label, email) {
+  async insertLabeledTweet(tweet, label, email) {
     try {
       const statement = "UPDATE queries SET labels = array_cat(labels, {$1}), users = array_cat(users, {$2}) WHERE tweet = $3";
       const result = await this.pgClient.query(statement, [label, email, tweet]);
@@ -74,11 +48,12 @@ class TweetRepository {
       }
       const isFull = await this.isQueryTableFull();
       if (isFull) {
-        await this.redisClient.set('querflag', 'unavailable');
+        await this.redisClient.set('queryflag', 'unavailable');
         const pub = this.redisClient.duplicate();
-        await pub.publish('predictor', 'update');
+        await pub.publish('learner', 'update');
       }
       return result;
+
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
@@ -98,7 +73,7 @@ class TweetRepository {
 
   async isQueryTableFull() {
     try {
-      const statement = "SELECT COUNT(*) AS cnt FROM queries WHERE array_length(labels) <= $1";
+      const statement = "SELECT COUNT(*) AS cnt FROM queries WHERE array_length(labels) >= $1";
       const result = await this.pgClient.query(statement, [keys.minLabelCount]);
       const count = parseInt(result.rows[0].cnt);
       if (count / keys.setSize >= keys.queryThreshold) {
