@@ -22,6 +22,5 @@ if __name__ == '__main__':
             clf, id = model_helper.create_model(X, y)
             print('Model created and saved', flush=True)
             print('Model index:', id, flush=True)
-            r.publish('predictor', id)
+            r.publish('predictor', 'update');
             print('Model id published on redis')
-        # publish model index
