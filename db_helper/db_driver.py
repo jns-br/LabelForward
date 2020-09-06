@@ -72,7 +72,8 @@ def create_table(conn):
             tweet VARCHAR (2000) NOT NULL,
             uncertainty FLOAT NOT NULL,
             labels TEXT [],
-            users TEXT []  
+            users TEXT [],
+            label  
         )
     """,
     """
