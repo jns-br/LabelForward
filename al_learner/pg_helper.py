@@ -19,7 +19,7 @@ def connect():
     return conn
 
 
-# legacy, maybe usefule if online learning is implemented
+# legacy, maybe useful if online learning is implemented
 def read_labeled_data_partial():
     print('Reading labeled data partial', flush=True)
     conn = connect()
@@ -46,7 +46,7 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM queries WHERE NOT (%(ignored)s = ANY (labels))
+            SELECT * FROM queries WHERE NOT ((%(ignored)s = ANY (labels)) OR (0 = array_length(labels, 1)))
         """
         df = pd.read_sql_query(statement, con=conn, params={"ignored":"ignored"})
 
@@ -58,7 +58,7 @@ def read_all_text():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT headline, description FROM news
+            SELECT news_id, headline, description FROM news
         """
         df = pd.read_sql_query(statement, con=conn)
         df['text'] = df['headline'] + " " + df['description']
