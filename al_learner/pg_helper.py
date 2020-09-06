@@ -44,11 +44,11 @@ def read_labeled_data_partial():
 def read_labeled_data_full():
     print('Reading labeled data full', flush=True)
     conn = connect()
-    if conn is not None:
+    if conn is not None: # TODO refactor selection
         statement = """
-            SELECT * FROM queries WHERE NOT ((%(ignored)s = ANY (labels)) OR (0 = array_length(labels, 1)))
+            SELECT * FROM queries WHERE NOT (0 = array_length(labels, 1)
         """
-        df = pd.read_sql_query(statement, con=conn, params={"ignored":"ignored"})
+        df = pd.read_sql_query(statement, con=conn)
 
     return df
 
