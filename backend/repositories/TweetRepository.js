@@ -31,7 +31,7 @@ class TweetRepository {
         default:
           await this.redisClient.set('queryflag', 'unavailable');
           const pub = this.redisClient.duplicate();
-          await pub.publish('predictor', 'update');
+          await pub.publish('predictor', 'init');
           return null;
       }
     } catch (err) {
