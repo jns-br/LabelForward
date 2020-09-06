@@ -57,7 +57,7 @@ class TweetRepository {
       throw err;
     }
   }
-  
+
   async insertLabeledTweet(tweet, label) {
     try {
       const statement = "INSERT INTO results(news, label) VALUES($1, $2)";
@@ -69,6 +69,20 @@ class TweetRepository {
     } catch (err) {
       console.error('DB error', err.message);
       throw message;
+    }
+  }
+
+  async insertLabeledTweetNew(tweet, label, email) {
+    try {
+      const statement = "UPDATE queries SET labels = array_cat(labels, {$1}), users = array_cat(users, {$2} WHERE tweet = $3";
+      const result = await this.pgClient.query(statement, [label, email, tweet]);
+      if (result.rowCount !== 1) {
+        throw new Error('Insertion failed');
+      }
+      return result;
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
     }
   }
 
