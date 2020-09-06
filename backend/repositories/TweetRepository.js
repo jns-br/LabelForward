@@ -1,5 +1,5 @@
 const keys = require('../keys');
-const redis = require('ioredis');
+const Redis = require('ioredis');
 const { Pool } = require('pg');
 
 class TweetRepository {
