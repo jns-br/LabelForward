@@ -54,17 +54,8 @@ def create_table(conn):
     """,
 
     """
-        CREATE TABLE IF NOT EXISTS results(
-            result_id SERIAL PRIMARY KEY,
-            news VARCHAR(2000) NOT NULL,
-            label VARCHAR(300) NOT NULL
-        )
-    """,
-
-    """
         CREATE TABLE IF NOT EXISTS result_indices(
             ri_id SERIAL PRIMARY KEY,
-            start_index INTEGER NOT NULL,
             end_index INTEGER NOT NULL 
         )
     """,
@@ -78,7 +69,9 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS queries(
             query_id SERIAL PRIMARY KEY,
             tweet VARCHAR (2000) NOT NULL,
-            uncertainty FLOAT NOT NULL 
+            uncertainty FLOAT NOT NULL,
+            labels TEXT [],
+            users TEXT []  
         )
     """,
     """
