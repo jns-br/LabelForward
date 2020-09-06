@@ -23,4 +23,4 @@ if __name__ == '__main__':
             print('Model created and saved', flush=True)
             print('Model index:', id, flush=True)
             r.publish('predictor', 'update');
-            print('Model id published on redis')
+            print('Model update published on redis')

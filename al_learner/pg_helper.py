@@ -46,7 +46,7 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM results WHERE label != %(ignored)s
+            SELECT * FROM queries WHERE NOT (%(ignored)s = ANY (labels))
         """
         df = pd.read_sql_query(statement, con=conn, params={"ignored":"ignored"})
 
