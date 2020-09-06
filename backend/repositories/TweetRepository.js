@@ -42,7 +42,6 @@ class TweetRepository {
           case 'available':
             const statement = "SELECT tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC";
             const result = await this.pgClient.query(statement, [email]);
-            // handle 'full' query table
             return result;
           case 'unavailable':
             return null;
@@ -80,7 +79,16 @@ class TweetRepository {
       if (result.rowCount !== 1) {
         throw new Error('Insertion failed');
       }
-      return result;
+      const isFull = await this.isQueryTableFull();
+      if (isFull) {
+        this.redisClient.set('queryflag', 'unavailable', (setRrr, setReply) => {
+          this.redisClient.publish('predictor', 'update', (pubErr, pubReply) => {
+            return result;
+          })
+        })
+      } else {
+        return result;
+      }
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
