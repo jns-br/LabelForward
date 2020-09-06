@@ -36,7 +36,8 @@ def create_table(conn):
             authors VARCHAR (500) NOT NULL,
             link VARCHAR (500) NOT NULL,
             description VARCHAR (2000) NOT NULL,
-            publish_date VARCHAR (50) NOT NULL 
+            publish_date VARCHAR (50) NOT NULL,
+            labeled BOOL NOT NULL 
         )
     """,
     """
@@ -133,10 +134,10 @@ def read_news_json(fn, conn):
         if (prefix, event) == ('', 'end_map'):
             try:
                 statement = """
-                    INSERT INTO news(category, headline, authors, link, description, publish_date)
-                    VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+                    INSERT INTO news(category, headline, authors, link, description, publish_date, labeled)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
                 """
-                cur.execute(statement, (category, headline, authors, link, description, publish_date))
+                cur.execute(statement, (category, headline, authors, link, description, publish_date, False))
                 doc_counter += 1
                 if doc_counter % 10000 == 0:
                     conn.commit()
