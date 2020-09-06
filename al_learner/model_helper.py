@@ -35,3 +35,28 @@ def create_model(X, y):
     data = pickle.dumps(clf)
     id = pg_helper.save_model(data)
     return clf, id
+
+def createMajorityLabel(df):
+    for index, row in df.iterrows():
+        majorityLabel = findMajority(row['labels'], len(row['labels']))
+        if majorityLabel is None:
+            majorityLabel = row['labels'][0]
+        df[index]['label'] = majorityLabel
+
+
+
+def findMajority(arr, size):
+    m = {}
+    for i in range(size):
+        if arr[i] in m:
+            m[arr[i]] += 1
+        else:
+            m[arr[i]] = 1
+    
+    count = 0
+    for key in m:
+        if m[key] > size / 2:
+            count = 1
+            return key
+    if count == 0:
+        return None
