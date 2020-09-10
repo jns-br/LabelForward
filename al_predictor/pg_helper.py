@@ -87,9 +87,9 @@ def get_initial_batch():
         df = pd.read_sql_query(select_statement, con=conn, params={"set_size": int(keys.set_size)})
         df['tweet'] = df['headline'] + " " + df['description']
         insert_statement = """
-            INSERT INTO queries(tweet_id, tweet) VALUES (%s, %s)
+            INSERT INTO queries(tweet_id, tweet, labels, users) VALUES (%s, %s, %s, %s)
         """
         for index, row in df.iterrows():
-            cur.execute(insert_statement, (row['tweet_id'], row['tweet']))
+            cur.execute(insert_statement, (row['tweet_id'], row['tweet'], [], []))
         conn.commit()
         cur.close()
