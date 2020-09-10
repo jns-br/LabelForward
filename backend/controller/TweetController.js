@@ -9,9 +9,9 @@ router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
     const email = req.user.email;
     const nextTweet = await TweetRepository.getNextTweet(email);
     if (!nextTweet) {
-      res.status(204).json({tweet: nextTweet});
+      res.status(204);
     } else {
-      res.status(200)
+      res.status(200).json({tweet: nextTweet});
     }
   } catch (error) {
    res.status(500).json({msg: err.message});
