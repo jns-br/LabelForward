@@ -82,7 +82,7 @@ def get_initial_batch():
         cur.execute(truncate_statement)
         conn.commit()
         select_statement = """
-            SELECT tweet_id, headline, description FROM tweets ORDER BY tweet_id LIMIT %(set_size)s ASC 
+            SELECT tweet_id, headline, description FROM tweets ORDER BY tweet_id ASC LIMIT %(set_size)s
         """
         df = pd.read_sql_query(select_statement, con=conn, params={"set_size": int(keys.set_size)})
         df['tweet'] = df['headline'] + " " + df['description']
