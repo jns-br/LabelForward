@@ -84,7 +84,7 @@ def get_initial_batch():
         select_statement = """
             SELECT tweet_id, headline, description FROM tweets ORDER BY tweet_id LIMIT %(set_size)s ASC 
         """
-        df = pd.read_sql_query(select_statement, con=conn, params={"set_size": keys.set_size})
+        df = pd.read_sql_query(select_statement, con=conn, params={"set_size": int(keys.set_size)})
         df['tweet'] = df['headline'] + " " + df['description']
         insert_statement = """
             INSERT INTO queries(tweet_id, tweet) VALUES (%s, %s)
