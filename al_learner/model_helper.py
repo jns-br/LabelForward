@@ -42,12 +42,9 @@ def create_majority_label(df):
     for index, row in df.iterrows():
         majority_label = find_max_occurences(row['labels'])
         if majority_label is None or majority_label == 'ignored':
-            pg_helper.update_label(row['query_id'], 'ignored')
-            df = df.drop(index, axis=0)
+            pg_helper.update_label(row['tweet_id'], 'ignored', row['labels'], row['users'])
         else:
-            df.iloc[index]['label'] = majority_label
-            pg_helper.update_label(row['query_id'], majority_label)
-    return df
+            pg_helper.update_label(row['query_id'], majority_label, row['labels'], row['users'])
 
 
 def find_majority(arr, size):

@@ -46,9 +46,9 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM tweets WHERE labeled = true 
+            SELECT * FROM tweets WHERE labeled = true AND major_label != %(ignored)s
         """
-        df = pd.read_sql_query(statement, con=conn)
+        df = pd.read_sql_query(statement, con=conn, params={"ignored": "ignored"})
         df['tweet'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
     return df
