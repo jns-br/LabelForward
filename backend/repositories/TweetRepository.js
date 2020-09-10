@@ -1,6 +1,5 @@
 const keys = require('../keys');
 const Redis = require('ioredis');
-const RecordRepository = require('./RecordRepository');
 const { Pool } = require('pg');
 
 class TweetRepository {
@@ -20,7 +19,7 @@ class TweetRepository {
 
   async getNextTweet(email) {
     try {
-      const queryFlag = await this.redisClient.get('queryflag');
+      const queryFlag = await this.redisClient.get('queryFlag');
       switch (queryFlag) {
         case 'available':
           const statement = "SELECT tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
@@ -29,7 +28,7 @@ class TweetRepository {
         case 'unavailable':
           return null;
         default:
-          await this.redisClient.set('queryflag', 'unavailable');
+          await this.redisClient.set('queryFlag', 'unavailable');
           const pub = this.redisClient.duplicate();
           await pub.publish('predictor', 'init');
           return null;
@@ -50,10 +49,6 @@ class TweetRepository {
       const isFull = await this.isQueryTableFull();
       if (isFull) {
         await this.redisClient.set('queryflag', 'unavailable');
-        const indexStatement = "SELECT query_id AS qid FROM queries ORDER BY query_id DESC LIMIT 1";
-        const indexQuery = await this.pgClient.query(indexStatement);
-        const endIndex = indexQuery.rows[0].qid;
-        await RecordRepository.insertEndIndex(endIndex);
         const pub = this.redisClient.duplicate();
         await pub.publish('learner', 'update');
       }
