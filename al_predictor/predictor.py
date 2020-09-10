@@ -14,7 +14,7 @@ if __name__ == '__main__':
         print('Message: ', new_msg['data'], flush=True)
         if new_msg['data'] == 'update':
             model_helper.make_queries()
-            r.set('queryDone', 'true')
+            r.set('queryFlag', 'available')
         if new_msg['data'] == 'init':
             pg_helper.get_initial_batch()
-            r.set('queryDone', 'true')
+            r.set('queryFlag', 'available')
