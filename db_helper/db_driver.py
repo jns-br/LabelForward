@@ -150,7 +150,7 @@ def read_news_json(fn, conn):
                 print('error: ', error)
 
     conn.commit()
-    print('Inserted news docs: ', doc_counter)
+    print('Inserted news docs: ', doc_counter, flush=True)
     cur.close()
 
 
