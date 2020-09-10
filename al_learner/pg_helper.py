@@ -44,13 +44,27 @@ def read_labeled_data_partial():
 def read_labeled_data_full():
     print('Reading labeled data full', flush=True)
     conn = connect()
-    if conn is not None: # TODO refactor selection
+    if conn is not None:
         statement = """
-            SELECT * FROM queries WHERE labeled = true 
+            SELECT * FROM queries WHERE labeled = true AND 
         """
         df = pd.read_sql_query(statement, con=conn)
-
+        df['text'] = df['headline'] + " " + df['description']
+        df = df.drop(['headline', 'description'], axis=1)
     return df
+
+
+def read_new_labeled_data():
+    print('Reading new labeled data', flush=True)
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT * FROM queries WHERE NOT (0 = array_length(labels, 1)) AND labeled != true
+        """
+        df = pd.read_sql_query(statement, con=conn)
+        df['text'] = df['headline'] + " " + df['description']
+        df = df.drop(['headline', 'description'], axis=1)
+        return df
 
 
 def read_all_text():
@@ -63,6 +77,7 @@ def read_all_text():
         df = pd.read_sql_query(statement, con=conn)
         df['text'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
+        df = df[df.major_label != 'ignored']
 
     return df
 
@@ -117,9 +132,9 @@ def update_label(index, label):
     conn = connect()
     if conn is not None:
         statement = """"
-            UPDATE queries SET label = %s WHERE query_id = %s
+            UPDATE queries SET label = %s, labeled = %s WHERE query_id = %s
         """
         cur = conn.cursor()
-        cur.execute(statement, (label, index))
+        cur.execute(statement, (label, True, index))
         conn.commit()
         cur.close()
