@@ -76,7 +76,7 @@ class TweetRepository {
       const statement = "SELECT COUNT(*) AS cnt FROM queries WHERE array_length(labels) >= $1";
       const result = await this.pgClient.query(statement, [keys.minLabelCount]);
       const count = parseInt(result.rows[0].cnt);
-      if (count / keys.setSize >= keys.queryThreshold) {
+      if (count / parseInt(keys.setSize) >= parseInt(keys.queryThreshold)) {
         return true;
       } else {
         return false;
