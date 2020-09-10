@@ -138,7 +138,7 @@ def read_news_json(fn, conn):
         if (prefix, event) == ('', 'end_map'):
             try:
                 statement = """
-                    INSERT INTO queries(category, headline, authors, link, description, publish_date, labeled)
+                    INSERT INTO tweets(category, headline, authors, link, description, publish_date, labeled)
                     VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
                 """
                 cur.execute(statement, (category, headline, authors, link, description, publish_date, False))
