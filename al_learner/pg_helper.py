@@ -46,10 +46,10 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM queries WHERE labeled = true AND 
+            SELECT * FROM tweets WHERE labeled = true 
         """
         df = pd.read_sql_query(statement, con=conn)
-        df['text'] = df['headline'] + " " + df['description']
+        df['tweet'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
     return df
 
@@ -59,11 +59,9 @@ def read_new_labeled_data():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM queries WHERE NOT (0 = array_length(labels, 1)) AND labeled != true
+            SELECT * FROM queries
         """
         df = pd.read_sql_query(statement, con=conn)
-        df['text'] = df['headline'] + " " + df['description']
-        df = df.drop(['headline', 'description'], axis=1)
         return df
 
 
@@ -128,13 +126,13 @@ def save_model(data):
         return id
 
 
-def update_label(index, label):
+def update_label(tweet_id, majority_label, labels, users):
     conn = connect()
     if conn is not None:
         statement = """"
-            UPDATE queries SET label = %s, labeled = %s WHERE query_id = %s
+            UPDATE tweets SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE tweet_id = %s
         """
         cur = conn.cursor()
-        cur.execute(statement, (label, True, index))
+        cur.execute(statement, (majority_label, labels, users, True, tweet_id))
         conn.commit()
         cur.close()
