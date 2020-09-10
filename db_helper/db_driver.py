@@ -30,7 +30,7 @@ def connect():
 def create_table(conn):
     statements = ("""
         CREATE TABLE IF NOT EXISTS queries(
-            news_id SERIAL PRIMARY KEY,
+            query_id SERIAL PRIMARY KEY,
             category VARCHAR(255) NOT NULL,
             headline VARCHAR(500) NOT NULL,
             authors VARCHAR (500) NOT NULL,
