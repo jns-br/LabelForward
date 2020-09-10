@@ -46,7 +46,7 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None: # TODO refactor selection
         statement = """
-            SELECT * FROM queries WHERE NOT (0 = array_length(labels, 1)
+            SELECT * FROM queries WHERE labeled = true 
         """
         df = pd.read_sql_query(statement, con=conn)
 
@@ -58,7 +58,7 @@ def read_all_text():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT news_id, headline, description FROM news
+            SELECT query_id, headline, description FROM queries
         """
         df = pd.read_sql_query(statement, con=conn)
         df['text'] = df['headline'] + " " + df['description']
@@ -111,3 +111,15 @@ def save_model(data):
         id = cur.fetchone()[0]
         cur.close()
         return id
+
+
+def update_label(index, label):
+    conn = connect()
+    if conn is not None:
+        statement = """"
+            UPDATE queries SET label = %s WHERE query_id = %s
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (label, index))
+        conn.commit()
+        cur.close()
