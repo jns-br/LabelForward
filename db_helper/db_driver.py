@@ -29,7 +29,7 @@ def connect():
 
 def create_table(conn):
     statements = ("""
-        CREATE TABLE IF NOT EXISTS news(
+        CREATE TABLE IF NOT EXISTS queries(
             news_id SERIAL PRIMARY KEY,
             category VARCHAR(255) NOT NULL,
             headline VARCHAR(500) NOT NULL,
@@ -37,7 +37,11 @@ def create_table(conn):
             link VARCHAR (500) NOT NULL,
             description VARCHAR (2000) NOT NULL,
             publish_date VARCHAR (50) NOT NULL,
-            labeled BOOL NOT NULL 
+            labeled BOOL NOT NULL,
+            uncertainty FLOAT,
+            labels TEXT [],
+            users TEXT [],
+            major_label VARCHAR(50)
         )
     """,
     """
@@ -64,16 +68,6 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS classifiers(
             clf_id SERIAL PRIMARY KEY,
             clf BYTEA NOT NULL 
-        )
-    """,
-    """
-        CREATE TABLE IF NOT EXISTS queries(
-            query_id SERIAL PRIMARY KEY,
-            tweet VARCHAR (2000) NOT NULL,
-            uncertainty FLOAT NOT NULL,
-            labels TEXT [],
-            users TEXT [],
-            label  
         )
     """,
     """
@@ -135,7 +129,7 @@ def read_news_json(fn, conn):
         if (prefix, event) == ('', 'end_map'):
             try:
                 statement = """
-                    INSERT INTO news(category, headline, authors, link, description, publish_date, labeled)
+                    INSERT INTO queries(category, headline, authors, link, description, publish_date, labeled)
                     VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
                 """
                 cur.execute(statement, (category, headline, authors, link, description, publish_date, False))
