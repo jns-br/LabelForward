@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
 import TweetCard from '../components/TweetCard';
+import WaitCard from '../components/WaitComponent';
 import '../styles/TweetPage.css';
 import AuthService from '../services/AuthService';
 import TweetService from '../services/TweetService';
@@ -13,7 +14,8 @@ class TweetModal extends Component {
       redirect: false,
       tweet: "",
       labels: ['label'],
-      selectedLabel: ""
+      selectedLabel: "",
+      available: false
     }
   }
 
@@ -40,7 +42,12 @@ class TweetModal extends Component {
   async fetchTweet() {
     try {
       const tweet = await TweetService.getTweet();
-      this.setState({ tweet: tweet.data.tweet });
+      if (tweet.status === 200) {
+        this.setState({ available: true});
+        this.setState({ tweet: tweet.data.tweet });
+      } else {
+        this.setState({ available: false})
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -93,23 +100,36 @@ class TweetModal extends Component {
   }
 
   render() {
-    return (
-      <div className="TweetMain">
-        {this.renderRedirect()}
-        <Navigation></Navigation>
-        <div className='TweetModal'>
-          <TweetCard 
-            tweet={this.state.tweet}
-            labels={this.state.labels}
-            selected={this.state.selectedLabel}
-            onSubmit={this.handleSubmit}
-            onIgnore={this.handleIgnore}
-            onSelect={this.updateLabel}
-            onDeleteLabel={this.deleteLabel}
-          />
+    if (this.state.available) {
+      return (
+        <div className="TweetMain">
+          {this.renderRedirect()}
+          <Navigation></Navigation>
+          <div className='TweetModal'>
+            <TweetCard 
+              tweet={this.state.tweet}
+              labels={this.state.labels}
+              selected={this.state.selectedLabel}
+              onSubmit={this.handleSubmit}
+              onIgnore={this.handleIgnore}
+              onSelect={this.updateLabel}
+              onDeleteLabel={this.deleteLabel}
+            />
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      return (
+        <div className="TweetMain">
+          {this.renderRedirect()}
+          <div className="TweetModal">
+            <WaitCard
+              onFetch={this.fetchTweet}
+            />
+          </div>
+        </div>
+      )
+    }
   }
 }
 
