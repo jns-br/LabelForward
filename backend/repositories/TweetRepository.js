@@ -62,7 +62,7 @@ class TweetRepository {
 
   async getLabels() {
     try {
-      const statement = "SELECT DISTINCT category FROM news";
+      const statement = "SELECT DISTINCT category FROM tweets";
       const results = await this.pgClient.query(statement);
       return Array.from(results.rows, result => result.category);
     } catch (err) {
