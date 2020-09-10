@@ -29,8 +29,8 @@ def connect():
 
 def create_table(conn):
     statements = ("""
-        CREATE TABLE IF NOT EXISTS queries(
-            query_id SERIAL PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS tweets(
+            tweet_id SERIAL PRIMARY KEY,
             category VARCHAR(255) NOT NULL,
             headline VARCHAR(500) NOT NULL,
             authors VARCHAR (500) NOT NULL,
@@ -42,6 +42,16 @@ def create_table(conn):
             labels TEXT [],
             users TEXT [],
             major_label VARCHAR(50)
+        )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS queries(
+            query_id SERIAL PRIMARY KEY,
+            tweet_id INTEGER NOT NULL,
+            tweet TEXT NOT NULL,
+            labels TEXT [],
+            users TEXT [],
+            uncertainty FLOAT
         )
     """,
     """
