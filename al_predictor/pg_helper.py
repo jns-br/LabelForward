@@ -52,6 +52,8 @@ def read_all_text():
 
 
 def save_queries(selection):
+    selection = selection.sort_values(by=['uncertainty'], ascending=False)
+    selection = selection.head(keys.set_size)
     print('Inserting new queries', flush=True)
     conn = connect()
     if conn is not None:
