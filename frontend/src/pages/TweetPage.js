@@ -53,6 +53,10 @@ class TweetModal extends Component {
     }
   }
 
+  getTweet = async event => {
+    await this.fetchTweet();
+  }
+
   renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to='/' />;
@@ -122,9 +126,10 @@ class TweetModal extends Component {
       return (
         <div className="TweetMain">
           {this.renderRedirect()}
+          <Navigation></Navigation>
           <div className="TweetModal">
             <WaitCard
-              onFetch={this.fetchTweet}
+              onFetch={this.getTweet}
             />
           </div>
         </div>
