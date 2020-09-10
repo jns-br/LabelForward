@@ -86,3 +86,22 @@ services:
       resources:
         reservations:
           memory: 700M
+  alpredictor:
+    depends_on: 
+      - postgres
+      - api
+      - client
+      - redis
+      - dbhelper
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./al_predictor
+    environment: 
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SET_SIZE=10
