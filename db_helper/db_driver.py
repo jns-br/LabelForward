@@ -38,7 +38,6 @@ def create_table(conn):
             description VARCHAR (2000) NOT NULL,
             publish_date VARCHAR (50) NOT NULL,
             labeled BOOL NOT NULL,
-            uncertainty FLOAT,
             labels TEXT [],
             users TEXT [],
             major_label VARCHAR(50)
