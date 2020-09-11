@@ -70,12 +70,11 @@ def read_all_text():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT query_id, headline, description FROM queries
+            SELECT headline, description FROM tweets
         """
         df = pd.read_sql_query(statement, con=conn)
-        df['text'] = df['headline'] + " " + df['description']
+        df['tweet'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
-        df = df[df.major_label != 'ignored']
 
     return df
 
