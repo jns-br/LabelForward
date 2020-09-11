@@ -24,7 +24,11 @@ class TweetRepository {
         case 'available':
           const statement = "SELECT tweet_id, tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
           const result = await this.pgClient.query(statement, [email]);
-          return result.rows[0];
+          if (result.rowCount !== 1) {
+            return null;
+          } else {
+            return result.rows[0];
+          }
         case 'unavailable':
           return null;
         default:
