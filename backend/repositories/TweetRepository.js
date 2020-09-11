@@ -52,7 +52,7 @@ class TweetRepository {
       }
       const isFull = await this.isQueryTableFull();
       if (isFull) {
-        await this.redisClient.set('queryflag', 'unavailable');
+        await this.redisClient.set('queryFlag', 'unavailable');
         const pub = this.redisClient.duplicate();
         await pub.publish('learner', 'update');
       }
