@@ -93,3 +93,21 @@ def get_initial_batch():
             cur.execute(insert_statement, (row['tweet_id'], row['tweet'], [], []))
         conn.commit()
         cur.close()
+
+
+def load_count_vec():
+    print('Loading count vec')
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT countvec FROM countvecs ORDER BY countvec_id DESC LIMIT 1
+        """
+        cur = conn.cursor()
+        cur.execute(statement)
+        data = cur.fetchone()
+        if data is None:
+            cur.close()
+            return None
+        else:
+            cur.close()
+            return data[0]
