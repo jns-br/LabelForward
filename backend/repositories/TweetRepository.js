@@ -22,9 +22,9 @@ class TweetRepository {
       const queryFlag = await this.redisClient.get('queryFlag');
       switch (queryFlag) {
         case 'available':
-          const statement = "SELECT tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
+          const statement = "SELECT tweet_id, tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
           const result = await this.pgClient.query(statement, [email]);
-          return result.rows[0].tweet;
+          return result.rows[0];
         case 'unavailable':
           return null;
         default:
@@ -39,10 +39,10 @@ class TweetRepository {
     }
   }
 
-  async insertLabeledTweet(tweet, label, email) {
+  async insertLabeledTweet(label, email, tweet_id) {
     try {
-      const statement = "UPDATE queries SET labels = array_cat(labels, {$1}), users = array_cat(users, {$2}) WHERE tweet = $3";
-      const result = await this.pgClient.query(statement, [label, email, tweet]);
+      const statement = "UPDATE queries SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE tweet_id = $3";
+      const result = await this.pgClient.query(statement, [label, email, tweet_id]);
       if (result.rowCount !== 1) {
         throw new Error('Insertion failed');
       }
