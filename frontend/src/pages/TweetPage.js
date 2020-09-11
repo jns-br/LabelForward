@@ -13,6 +13,7 @@ class TweetModal extends Component {
     this.state = {
       redirect: false,
       tweet: "",
+      tweet_id: 0,
       labels: ['label'],
       selectedLabel: "",
       available: false
@@ -44,7 +45,7 @@ class TweetModal extends Component {
       const tweet = await TweetService.getTweet();
       if (tweet.status === 200) {
         this.setState({ available: true});
-        this.setState({ tweet: tweet.data.tweet });
+        this.setState({ tweet: tweet.data.tweet, tweet_id: tweet.data.tweet_id });
       } else {
         this.setState({ available: false})
       }
@@ -69,7 +70,7 @@ class TweetModal extends Component {
       return;
     }
     try {
-      await TweetService.postTweet(this.state.tweet, this.state.selectedLabel)
+      await TweetService.postTweet(this.state.selectedLabel, this.state.tweet_id)
       await this.fetchTweet();
       this.setState({ selectedLabel: ""});
     } catch (err) {
@@ -83,7 +84,7 @@ class TweetModal extends Component {
       this.setState({
         selectedLabel: "ignored"
       });
-      await TweetService.postTweet(this.state.tweet, this.state.selectedLabel);
+      await TweetService.postTweet(this.state.selectedLabel, this.state.tweet_id);
       await this.fetchTweet();
     } catch (err) {
       console.error(err.message);
