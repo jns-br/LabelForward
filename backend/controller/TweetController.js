@@ -11,7 +11,7 @@ router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
     if (!nextTweet) {
       res.status(204);
     } else {
-      res.status(200).json({tweet: nextTweet});
+      res.status(200).json({tweet: nextTweet.tweet, tweet_id: nextTweet.tweet_id});
     }
   } catch (error) {
    res.status(500).json({msg: err.message});
@@ -30,8 +30,9 @@ router.get('/labels', JWTService.requireJWT(), async (req, res) => {
 router.post('/tweet', JWTService.requireJWT(), async (req, res) => {
   try {
     const label = req.body.label;
-    const tweet = req.body.tweet;
-    await TweetRepository.insertLabeledTweet(tweet, label);
+    const tweet_id = req.body.tweet_id;
+    const email = req.user.email;
+    await TweetRepository.insertLabeledTweet(label, email, tweet_id);
     res.status(201).json();
   } catch (err) {
     res.status(500).json({msg: err.message});
