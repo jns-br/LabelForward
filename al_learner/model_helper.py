@@ -41,9 +41,7 @@ def create_model(X, y):
 def create_majority_label(df):
     for index, row in df.iterrows():
         majority_label = find_max_occurences(row['labels'])
-        if majority_label is None or majority_label == 'ignored':
-            pg_helper.update_label(row['tweet_id'], 'ignored', row['labels'], row['users'])
-        else:
+        if majority_label is not None:
             pg_helper.update_label(row['query_id'], majority_label, row['labels'], row['users'])
 
 
@@ -65,8 +63,9 @@ def find_majority(arr, size):
 
 
 def find_max_occurences(arr):
-    list = arr.values.tolist()
-    most_common = Counter(list).most_common(1)[0][0]
-    if most_common == 'ignored':
+    if len(arr) > 0:
+        most_common = Counter(arr).most_common(1)[0][0]
+        print('Most common', most_common, flush=True)
+        return most_common
+    else:
         return None
-    return most_common

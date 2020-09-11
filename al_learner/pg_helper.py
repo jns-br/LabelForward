@@ -129,7 +129,7 @@ def save_model(data):
 def update_label(tweet_id, majority_label, labels, users):
     conn = connect()
     if conn is not None:
-        statement = """"
+        statement = """
             UPDATE tweets SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE tweet_id = %s
         """
         cur = conn.cursor()
