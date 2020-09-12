@@ -63,10 +63,10 @@ def save_queries(selection):
         cur.execute(truncate_statement)
         conn.commit()
         insert_statement = """
-            INSERT INTO queries(tweet_id, tweet, uncertainty) VALUES (%s, %s, %s)
+            INSERT INTO queries(tweet_id, tweet, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
         """
         for index, row in selection.iterrows():
-            cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty']))
+            cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty'], [], []))
         conn.commit()
 
 
