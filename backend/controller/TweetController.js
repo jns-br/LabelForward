@@ -32,8 +32,12 @@ router.post('/tweet', JWTService.requireJWT(), async (req, res) => {
     const label = req.body.label;
     const tweet_id = req.body.tweet_id;
     const email = req.user.email;
-    await TweetRepository.insertLabeledTweet(label, email, tweet_id);
-    res.status(201).json();
+    isFull = await TweetRepository.insertLabeledTweet(label, email, tweet_id);
+    if (isFull) {
+      res.status(204).json();
+    } else{
+      res.status(201).json();
+    }
   } catch (err) {
     res.status(500).json({msg: err.message});
   }

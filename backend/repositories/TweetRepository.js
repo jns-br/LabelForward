@@ -20,6 +20,7 @@ class TweetRepository {
   async getNextTweet(email) {
     try {
       const queryFlag = await this.redisClient.get('queryFlag');
+      console.log(queryFlag);
       switch (queryFlag) {
         case 'available':
           const statement = "SELECT tweet_id, tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
@@ -55,8 +56,9 @@ class TweetRepository {
         await this.redisClient.set('queryFlag', 'unavailable');
         const pub = this.redisClient.duplicate();
         await pub.publish('learner', 'update');
+        return true;
       }
-      return result;
+      return false;
 
     } catch (err) {
       console.error('DB error', err.message);
