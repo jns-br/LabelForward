@@ -65,7 +65,6 @@ def find_majority(arr, size):
 def find_max_occurences(arr):
     if len(arr) > 0:
         most_common = Counter(arr).most_common(1)[0][0]
-        print('Most common', most_common, flush=True)
         return most_common
     else:
         return None
