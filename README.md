@@ -1,6 +1,6 @@
 # CovidStateWeb 
 
-A web application for the CovidState project. It provides an interface for labeling data related to the project, soon to be combined with an active learning framework. It can be build using docker-compose, which will start up a docker environment with
+A web application for the CovidState project. It provides an interface for labeling data related to the project, using active learning workers to speed up the labeling process. It can be build using docker-compose, which will start up a docker environment with
 microservices for frontend, backend, database and a database setup.
 
 # Prerequisites
