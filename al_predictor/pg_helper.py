@@ -1,12 +1,12 @@
 import psycopg2
 import keys
 import pandas as pd
+import pickle
 
 
 def connect():
     conn = None
     try:
-        print('Connecting to Postgres database', flush=True)
         conn = psycopg2.connect(
             host=keys.pg_host,
             dbname=keys.pg_dbname,
@@ -21,6 +21,7 @@ def connect():
 
 
 def load_last_model():
+    print('Loading last model', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
@@ -47,16 +48,11 @@ def read_all_unlabeled_text():
         df = pd.read_sql_query(statement, con=conn)
         df['tweet'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
-        count_vec = load_count_vec()
-        vect_data = count_vec.transform(df['tweet'].to_numpy())
-        df['vect'] = pd.DataFrame(vect_data)
 
     return df
 
 
 def save_queries(selection):
-    selection = selection.sort_values(by=['uncertainty'], ascending=False)
-    selection = selection.head(keys.set_size)
     print('Inserting new queries', flush=True)
     conn = connect()
     if conn is not None:

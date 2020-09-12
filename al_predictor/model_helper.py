@@ -3,6 +3,7 @@ import pg_helper
 import sklearn
 import keys
 import numpy as np
+import pandas as pd
 
 
 def get_last_model():
@@ -15,11 +16,20 @@ def get_last_model():
 
 
 def make_queries():
+    print('Making new queries', flush=True)
     clf = get_last_model()
-    df = pg_helper.read_all_text()
-    X = df['tweet'].to_numpy()
+    df = pg_helper.read_all_unlabeled_text()
+    count_vec = pickle.loads(pg_helper.load_count_vec())
+    X = count_vec.transform(df['tweet'].to_numpy().ravel())
     probas = clf.predict_proba(X)
-    highest_probas = np.array([np.argmax(y) for y in probas])
-    for index, row in df.iterrows():
-        df.iloc[index]['uncertainty'] = highest_probas[index]
-    pg_helper.save_queries(df)
+    print('probas shape', probas.shape, flush=True)
+    print('first 10 probas', probas[:9, :], flush=True)
+    highest_probas = np.array([np.max(probas[i]) for i in range(probas.shape[0])])
+    print('highest probas shape', highest_probas.shape, flush=True)
+    print('first 10 highest probas', highest_probas[:9], flush=True)
+    probas_df = pd.DataFrame(highest_probas, columns=['uncertainty'])
+    df['uncertainty'] = probas_df['uncertainty']
+    df = df.sort_values(by=['uncertainty'])
+    print(df.head())
+    set_size = int(keys.set_size)
+    pg_helper.save_queries(df.head(set_size))
