@@ -39,7 +39,7 @@ def load_last_model():
 
 
 def read_all_unlabeled_text():
-    print('Reading all text data', flush=True)
+    print('Reading all unlabeled text data', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
