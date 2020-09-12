@@ -54,8 +54,8 @@ class TweetModal extends Component {
     }
   }
 
-  getTweet = async event => {
-    await this.fetchTweet();
+  getTweet = event => {
+    window.location.reload();
   }
 
   renderRedirect = () => {
