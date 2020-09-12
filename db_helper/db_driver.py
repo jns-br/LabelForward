@@ -29,14 +29,28 @@ def connect():
 
 def create_table(conn):
     statements = ("""
-        CREATE TABLE IF NOT EXISTS news(
-            news_id SERIAL PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS tweets(
+            tweet_id SERIAL PRIMARY KEY,
             category VARCHAR(255) NOT NULL,
             headline VARCHAR(500) NOT NULL,
             authors VARCHAR (500) NOT NULL,
             link VARCHAR (500) NOT NULL,
             description VARCHAR (2000) NOT NULL,
-            publish_date VARCHAR (50) NOT NULL 
+            publish_date VARCHAR (50) NOT NULL,
+            labeled BOOL NOT NULL,
+            labels TEXT [],
+            users TEXT [],
+            major_label VARCHAR(50)
+        )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS queries(
+            query_id SERIAL PRIMARY KEY,
+            tweet_id INTEGER NOT NULL,
+            tweet TEXT NOT NULL,
+            labels TEXT [],
+            users TEXT [],
+            uncertainty FLOAT
         )
     """,
     """
@@ -54,17 +68,8 @@ def create_table(conn):
     """,
 
     """
-        CREATE TABLE IF NOT EXISTS results(
-            result_id SERIAL PRIMARY KEY,
-            news VARCHAR(2000) NOT NULL,
-            label VARCHAR(300) NOT NULL
-        )
-    """,
-
-    """
         CREATE TABLE IF NOT EXISTS result_indices(
             ri_id SERIAL PRIMARY KEY,
-            start_index INTEGER NOT NULL,
             end_index INTEGER NOT NULL 
         )
     """,
@@ -72,14 +77,6 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS classifiers(
             clf_id SERIAL PRIMARY KEY,
             clf BYTEA NOT NULL 
-        )
-    """,
-    """
-        CREATE TABLE IF NOT EXISTS queries(
-            query_id SERIAL PRIMARY KEY,
-            tweet VARCHAR (2000) NOT NULL,
-            label VARCHAR(300) NOT NULL,
-            uncertainty FLOAT NOT NULL 
         )
     """,
     """
@@ -141,10 +138,10 @@ def read_news_json(fn, conn):
         if (prefix, event) == ('', 'end_map'):
             try:
                 statement = """
-                    INSERT INTO news(category, headline, authors, link, description, publish_date)
-                    VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+                    INSERT INTO tweets(category, headline, authors, link, description, publish_date, labeled)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
                 """
-                cur.execute(statement, (category, headline, authors, link, description, publish_date))
+                cur.execute(statement, (category, headline, authors, link, description, publish_date, False))
                 doc_counter += 1
                 if doc_counter % 10000 == 0:
                     conn.commit()
@@ -153,7 +150,7 @@ def read_news_json(fn, conn):
                 print('error: ', error)
 
     conn.commit()
-    print('Inserted news docs: ', doc_counter)
+    print('Inserted news docs: ', doc_counter, flush=True)
     cur.close()
 
 

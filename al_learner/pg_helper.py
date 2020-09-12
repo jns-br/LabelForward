@@ -19,7 +19,7 @@ def connect():
     return conn
 
 
-# legacy, maybe usefule if online learning is implemented
+# legacy, maybe useful if online learning is implemented
 def read_labeled_data_partial():
     print('Reading labeled data partial', flush=True)
     conn = connect()
@@ -46,11 +46,23 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM results WHERE label != %(ignored)s
+            SELECT * FROM tweets WHERE labeled = true AND major_label != %(ignored)s
         """
-        df = pd.read_sql_query(statement, con=conn, params={"ignored":"ignored"})
-
+        df = pd.read_sql_query(statement, con=conn, params={"ignored": "ignored"})
+        df['tweet'] = df['headline'] + " " + df['description']
+        df = df.drop(['headline', 'description'], axis=1)
     return df
+
+
+def read_new_labeled_data():
+    print('Reading new labeled data', flush=True)
+    conn = connect()
+    if conn is not None:
+        statement = """
+            SELECT * FROM queries
+        """
+        df = pd.read_sql_query(statement, con=conn)
+        return df
 
 
 def read_all_text():
@@ -58,10 +70,10 @@ def read_all_text():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT headline, description FROM news
+            SELECT headline, description FROM tweets
         """
         df = pd.read_sql_query(statement, con=conn)
-        df['text'] = df['headline'] + " " + df['description']
+        df['tweet'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
 
     return df
@@ -111,3 +123,15 @@ def save_model(data):
         id = cur.fetchone()[0]
         cur.close()
         return id
+
+
+def update_label(tweet_id, majority_label, labels, users):
+    conn = connect()
+    if conn is not None:
+        statement = """
+            UPDATE tweets SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE tweet_id = %s
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (majority_label, labels, users, True, tweet_id))
+        conn.commit()
+        cur.close()

@@ -12,10 +12,10 @@ class RecordRepository {
     });
   }
 
-  async insertIndices(start, end) {
+  async insertEndIndex(end) {
     try {
-      const statment = "INSERT INTO result_indices(start_index, end_index) VALUES($1, $2)";
-      const result = await this.pgClient.query(statment, [start, end]);
+      const statment = "INSERT INTO result_indices(end_index) VALUES($1)";
+      const result = await this.pgClient.query(statment, [end]);
       if(result.rowCount !== 1) {
         throw new Error('Insertion failed');
       }

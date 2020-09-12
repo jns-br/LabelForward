@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 import pg_helper
 import pickle
+from collections import Counter
 
 
 def create_count_vectorizer():
@@ -35,3 +36,35 @@ def create_model(X, y):
     data = pickle.dumps(clf)
     id = pg_helper.save_model(data)
     return clf, id
+
+
+def create_majority_label(df):
+    for index, row in df.iterrows():
+        majority_label = find_max_occurences(row['labels'])
+        if majority_label is not None:
+            pg_helper.update_label(row['query_id'], majority_label, row['labels'], row['users'])
+
+
+def find_majority(arr, size):
+    m = {}
+    for i in range(size):
+        if arr[i] in m:
+            m[arr[i]] += 1
+        else:
+            m[arr[i]] = 1
+
+    count = 0
+    for key in m:
+        if m[key] > size / 2:
+            count = 1
+            return key
+    if count == 0:
+        return None
+
+
+def find_max_occurences(arr):
+    if len(arr) > 0:
+        most_common = Counter(arr).most_common(1)[0][0]
+        return most_common
+    else:
+        return None

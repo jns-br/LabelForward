@@ -19,12 +19,13 @@ class TweetService {
     }
   }
 
-  async postTweet(tweet, label) {
+  async postTweet(label, tweet_id) {
     try {
-      await axios.post('/api/tweets/tweet', {
-        tweet: tweet,
-        label: label
+      const result = await axios.post('/api/tweets/tweet', {
+        label: label,
+        tweet_id: tweet_id
       });
+      return result;
     } catch (err) {
       throw err;
     }

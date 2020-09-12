@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
 import TweetCard from '../components/TweetCard';
+import WaitCard from '../components/WaitComponent';
 import '../styles/TweetPage.css';
 import AuthService from '../services/AuthService';
 import TweetService from '../services/TweetService';
@@ -12,8 +13,10 @@ class TweetModal extends Component {
     this.state = {
       redirect: false,
       tweet: "",
+      tweet_id: 0,
       labels: ['label'],
-      selectedLabel: ""
+      selectedLabel: "",
+      available: false
     }
   }
 
@@ -40,10 +43,19 @@ class TweetModal extends Component {
   async fetchTweet() {
     try {
       const tweet = await TweetService.getTweet();
-      this.setState({ tweet: tweet.data.tweet });
+      if (tweet.status === 200) {
+        this.setState({ available: true});
+        this.setState({ tweet: tweet.data.tweet, tweet_id: tweet.data.tweet_id });
+      } else {
+        this.setState({ available: false})
+      }
     } catch (err) {
       console.error(err.message);
     }
+  }
+
+  getTweet = event => {
+    window.location.reload();
   }
 
   renderRedirect = () => {
@@ -58,9 +70,13 @@ class TweetModal extends Component {
       return;
     }
     try {
-      await TweetService.postTweet(this.state.tweet, this.state.selectedLabel)
-      await this.fetchTweet();
-      this.setState({ selectedLabel: ""});
+      const result = await TweetService.postTweet(this.state.selectedLabel, this.state.tweet_id)
+      if (result.status === 204) {
+        this.setState({ available : false});
+      } else {
+        await this.fetchTweet();
+        this.setState({ selectedLabel: ""});
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -70,9 +86,9 @@ class TweetModal extends Component {
     event.preventDefault();
     try {
       this.setState({
-        selectedLabel: "ignored"
+        selectedLabel: ""
       });
-      await TweetService.postTweet(this.state.tweet, this.state.selectedLabel);
+      await TweetService.postTweet("ignored", this.state.tweet_id);
       await this.fetchTweet();
     } catch (err) {
       console.error(err.message);
@@ -93,23 +109,37 @@ class TweetModal extends Component {
   }
 
   render() {
-    return (
-      <div className="TweetMain">
-        {this.renderRedirect()}
-        <Navigation></Navigation>
-        <div className='TweetModal'>
-          <TweetCard 
-            tweet={this.state.tweet}
-            labels={this.state.labels}
-            selected={this.state.selectedLabel}
-            onSubmit={this.handleSubmit}
-            onIgnore={this.handleIgnore}
-            onSelect={this.updateLabel}
-            onDeleteLabel={this.deleteLabel}
-          />
+    if (this.state.available) {
+      return (
+        <div className="TweetMain">
+          {this.renderRedirect()}
+          <Navigation></Navigation>
+          <div className='TweetModal'>
+            <TweetCard 
+              tweet={this.state.tweet}
+              labels={this.state.labels}
+              selected={this.state.selectedLabel}
+              onSubmit={this.handleSubmit}
+              onIgnore={this.handleIgnore}
+              onSelect={this.updateLabel}
+              onDeleteLabel={this.deleteLabel}
+            />
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      return (
+        <div className="TweetMain">
+          {this.renderRedirect()}
+          <Navigation></Navigation>
+          <div className="TweetModal">
+            <WaitCard
+              onFetch={this.getTweet}
+            />
+          </div>
+        </div>
+      )
+    }
   }
 }
 
