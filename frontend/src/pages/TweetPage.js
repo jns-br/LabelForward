@@ -70,9 +70,13 @@ class TweetModal extends Component {
       return;
     }
     try {
-      await TweetService.postTweet(this.state.selectedLabel, this.state.tweet_id)
-      await this.fetchTweet();
-      this.setState({ selectedLabel: ""});
+      const result = await TweetService.postTweet(this.state.selectedLabel, this.state.tweet_id)
+      if (result.status === 204) {
+        this.setState({ available : false});
+      } else {
+        await this.fetchTweet();
+        this.setState({ selectedLabel: ""});
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -82,7 +86,7 @@ class TweetModal extends Component {
     event.preventDefault();
     try {
       this.setState({
-        selectedLabel: "ignored"
+        selectedLabel: ""
       });
       await TweetService.postTweet("ignored", this.state.tweet_id);
       await this.fetchTweet();
