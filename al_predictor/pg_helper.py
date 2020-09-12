@@ -37,16 +37,19 @@ def load_last_model():
             return data[0]
 
 
-def read_all_text():
+def read_all_unlabeled_text():
     print('Reading all text data', flush=True)
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT tweet_id, headline, description FROM tweets
+            SELECT tweet_id, headline, description FROM tweets WHERE labeled = false
         """
         df = pd.read_sql_query(statement, con=conn)
         df['tweet'] = df['headline'] + " " + df['description']
         df = df.drop(['headline', 'description'], axis=1)
+        count_vec = load_count_vec()
+        vect_data = count_vec.transform(df['tweet'].to_numpy())
+        df['vect'] = pd.DataFrame(vect_data)
 
     return df
 
