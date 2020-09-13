@@ -54,6 +54,13 @@ def create_table(conn):
         )
     """,
     """
+        CREATE TABLE IF NOT EXISTS precision_scores(
+            score_id SERIAL PRIMARY KEY,
+            clf_id INTEGER NOT NULL,
+            precision FLOAT NOT NULL
+        )
+    """,
+    """
         CREATE TABLE IF NOT EXISTS users(
             user_id SERIAL PRIMARY KEY,
             email VARCHAR(255) UNIQUE NOT NULL,
