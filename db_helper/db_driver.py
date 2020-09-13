@@ -57,7 +57,7 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS precision_scores(
             score_id SERIAL PRIMARY KEY,
             clf_id INTEGER NOT NULL,
-            precision FLOAT NOT NULL
+            precision_score FLOAT NOT NULL
         )
     """,
     """
