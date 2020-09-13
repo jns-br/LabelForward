@@ -5,7 +5,6 @@ import pandas as pd
 def connect():
     conn = None
     try:
-        print('Connecting to Postgres database', flush=True)
         conn = psycopg2.connect(
             host=keys.pg_host,
             dbname=keys.pg_dbname,
@@ -133,5 +132,17 @@ def update_label(tweet_id, majority_label, labels, users):
         """
         cur = conn.cursor()
         cur.execute(statement, (majority_label, labels, users, True, tweet_id))
+        conn.commit()
+        cur.close()
+
+
+def save_score(clf_id, precision_score):
+    conn = connect()
+    if conn is not None:
+        statement = """
+            INSERT INTO precision_scores(clf_id, precision_score) VALUES(%s, %s)
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (clf_id, precision_score))
         conn.commit()
         cur.close()
