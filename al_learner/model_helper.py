@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 import pg_helper
 import pickle
 from collections import Counter
@@ -68,3 +69,8 @@ def find_max_occurences(arr):
         return most_common
     else:
         return None
+
+
+def create_train_test_split(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+    return X_train, X_test, y_train, y_test

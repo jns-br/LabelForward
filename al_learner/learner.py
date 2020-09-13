@@ -24,6 +24,5 @@ if __name__ == '__main__':
             y = df['major_label'].to_numpy()
             clf, id = model_helper.create_model(X, y)
             print('Model created and saved', flush=True)
-            print('Model index:', id, flush=True)
             r.publish('predictor', 'update')
             print('Model update published on redis')
