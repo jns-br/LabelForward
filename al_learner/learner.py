@@ -27,3 +27,5 @@ if __name__ == '__main__':
             print('Model created and saved', flush=True)
             r.publish('predictor', 'update')
             print('Model update published on redis', flush=True)
+            precision = model_helper.create_precision_score(clf, X_test, y_test)
+            pg_helper.save_score(id, precision)

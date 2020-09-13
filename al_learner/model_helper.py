@@ -80,3 +80,4 @@ def create_train_test_split(X, y):
 def create_precision_score(clf, X_test, y_test):
     y_pred = clf.predict(X_test)
     score = precision_score(y_test, y_pred)
+    return score
