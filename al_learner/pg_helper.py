@@ -5,7 +5,6 @@ import pandas as pd
 def connect():
     conn = None
     try:
-        print('Connecting to Postgres database', flush=True)
         conn = psycopg2.connect(
             host=keys.pg_host,
             dbname=keys.pg_dbname,
