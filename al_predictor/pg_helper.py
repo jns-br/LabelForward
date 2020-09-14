@@ -70,7 +70,7 @@ def save_queries(selection):
         """
         for index, row in selection.iterrows():
             cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty'], [], []))
-            cur.execute(update_selected, (row['tweet_id']))
+            cur.execute(update_selected, (row['tweet_id'], ))
         conn.commit()
 
 
