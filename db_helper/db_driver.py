@@ -41,8 +41,8 @@ def create_table(conn):
     """
         CREATE TABLE IF NOT EXISTS queries(
             query_id SERIAL PRIMARY KEY,
-            tweet_id INTEGER NOT NULL,
-            tweet TEXT NOT NULL,
+            text_id INTEGER NOT NULL,
+            text_data TEXT NOT NULL,
             labels TEXT [],
             users TEXT [],
             uncertainty FLOAT
