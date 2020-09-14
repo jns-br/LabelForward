@@ -4,14 +4,14 @@ const router = express.Router();
 const TweetRepository = require('../repositories/TweetRepository');
 const JWTService = require('../services/JWTService');
 
-router.get('/tweet', JWTService.requireJWT(), async (req, res) => {
+router.get('/text', JWTService.requireJWT(), async (req, res) => {
   try {
     const email = req.user.email;
-    const nextTweet = await TweetRepository.getNextTweet(email);
-    if (!nextTweet) {
+    const nextText = await TweetRepository.getNextText(email);
+    if (!nextText) {
       res.status(204);
     } else {
-      res.status(200).json({tweet: nextTweet.tweet, tweet_id: nextTweet.tweet_id});
+      res.status(200).json({tweet: nextText.text_data, text_id: nextText.text_id});
     }
   } catch (error) {
    res.status(500).json({msg: err.message});
@@ -27,12 +27,12 @@ router.get('/labels', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.post('/tweet', JWTService.requireJWT(), async (req, res) => {
+router.post('/text', JWTService.requireJWT(), async (req, res) => {
   try {
     const label = req.body.label;
-    const tweet_id = req.body.tweet_id;
+    const text_id = req.body.text_id;
     const email = req.user.email;
-    isFull = await TweetRepository.insertLabeledTweet(label, email, tweet_id);
+    isFull = await TweetRepository.insertLabeledTweet(label, email, text_id);
     if (isFull) {
       res.status(204).json();
     } else{

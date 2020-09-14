@@ -17,12 +17,12 @@ class TweetRepository {
     });
   }
 
-  async getNextTweet(email) {
+  async getNextText(email) {
     try {
       const queryFlag = await this.redisClient.get('queryFlag');
       switch (queryFlag) {
         case 'available':
-          const statement = "SELECT tweet_id, tweet FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
+          const statement = "SELECT text_id, text_data FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
           const result = await this.pgClient.query(statement, [email]);
           if (result.rowCount !== 1) {
             return null;
@@ -43,10 +43,10 @@ class TweetRepository {
     }
   }
 
-  async insertLabeledTweet(label, email, tweet_id) {
+  async insertLabeledText(label, email, text_id) {
     try {
-      const statement = "UPDATE queries SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE tweet_id = $3";
-      const result = await this.pgClient.query(statement, [label, email, tweet_id]);
+      const statement = "UPDATE queries SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
+      const result = await this.pgClient.query(statement, [label, email, text_id]);
       if (result.rowCount !== 1) {
         throw new Error('Insertion failed');
       }
@@ -67,9 +67,9 @@ class TweetRepository {
 
   async getLabels() {
     try {
-      const statement = "SELECT DISTINCT category FROM tweets";
+      const statement = "SELECT label FROM labels";
       const results = await this.pgClient.query(statement);
-      return Array.from(results.rows, result => result.category);
+      return Array.from(results.rows, result => result.label);
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
