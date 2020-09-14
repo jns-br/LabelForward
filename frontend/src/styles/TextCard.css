@@ -1,0 +1,8 @@
+.ButtonFooter {
+  display: flex;
+  justify-content: space-around;
+}
+
+.Buttons {
+  width: 30%;
+}

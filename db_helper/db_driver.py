@@ -1,7 +1,6 @@
 import psycopg2
-import ijson
 import keys
-
+import pandas as pd
 
 def connect():
     conn = None
@@ -29,14 +28,9 @@ def connect():
 
 def create_table(conn):
     statements = ("""
-        CREATE TABLE IF NOT EXISTS tweets(
-            tweet_id SERIAL PRIMARY KEY,
-            category VARCHAR(255) NOT NULL,
-            headline VARCHAR(500) NOT NULL,
-            authors VARCHAR (500) NOT NULL,
-            link VARCHAR (500) NOT NULL,
-            description VARCHAR (2000) NOT NULL,
-            publish_date VARCHAR (50) NOT NULL,
+        CREATE TABLE IF NOT EXISTS text_data(
+            text_id SERIAL PRIMARY KEY,
+            text_data TEXT NOT NULL,
             labeled BOOL NOT NULL,
             selected BOOL NOT NULL,
             labels TEXT [],
@@ -47,8 +41,8 @@ def create_table(conn):
     """
         CREATE TABLE IF NOT EXISTS queries(
             query_id SERIAL PRIMARY KEY,
-            tweet_id INTEGER NOT NULL,
-            tweet TEXT NOT NULL,
+            text_id INTEGER NOT NULL,
+            text_data TEXT NOT NULL,
             labels TEXT [],
             users TEXT [],
             uncertainty FLOAT
@@ -67,11 +61,10 @@ def create_table(conn):
             email VARCHAR(255) UNIQUE NOT NULL
         )
     """,
-
     """
-        CREATE TABLE IF NOT EXISTS result_indices(
-            ri_id SERIAL PRIMARY KEY,
-            end_index INTEGER NOT NULL 
+        CREATE TABLE IF NOT EXISTS labels(
+            label_id SERIAL PRIMARY KEY,
+            label TEXT NOT NULL
         )
     """,
     """
@@ -94,7 +87,7 @@ def create_table(conn):
             cur.execute(statement)
         cur.close()
         conn.commit()
-        print('Created tables!')
+        print('Created tables!', flush=True)
     except (Exception, psycopg2.DatabaseError) as error:
         print('error: ', error)
 
@@ -113,51 +106,48 @@ def create_test_accessors(conn):
         print('error: ', error)
 
 
-def read_news_json(fn, conn):
-    events = ijson.parse(open(fn), multiple_values=True)
+def read_text_data(conn):
+    text_data = pd.read_csv('data.csv')
     cur = conn.cursor()
-
+    statement = """
+        INSERT INTO text_data(text_data, labels, users, labeled, selected) VALUES(%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+    """
     doc_counter = 0
-    for prefix, event, value in events:
-        if prefix == 'category':
-            category = value
-
-        if prefix == 'headline':
-            headline = value
-
-        if prefix == 'authors':
-            authors = value
-
-        if prefix == 'link':
-            link = value
-
-        if prefix == 'short_description':
-            description = value
-
-        if prefix == 'date':
-            publish_date = value
-
-        if (prefix, event) == ('', 'end_map'):
-            try:
-                statement = """
-                    INSERT INTO tweets(category, headline, authors, link, description, publish_date, labeled, selected)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
-                """
-                cur.execute(statement, (category, headline, authors, link, description, publish_date, False, False))
-                doc_counter += 1
-                if doc_counter % 10000 == 0:
-                    conn.commit()
-                    print('Inserted news docs: ', doc_counter)
-            except (Exception, psycopg2.DatabaseError) as error:
-                print('error: ', error)
+    for index, row in text_data.iterrows():
+        try:
+            cur.execute(statement, (row['data'], [], [], False, False))
+            doc_counter += 1
+            if doc_counter % 10000 == 0:
+                conn.commit()
+                print('Inserted text docs: ', doc_counter, flush=True)
+        except psycopg2.DatabaseError as error:
+            print('error: ', error, flush=True)
 
     conn.commit()
-    print('Inserted news docs: ', doc_counter, flush=True)
+    print('Inserted text docs: ', doc_counter, flush=True)
     cur.close()
 
+
+def read_labels(conn):
+    label_data = pd.read_csv('labels.csv')
+    cur = conn.cursor()
+    statement = """
+        INSERT INTO labels(label) VALUES (%s) ON CONFLICT DO NOTHING
+    """
+
+    for index, row in label_data.iterrows():
+        try:
+            cur.execute(statement, (row['labels'], ))
+        except psycopg2.DatabaseError as error:
+            print('error: ', error)
+
+    conn.commit()
+    print('Inserted labels', flush=True)
+    cur.close()
 
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
     create_test_accessors(conn)
-    read_news_json(keys.file_name, conn)
+    read_text_data(conn)
+    read_labels(conn)

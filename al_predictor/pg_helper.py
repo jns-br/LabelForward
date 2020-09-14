@@ -43,11 +43,9 @@ def read_all_unlabeled_text():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT tweet_id, headline, description FROM tweets WHERE labeled = false
+            SELECT text_id, text_data FROM text_data WHERE labeled = false
         """
         df = pd.read_sql_query(statement, con=conn)
-        df['tweet'] = df['headline'] + " " + df['description']
-        df = df.drop(['headline', 'description'], axis=1)
 
     return df
 
@@ -63,14 +61,14 @@ def save_queries(selection):
         cur.execute(truncate_statement)
         conn.commit()
         insert_statement = """
-            INSERT INTO queries(tweet_id, tweet, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO queries(text_id, text_data, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
         """
         update_selected = """
-             UPDATE tweets SET selected = true WHERE tweet_id = %s
+             UPDATE text_data SET selected = true WHERE text_id = %s
         """
         for index, row in selection.iterrows():
-            cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty'], [], []))
-            cur.execute(update_selected, (row['tweet_id'], ))
+            cur.execute(insert_statement, (row['text_id'], row['text_data'], row['uncertainty'], [], []))
+            cur.execute(update_selected, (row['text_id'], ))
         conn.commit()
 
 
@@ -85,19 +83,18 @@ def get_initial_batch():
         cur.execute(truncate_statement)
         conn.commit()
         select_statement = """
-            SELECT tweet_id, headline, description FROM tweets WHERE selected = false ORDER BY tweet_id ASC LIMIT %(set_size)s
+            SELECT text_id, text_data FROM text_data WHERE selected = false ORDER BY text_id ASC LIMIT %(set_size)s
         """
         df = pd.read_sql_query(select_statement, con=conn, params={"set_size": int(keys.set_size)})
-        df['tweet'] = df['headline'] + " " + df['description']
         insert_statement = """
-            INSERT INTO queries(tweet_id, tweet, labels, users) VALUES (%s, %s, %s, %s)
+            INSERT INTO queries(text_id, text_data, labels, users) VALUES (%s, %s, %s, %s)
         """
         update_selected = """
-            UPDATE tweets SET selected = true WHERE tweet_id = %s
+            UPDATE text_data SET selected = true WHERE text_id = %s
         """
         for index, row in df.iterrows():
-            cur.execute(insert_statement, (row['tweet_id'], row['tweet'], [], []))
-            cur.execute(update_selected, (row['tweet_id'], ))
+            cur.execute(insert_statement, (row['text_id'], row['text_data'], [], []))
+            cur.execute(update_selected, (row['text_id'], ))
         conn.commit()
         cur.close()
 

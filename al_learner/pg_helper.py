@@ -45,14 +45,12 @@ def read_labeled_data_full():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM tweets WHERE labeled = true AND major_label != %(ignored)s
+            SELECT * FROM text_data WHERE labeled = true AND major_label != %(ignored)s
         """
         df = pd.read_sql_query(statement, con=conn, params={"ignored": "ignored"})
         if len(df.index) == 0:
             return None
         else:
-            df['tweet'] = df['headline'] + " " + df['description']
-            df = df.drop(['headline', 'description'], axis=1)
             return df
 
 
@@ -72,11 +70,9 @@ def read_all_text():
     conn = connect()
     if conn is not None:
         statement = """
-            SELECT headline, description FROM tweets
+            SELECT text_data FROM text_data
         """
         df = pd.read_sql_query(statement, con=conn)
-        df['tweet'] = df['headline'] + " " + df['description']
-        df = df.drop(['headline', 'description'], axis=1)
 
     return df
 
@@ -131,7 +127,7 @@ def update_label(tweet_id, majority_label, labels, users):
     conn = connect()
     if conn is not None:
         statement = """
-            UPDATE tweets SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE tweet_id = %s
+            UPDATE text_data SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE text_id = %s
         """
         cur = conn.cursor()
         cur.execute(statement, (majority_label, labels, users, True, tweet_id))
