@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class TweetService {
+class TextService {
   async getLabels() {
     try {
       const labels = await axios.get('/api/tweets/labels');
@@ -10,7 +10,7 @@ class TweetService {
     }
   }
 
-  async getTweet() {
+  async getText() {
     try {
       const tweet = await axios.get('/api/tweets/text');
       return tweet;
@@ -19,7 +19,7 @@ class TweetService {
     }
   }
 
-  async postTweet(label, text_id) {
+  async postText(label, text_id) {
     try {
       const result = await axios.post('/api/tweets/text', {
         label: label,
@@ -32,4 +32,4 @@ class TweetService {
   }
 }
 
-export default new TweetService();
+export default new TextService();

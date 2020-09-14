@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Button, Card, Form, Badge } from 'react-bootstrap';
-import '../styles/TweetCard.css';
+import '../styles/TextCard.css';
 
-class TweetCard extends Component {
+class TextCard extends Component {
 
   render() {
     return (
       <div>
-        <Card className="TweetCard">
+        <Card className="TextCard">
           <Card.Header as="h5">Tweet</Card.Header>
           <Card.Body>
             <Card.Text>

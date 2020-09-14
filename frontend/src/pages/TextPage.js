@@ -3,9 +3,9 @@ import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
 import TweetCard from '../components/TweetCard';
 import WaitCard from '../components/WaitComponent';
-import '../styles/TweetPage.css';
+import '../styles/TextPage.css';
 import AuthService from '../services/AuthService';
-import TweetService from '../services/TweetService';
+import TextService from '../services/TextService';
 
 class Text extends Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class Text extends Component {
 
   async fetchLables() {
     try {
-      const labels = await TweetService.getLabels();
+      const labels = await TextService.getLabels();
       this.setState({ labels: labels.data.labels });
     } catch (err) {
       console.error(err.message);
@@ -42,7 +42,7 @@ class Text extends Component {
 
   async fetchTweet() {
     try {
-      const text = await TweetService.getTweet();
+      const text = await TextService.getTweet();
       if (tweet.status === 200) {
         this.setState({ available: true});
         this.setState({ text: text.data.text, text_id: text.data.text_id });
@@ -70,7 +70,7 @@ class Text extends Component {
       return;
     }
     try {
-      const result = await TweetService.postTweet(this.state.selectedLabel, this.state.text_id)
+      const result = await TextService.postTweet(this.state.selectedLabel, this.state.text_id)
       if (result.status === 204) {
         this.setState({ available : false});
       } else {
@@ -88,7 +88,7 @@ class Text extends Component {
       this.setState({
         selectedLabel: ""
       });
-      const result = await TweetService.postTweet("ignored", this.state.tweet_id);
+      const result = await TextService.postTweet("ignored", this.state.tweet_id);
       if (result.status === 204) {
         this.setState({ available: false});
       } else {
@@ -115,12 +115,12 @@ class Text extends Component {
   render() {
     if (this.state.available) {
       return (
-        <div className="TweetMain">
+        <div className="TextMain">
           {this.renderRedirect()}
           <Navigation></Navigation>
-          <div className='TweetModal'>
+          <div className="TextModal">
             <TweetCard 
-              tweet={this.state.tweet}
+              tweet={this.state.text}
               labels={this.state.labels}
               selected={this.state.selectedLabel}
               onSubmit={this.handleSubmit}
@@ -133,10 +133,10 @@ class Text extends Component {
       )
     } else {
       return (
-        <div className="TweetMain">
+        <div className="TextMain">
           {this.renderRedirect()}
           <Navigation></Navigation>
-          <div className="TweetModal">
+          <div className="TextModal">
             <WaitCard
               onFetch={this.getTweet}
             />
