@@ -65,8 +65,12 @@ def save_queries(selection):
         insert_statement = """
             INSERT INTO queries(tweet_id, tweet, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
         """
+        update_selected = """
+             UPDATE tweets SET selected = true WHERE tweet_id = %s
+        """
         for index, row in selection.iterrows():
             cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty'], [], []))
+            cur.execute(update_selected, (row['tweet_id'], ))
         conn.commit()
 
 
@@ -81,15 +85,19 @@ def get_initial_batch():
         cur.execute(truncate_statement)
         conn.commit()
         select_statement = """
-            SELECT tweet_id, headline, description FROM tweets ORDER BY tweet_id ASC LIMIT %(set_size)s
+            SELECT tweet_id, headline, description FROM tweets WHERE selected = false ORDER BY tweet_id ASC LIMIT %(set_size)s
         """
         df = pd.read_sql_query(select_statement, con=conn, params={"set_size": int(keys.set_size)})
         df['tweet'] = df['headline'] + " " + df['description']
         insert_statement = """
             INSERT INTO queries(tweet_id, tweet, labels, users) VALUES (%s, %s, %s, %s)
         """
+        update_selected = """
+            UPDATE tweets SET selected = true WHERE tweet_id = %s
+        """
         for index, row in df.iterrows():
             cur.execute(insert_statement, (row['tweet_id'], row['tweet'], [], []))
+            cur.execute(update_selected, (row['tweet_id'], ))
         conn.commit()
         cur.close()
 
