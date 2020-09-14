@@ -65,8 +65,12 @@ def save_queries(selection):
         insert_statement = """
             INSERT INTO queries(tweet_id, tweet, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
         """
+        update_selected = """
+             UPDATE tweets SET selected = true WHERE tweet_id = %s
+        """
         for index, row in selection.iterrows():
             cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty'], [], []))
+            cur.execute(update_selected, (row['tweet_id']))
         conn.commit()
 
 
