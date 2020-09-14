@@ -88,8 +88,12 @@ class TweetModal extends Component {
       this.setState({
         selectedLabel: ""
       });
-      await TweetService.postTweet("ignored", this.state.tweet_id);
-      await this.fetchTweet();
+      const result = await TweetService.postTweet("ignored", this.state.tweet_id);
+      if (result.status === 204) {
+        this.setState({ available: false});
+      } else {
+        await this.fetchTweet();
+      }
     } catch (err) {
       console.error(err.message);
     }
