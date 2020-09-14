@@ -32,9 +32,6 @@ router.post('/text', JWTService.requireJWT(), async (req, res) => {
     const label = req.body.label;
     const text_id = req.body.text_id;
     const email = req.user.email;
-    console.log('Label', label)
-    console.log('text_id', text_id)
-    console.log('email', email)
     isFull = await TextRepository.insertLabeledText(label, email, text_id);
     if (isFull) {
       res.status(204).json();
