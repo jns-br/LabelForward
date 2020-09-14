@@ -55,13 +55,6 @@ def create_table(conn):
         )
     """,
     """
-        CREATE TABLE IF NOT EXISTS precision_scores(
-            score_id SERIAL PRIMARY KEY,
-            clf_id INTEGER NOT NULL,
-            precision_score FLOAT NOT NULL
-        )
-    """,
-    """
         CREATE TABLE IF NOT EXISTS users(
             user_id SERIAL PRIMARY KEY,
             email VARCHAR(255) UNIQUE NOT NULL,
@@ -84,7 +77,8 @@ def create_table(conn):
     """
         CREATE TABLE IF NOT EXISTS classifiers(
             clf_id SERIAL PRIMARY KEY,
-            clf BYTEA NOT NULL 
+            clf BYTEA NOT NULL,
+            precision_score FLOAT 
         )
     """,
     """
