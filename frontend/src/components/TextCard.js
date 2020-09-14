@@ -46,4 +46,4 @@ class TextCard extends Component {
   }
 }
 
-export default TweetCard;
+export default TextCard;

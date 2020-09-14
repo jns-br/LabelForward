@@ -61,14 +61,14 @@ def save_queries(selection):
         cur.execute(truncate_statement)
         conn.commit()
         insert_statement = """
-            INSERT INTO queries(tweet_id, tweet, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO queries(text_id, text_data, uncertainty, labels, users) VALUES (%s, %s, %s, %s, %s)
         """
         update_selected = """
              UPDATE text_data SET selected = true WHERE text_id = %s
         """
         for index, row in selection.iterrows():
-            cur.execute(insert_statement, (row['tweet_id'], row['tweet'], row['uncertainty'], [], []))
-            cur.execute(update_selected, (row['tweet_id'], ))
+            cur.execute(insert_statement, (row['text_id'], row['text_data'], row['uncertainty'], [], []))
+            cur.execute(update_selected, (row['text_id'], ))
         conn.commit()
 
 
@@ -83,7 +83,7 @@ def get_initial_batch():
         cur.execute(truncate_statement)
         conn.commit()
         select_statement = """
-            SELECT text_id, text_data FROM text_data WHERE selected = false ORDER BY tweet_id ASC LIMIT %(set_size)s
+            SELECT text_id, text_data FROM text_data WHERE selected = false ORDER BY text_id ASC LIMIT %(set_size)s
         """
         df = pd.read_sql_query(select_statement, con=conn, params={"set_size": int(keys.set_size)})
         insert_statement = """

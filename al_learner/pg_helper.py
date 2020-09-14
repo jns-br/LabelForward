@@ -51,8 +51,6 @@ def read_labeled_data_full():
         if len(df.index) == 0:
             return None
         else:
-            df['tweet'] = df['headline'] + " " + df['description']
-            df = df.drop(['headline', 'description'], axis=1)
             return df
 
 

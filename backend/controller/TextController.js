@@ -11,7 +11,7 @@ router.get('/text', JWTService.requireJWT(), async (req, res) => {
     if (!nextText) {
       res.status(204);
     } else {
-      res.status(200).json({tweet: nextText.text_data, text_id: nextText.text_id});
+      res.status(200).json({text: nextText.text_data, text_id: nextText.text_id});
     }
   } catch (error) {
    res.status(500).json({msg: err.message});
@@ -32,13 +32,17 @@ router.post('/text', JWTService.requireJWT(), async (req, res) => {
     const label = req.body.label;
     const text_id = req.body.text_id;
     const email = req.user.email;
-    isFull = await TextRepository.insertLabeledTweet(label, email, text_id);
+    console.log('Label', label)
+    console.log('text_id', text_id)
+    console.log('email', email)
+    isFull = await TextRepository.insertLabeledText(label, email, text_id);
     if (isFull) {
       res.status(204).json();
     } else{
       res.status(201).json();
     }
   } catch (err) {
+    console.log(err.message);
     res.status(500).json({msg: err.message});
   }
 });

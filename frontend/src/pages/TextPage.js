@@ -24,7 +24,7 @@ class Text extends Component {
     try {
       await AuthService.checkToken();
       await this.fetchLables();
-      await this.fetchTweet();
+      await this.fetchText();
     } catch (err) {
       console.log(err.message);
       this.setState({redirect: true});
@@ -40,10 +40,10 @@ class Text extends Component {
     }
   }
 
-  async fetchTweet() {
+  async fetchText() {
     try {
-      const text = await TextService.getTweet();
-      if (tweet.status === 200) {
+      const text = await TextService.getText();
+      if (text.status === 200) {
         this.setState({ available: true});
         this.setState({ text: text.data.text, text_id: text.data.text_id });
       } else {
@@ -54,7 +54,7 @@ class Text extends Component {
     }
   }
 
-  getTweet = event => {
+  getText = event => {
     window.location.reload();
   }
 
@@ -70,11 +70,11 @@ class Text extends Component {
       return;
     }
     try {
-      const result = await TextService.postTweet(this.state.selectedLabel, this.state.text_id)
+      const result = await TextService.postText(this.state.selectedLabel, this.state.text_id)
       if (result.status === 204) {
         this.setState({ available : false});
       } else {
-        await this.fetchTweet();
+        await this.fetchText();
         this.setState({ selectedLabel: ""});
       }
     } catch (err) {
@@ -88,11 +88,11 @@ class Text extends Component {
       this.setState({
         selectedLabel: ""
       });
-      const result = await TextService.postTweet("ignored", this.state.tweet_id);
+      const result = await TextService.postText("ignored", this.state.text_id);
       if (result.status === 204) {
         this.setState({ available: false});
       } else {
-        await this.fetchTweet();
+        await this.fetchText();
       }
     } catch (err) {
       console.error(err.message);
@@ -138,7 +138,7 @@ class Text extends Component {
           <Navigation></Navigation>
           <div className="TextModal">
             <WaitCard
-              onFetch={this.getTweet}
+              onFetch={this.getText}
             />
           </div>
         </div>
