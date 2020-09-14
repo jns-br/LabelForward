@@ -21,7 +21,7 @@ if __name__ == '__main__':
             model_helper.create_majority_label(new_data)
             df = pg_helper.read_labeled_data_full()
             if df is not None:
-                X = df['tweet'].to_numpy(dtype=str)
+                X = df['text_data'].to_numpy(dtype=str)
                 y = df['major_label'].to_numpy()
                 X_train, X_test, y_train, y_test = model_helper.create_train_test_split(X, y)
                 clf, id = model_helper.create_model(X_train, y_train)
