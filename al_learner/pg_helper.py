@@ -143,9 +143,9 @@ def save_score(clf_id, precision_score):
     conn = connect()
     if conn is not None:
         statement = """
-            INSERT INTO precision_scores(clf_id, precision_score) VALUES(%s, %s)
+            UPDATE classifiers SET precision_score = %s WHERE clf_id = %s
         """
         cur = conn.cursor()
-        cur.execute(statement, (clf_id, precision_score))
+        cur.execute(statement, (precision_score, clf_id))
         conn.commit()
         cur.close()
