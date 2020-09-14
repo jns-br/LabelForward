@@ -1,13 +1,13 @@
 const express = require('express');
 const { restart } = require('nodemon');
 const router = express.Router();
-const TweetRepository = require('../repositories/TweetRepository');
+const TextRepository = require('../repositories/TextRepository');
 const JWTService = require('../services/JWTService');
 
 router.get('/text', JWTService.requireJWT(), async (req, res) => {
   try {
     const email = req.user.email;
-    const nextText = await TweetRepository.getNextText(email);
+    const nextText = await TextRepository.getNextText(email);
     if (!nextText) {
       res.status(204);
     } else {
@@ -20,7 +20,7 @@ router.get('/text', JWTService.requireJWT(), async (req, res) => {
 
 router.get('/labels', JWTService.requireJWT(), async (req, res) => {
   try {
-    const labels = await TweetRepository.getLabels();
+    const labels = await TextRepository.getLabels();
     res.status(200).json({labels: labels});
   } catch (error) {
     res.status(500).json({msg: err.message});
@@ -32,7 +32,7 @@ router.post('/text', JWTService.requireJWT(), async (req, res) => {
     const label = req.body.label;
     const text_id = req.body.text_id;
     const email = req.user.email;
-    isFull = await TweetRepository.insertLabeledTweet(label, email, text_id);
+    isFull = await TextRepository.insertLabeledTweet(label, email, text_id);
     if (isFull) {
       res.status(204).json();
     } else{

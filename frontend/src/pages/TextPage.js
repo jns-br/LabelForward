@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
-import TweetCard from '../components/TweetCard';
+import TweetCard from '../components/TextCard';
 import WaitCard from '../components/WaitComponent';
 import '../styles/TextPage.css';
 import AuthService from '../services/AuthService';

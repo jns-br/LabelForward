@@ -2,7 +2,7 @@ const keys = require('../keys');
 const Redis = require('ioredis');
 const { Pool } = require('pg');
 
-class TweetRepository {
+class TextRepository {
   constructor() {
     this.pgClient = new Pool({
       user: keys.pgUser,
@@ -94,4 +94,4 @@ class TweetRepository {
 
 }
 
-module.exports = new TweetRepository();
+module.exports = new TextRepository();
