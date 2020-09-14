@@ -7,13 +7,13 @@ import '../styles/TweetPage.css';
 import AuthService from '../services/AuthService';
 import TweetService from '../services/TweetService';
 
-class TweetModal extends Component {
+class Text extends Component {
   constructor(props) {
     super(props);
     this.state = {
       redirect: false,
-      tweet: "",
-      tweet_id: 0,
+      text: "",
+      text_id: 0,
       labels: ['label'],
       selectedLabel: "",
       available: false
@@ -42,10 +42,10 @@ class TweetModal extends Component {
 
   async fetchTweet() {
     try {
-      const tweet = await TweetService.getTweet();
+      const text = await TweetService.getTweet();
       if (tweet.status === 200) {
         this.setState({ available: true});
-        this.setState({ tweet: tweet.data.tweet, tweet_id: tweet.data.tweet_id });
+        this.setState({ text: text.data.text, text_id: text.data.text_id });
       } else {
         this.setState({ available: false})
       }
@@ -70,7 +70,7 @@ class TweetModal extends Component {
       return;
     }
     try {
-      const result = await TweetService.postTweet(this.state.selectedLabel, this.state.tweet_id)
+      const result = await TweetService.postTweet(this.state.selectedLabel, this.state.text_id)
       if (result.status === 204) {
         this.setState({ available : false});
       } else {
@@ -147,4 +147,4 @@ class TweetModal extends Component {
   }
 }
 
-export default TweetModal;
+export default Text;
