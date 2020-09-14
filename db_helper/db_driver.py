@@ -147,7 +147,7 @@ def read_news_json(fn, conn):
             try:
                 statement = """
                     INSERT INTO tweets(category, headline, authors, link, description, publish_date, labeled, selected)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
                 """
                 cur.execute(statement, (category, headline, authors, link, description, publish_date, False, False))
                 doc_counter += 1
