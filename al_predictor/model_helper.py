@@ -23,7 +23,7 @@ def make_queries():
     else:
         df = pg_helper.read_all_unlabeled_text()
         count_vec = pickle.loads(pg_helper.load_count_vec())
-        X = count_vec.transform(df['tweet'].to_numpy().ravel())
+        X = count_vec.transform(df['text_data'].to_numpy().ravel())
         probas = clf.predict_proba(X)
         highest_probas = np.array([np.max(probas[i]) for i in range(probas.shape[0])])
         probas_df = pd.DataFrame(highest_probas, columns=['uncertainty'])
