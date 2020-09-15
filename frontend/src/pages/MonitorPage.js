@@ -4,6 +4,7 @@ import ClfMonitor from '../components/ClfMonitor';
 import LabelMonitor from '../components/LabelMonitor';
 import Navigation from '../components/Navigation';
 import AuthService from '../services/AuthService';
+import MonitorService from '../services/MonitorService';
 
 class Monitor extends Component {
   constructor(props) {
@@ -21,6 +22,24 @@ class Monitor extends Component {
     } catch (err) {
       console.log(err.message);
       this.setState({ redirect: true});
+    }
+  }
+
+  async fetchClfData() {
+    try {
+      const clfData = await MonitorService.getClfData();
+      this.setState({ clfArray: clfData});
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  async fetchLabelShare() {
+    try {
+      const labelShare = await MonitorService.getLabelShare();
+      this.setState({ labelShare: labelShare});
+    } catch (err) {
+      console.error(err.message);
     }
   }
 
