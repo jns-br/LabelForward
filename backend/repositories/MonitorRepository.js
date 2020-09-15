@@ -46,3 +46,5 @@ class MonitorRepository {
     }
   }
 }
+
+module.exports = new MonitorRepository();
