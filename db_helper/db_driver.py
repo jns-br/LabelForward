@@ -71,7 +71,8 @@ def create_table(conn):
         CREATE TABLE IF NOT EXISTS classifiers(
             clf_id SERIAL PRIMARY KEY,
             clf BYTEA NOT NULL,
-            precision_score FLOAT 
+            precision_score FLOAT,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         )
     """,
     """
