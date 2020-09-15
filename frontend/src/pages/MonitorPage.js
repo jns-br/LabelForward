@@ -5,6 +5,7 @@ import LabelMonitor from '../components/LabelMonitor';
 import Navigation from '../components/Navigation';
 import AuthService from '../services/AuthService';
 import MonitorService from '../services/MonitorService';
+import '../styles/MonitorPage.css';
 
 class Monitor extends Component {
   constructor(props) {
@@ -19,6 +20,8 @@ class Monitor extends Component {
   async componentDidMount() {
     try {
       await AuthService.checkToken();
+      await this.fetchClfData();
+      await this.fetchLabelShare();
     } catch (err) {
       console.log(err.message);
       this.setState({ redirect: true});
@@ -27,8 +30,9 @@ class Monitor extends Component {
 
   async fetchClfData() {
     try {
-      const clfData = await MonitorService.getClfData();
-      this.setState({ clfArray: clfData});
+      const result = await MonitorService.getClfData();
+      const data = Array.from(result.clfData);
+      this.setState({ clfArray: data});
     } catch (err) {
       console.error(err.message);
     }
@@ -36,8 +40,8 @@ class Monitor extends Component {
 
   async fetchLabelShare() {
     try {
-      const labelShare = await MonitorService.getLabelShare();
-      this.setState({ labelShare: labelShare});
+      const result = await MonitorService.getLabelShare();
+      this.setState({ labelShare: result.labelShare});
     } catch (err) {
       console.error(err.message);
     }
@@ -55,9 +59,9 @@ class Monitor extends Component {
         {this.renderRedirect()}
         <Navigation></Navigation>
         <div className="ClfTable">
-          <ClfMonitor clfs={this.state.clfArray} />
-          <br />
           <LabelMonitor labelShare={this.state.labelShare} />
+          <br />
+          <ClfMonitor clfs={this.state.clfArray} />
         </div>
       </div>
     )

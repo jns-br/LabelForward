@@ -12,11 +12,11 @@ class ClfMonitor extends Component {
         </thead>
         <tbody>
           {this.props.clfs.map((value, index) => {
-            <tr>
+            return (<tr>
               <td key={index}>{value.clfId}</td>
               <td key={index}>{value.precision}</td>
               <td key={index}>{value.timestamp}</td>
-            </tr>
+            </tr>)
           })}
         </tbody>
       </Table>
