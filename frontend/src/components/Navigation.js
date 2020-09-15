@@ -11,15 +11,18 @@ class Navigation extends Component {
 
   handleClickHome = event => {
     event.preventDefault();
-    console.log('Clicked Home Button');
     this.setState({redirect: '/home'});
   }
 
   handleClickSettings = event => {
     event.preventDefault();
-    console.log('Click Settings Button');
     this.setState({redirect: '/settings'});
-  };
+  }
+
+  handleClickMonitor = event => {
+    event.preventDefault();
+    this.setState({redirect: '/monitor'});
+  }
 
   handleClickLogout = async event => {
     event.preventDefault();
@@ -42,6 +45,7 @@ class Navigation extends Component {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
             <Nav.Link href="home" to="/home" onClick={this.handleClickHome}>Home</Nav.Link>
+            <Nav.Link href="monitor" to="/monitor" onClick={this.handleClickMonitor}>Monitor</Nav.Link>
             <Nav.Link href="settings" to="/settings" onClick={this.handleClickSettings}>Settings</Nav.Link>
             <Nav.Link href="/" to="/" onClick={this.handleClickLogout}>Logout</Nav.Link>
           </Nav>
