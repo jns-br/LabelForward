@@ -1,9 +1,11 @@
 version: '3'
 services:
   redis:
-    image: 'redis:latest' 
+    image: redis:latest
+    restart: always 
   postgres:
     image: postgres:latest
+    restart: always
     environment: 
       - POSTGRES_PASSWORD=postgres_password
   dbhelper:
@@ -31,6 +33,7 @@ services:
     ports: 
       - '3050:80'
   api:
+    restart: always
     depends_on: 
       - postgres
       - redis
@@ -55,6 +58,7 @@ services:
       - MIN_LABEL_COUNT=1
   client:
     stdin_open: true
+    restart: always
     depends_on: 
       - postgres
       - api
@@ -65,6 +69,7 @@ services:
       - /app/node_modules
       - ./frontend:/app
   allearner:
+    restart: always
     depends_on: 
       - postgres
       - api
@@ -87,6 +92,7 @@ services:
         reservations:
           memory: 700M
   alpredictor:
+    restart: always
     depends_on: 
       - postgres
       - api
