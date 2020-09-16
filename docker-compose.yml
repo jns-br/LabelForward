@@ -116,7 +116,7 @@ services:
     restart: always
     user: postgres:postgres
     volumes:
-      - /var/opt/pgbackups:/backups
+      - /Users/jba/test/pgbackups:/backups
     links:
       - postgres
     depends_on:
