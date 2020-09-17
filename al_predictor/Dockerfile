@@ -1,0 +1,5 @@
+FROM python:latest
+WORKDIR '/app'
+RUN python3 -m pip install pandas psycopg2 redis sklearn numpy
+COPY . .
+CMD ["python3", "-u", "predictor.py"]
