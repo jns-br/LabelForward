@@ -104,7 +104,7 @@ def read_text_data(conn):
     text_data = pd.read_csv('data.csv')
     cur = conn.cursor()
     statement = """
-        INSERT INTO text_data(text_data, labels, users, labeled, selected, taught) VALUES(%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+        INSERT INTO text_data(text_data, labels, users, labeled, selected, taught) VALUES(%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
     """
     doc_counter = 0
     for index, row in text_data.iterrows():

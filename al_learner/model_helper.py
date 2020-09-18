@@ -22,7 +22,7 @@ def init(conn):
 
 def update(conn):
     batch_ready = pg_helper.is_new_batch_ready(conn)
-    if batch_ready is True:
+    if batch_ready == True:
         data = pg_helper.read_labeled_data_full(conn)
         if data is None:
             return
@@ -38,6 +38,8 @@ def update(conn):
             cur.execute(update_statement, (row['text_id'], ))
         conn.commit()
         return X_test, y_test, clf, id
+    else:
+        return None, None, None, None        
 
 
 def create_count_vectorizer(conn):
@@ -74,7 +76,7 @@ def create_model(X, y, conn):
 
 def create_precision_score(X_test, y_test, clf, id, conn):
     print('Creating precision score', flush=True)
-    count_vec = get_last_vectorizer()
+    count_vec = get_last_vectorizer(conn)
     X_test_vect = count_vec.transform(X_test)
     y_pred = clf.predict(X_test_vect)
     score = precision_score(y_test, y_pred, average='micro')

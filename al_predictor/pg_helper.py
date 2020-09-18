@@ -45,6 +45,7 @@ def load_last_model(conn):
 
 
 def insert_uncertainties(data, conn):
+    print('Inserting uncertainties', flush=True)
     cur = conn.cursor()
     statement = """
         UPDATE text_data SET uncertainty = %s WHERE text_id = %s

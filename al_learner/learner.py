@@ -22,6 +22,7 @@ if __name__ == '__main__':
             r.publish('predictor', 'update')
         if new_msg['data'] == 'update':
             X_test, y_test, clf, id = model_helper.update(conn)
-            r.publish('predictor', 'update')
-            model_helper.create_precision_score(X_test, y_test, clf, id, conn)
+            if clf != None:
+                r.publish('predictor', 'update')
+                model_helper.create_precision_score(X_test, y_test, clf, id, conn)
 

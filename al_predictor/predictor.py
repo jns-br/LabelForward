@@ -20,3 +20,4 @@ if __name__ == '__main__':
             r.set('queryFlag', 'unavailable')
             pg_helper.insert_uncertainties(data, conn)
             r.set('queryFlag', 'available')
+            print('set query flag available', flush=True)

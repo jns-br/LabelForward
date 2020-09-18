@@ -32,8 +32,12 @@ router.post('/text', JWTService.requireJWT(), async (req, res) => {
     const label = req.body.label;
     const text_id = req.body.text_id;
     const email = req.user.email;
-    await TextRepository.insertLabeledText(label, email, text_id);
-    res.status(201).json();
+    const available = await TextRepository.insertLabeledText(label, email, text_id);
+    if (available) {
+      res.status(201).json();
+    } else {
+      res.status(204).json();
+    }
   } catch (err) {
     console.log(err.message);
     res.status(500).json({msg: err.message});
