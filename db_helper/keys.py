@@ -5,4 +5,6 @@ dbname = os.getenv('PGDATABASE')
 user = os.getenv('PGUSER')
 password = os.getenv('PGPASSWORD')
 port = os.getenv('PGPORT')
+redis_host = os.getenv('REDIS_HOST')
+redis_port = os.getenv('REDIS_PORT')
 file_name = 'News_Category_Dataset_v2.json'
