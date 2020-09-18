@@ -19,10 +19,10 @@ def connect():
     return conn
 
 
-def load_untaught_data(conn):
+def load_data(conn):
     print('Loading untaught data', flush=True)
     statement = """
-        SELECT text_id, text_data FROM text_data WHERE taught = false 
+        SELECT text_id, text_data FROM text_data
     """
     df = pd.read_sql_query(statement, con=conn)
     return df
