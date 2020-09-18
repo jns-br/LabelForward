@@ -17,6 +17,10 @@ spec:
         - name: dbhelper
           image: jnsbr/covidstate-dbhelper
           env:
+            - name: DATA_PATH
+              value: exampledata/data.csv
+            - name: LABEL_PATH
+              value: exampledata/labels.csv
             - name: REDIS_HOST
               value: redis-cluster-ip-service
             - name: REDIS_PORT
