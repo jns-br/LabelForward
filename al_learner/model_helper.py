@@ -4,83 +4,80 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score
 import pg_helper
 import pickle
-from collections import Counter
+import keys
+import numpy as np
 
 
-def create_count_vectorizer():
+def init(conn):
+    X_text = pg_helper.read_all_text(conn)
+    labels = pg_helper.load_labels(conn)
+    batch_size = int(keys.batch_size)
+    X = X_text[:batch_size]
+    y_list = []
+    for i in range(batch_size):
+        y_list.append(np.random.choice(labels))
+    y = np.array(y_list)
+    create_model(X, y, conn)
+
+
+def update(conn):
+    batch_ready = pg_helper.is_new_batch_ready(conn)
+    if batch_ready == True:
+        data = pg_helper.read_labeled_data_full(conn)
+        if data is None:
+            return
+        X_text = data['text_data'].to_numpy(dtype=str)
+        y = data['major_label'].to_numpy()
+        X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
+        clf, id = create_model(X_train, y_train, conn)
+        cur = conn.cursor()
+        update_statement = """
+            UPDATE text_data SET taught = true WHERE text_id = %s
+        """
+        for index, row in data.iterrows():
+            cur.execute(update_statement, (row['text_id'], ))
+        conn.commit()
+        return X_test, y_test, clf, id
+    else:
+        return None, None, None, None        
+
+
+def create_count_vectorizer(conn):
     print('Creating new count vectorizer', flush=True)
-    df = pg_helper.read_all_text()
-    X_text = df.to_numpy()
+    X_text = pg_helper.read_all_text(conn)
     count_vec = CountVectorizer()
     count_vec.fit(X_text.ravel())
     data = pickle.dumps(count_vec)
-    pg_helper.save_countvec(data)
+    pg_helper.save_countvec(data, conn)
     return count_vec
 
 
-def get_last_vectorizer():
+def get_last_vectorizer(conn):
     print('Getting last count vectorizer', flush=True)
-    data = pg_helper.load_last_countvec()
+    data = pg_helper.load_last_countvec(conn)
     if data is None:
         return None
     count_vec = pickle.loads(data)
     return count_vec
 
 
-def create_model(X, y):
+def create_model(X, y, conn):
     print('Creating new model', flush=True)
-    count_vec = get_last_vectorizer()
+    count_vec = get_last_vectorizer(conn)
     if count_vec is None:
-        count_vec = create_count_vectorizer()
-    X_vect = count_vec.transform(X)
+        count_vec = create_count_vectorizer(conn)
+    X_vect = count_vec.transform(X.ravel())
     clf = LogisticRegression(random_state=42)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
-    id = pg_helper.save_model(data)
+    id = pg_helper.save_model(data, conn)
     return clf, id
 
 
-def create_majority_label(df):
-    for index, row in df.iterrows():
-        majority_label = find_max_occurences(row['labels'])
-        if majority_label is not None:
-            pg_helper.update_label(row['query_id'], majority_label, row['labels'], row['users'])
-
-
-def find_majority(arr, size):
-    m = {}
-    for i in range(size):
-        if arr[i] in m:
-            m[arr[i]] += 1
-        else:
-            m[arr[i]] = 1
-
-    count = 0
-    for key in m:
-        if m[key] > size / 2:
-            count = 1
-            return key
-    if count == 0:
-        return None
-
-
-def find_max_occurences(arr):
-    if len(arr) > 0:
-        most_common = Counter(arr).most_common(1)[0][0]
-        return most_common
-    else:
-        return None
-
-
-def create_train_test_split(X, y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
-    return X_train, X_test, y_train, y_test
-
-
-def create_precision_score(clf, X_test, y_test):
+def create_precision_score(X_test, y_test, clf, id, conn):
     print('Creating precision score', flush=True)
-    count_vec = get_last_vectorizer()
+    count_vec = get_last_vectorizer(conn)
     X_test_vect = count_vec.transform(X_test)
     y_pred = clf.predict(X_test_vect)
     score = precision_score(y_test, y_pred, average='micro')
-    return score
+    pg_helper.save_score(id, score, conn)
