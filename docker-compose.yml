@@ -28,7 +28,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - DATA_PATH=exampledata/data.csv
-      - LABEL_PATH=exampledata/data.csv
+      - LABEL_PATH=exampledata/labels.csv
   nginx:
     restart: always
     build: 
