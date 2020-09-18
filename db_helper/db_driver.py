@@ -101,7 +101,7 @@ def create_test_accessors(conn):
 
 
 def read_text_data(conn):
-    text_data = pd.read_csv('data.csv')
+    text_data = pd.read_csv(keys.data_path)
     cur = conn.cursor()
     statement = """
         INSERT INTO text_data(text_data, labels, users, labeled, selected, taught) VALUES(%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
@@ -123,7 +123,7 @@ def read_text_data(conn):
 
 
 def read_labels(conn):
-    label_data = pd.read_csv('labels.csv')
+    label_data = pd.read_csv(keys.label_path)
     cur = conn.cursor()
     statement = """
         INSERT INTO labels(label) VALUES (%s) ON CONFLICT DO NOTHING
