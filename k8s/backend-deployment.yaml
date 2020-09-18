@@ -34,10 +34,6 @@ spec:
               value: '5000'
             - name: SET_SIZE
               value: '10'
-            - name: QUERY_THRESHOLD
-              value: '0.8'
-            - name: MIN_LABEL_COUNT
-              value: '1'
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:

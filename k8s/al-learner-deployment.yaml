@@ -28,6 +28,10 @@ spec:
               value: postgres
             - name: PGPORT
               value: '5432'
+            - name: BATCH_SIZE
+              value: '10'
+            - name: MIN_LABEL_COUNT
+              value: '1'
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:

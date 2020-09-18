@@ -17,6 +17,10 @@ spec:
         - name: dbhelper
           image: jnsbr/covidstate-dbhelper
           env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: '6379'
             - name: PGUSER
               value: postgres
             - name: PGHOST
