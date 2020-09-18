@@ -17,7 +17,7 @@ class TextRepository {
     });
   }
 
-  async getNextTextAs(email) {
+  async getNextText(email) {
     try {
       const queryFlag = await this.redisClient.get('queryFlag');
       switch (queryFlag) {
@@ -34,33 +34,7 @@ class TextRepository {
     }
   }
 
-  async getNextText(email) {
-    try {
-      const queryFlag = await this.redisClient.get('queryFlag');
-      switch (queryFlag) {
-        case 'available':
-          const statement = "SELECT text_id, text_data FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
-          const result = await this.pgClient.query(statement, [email]);
-          if (result.rowCount !== 1) {
-            return null;
-          } else {
-            return result.rows[0];
-          }
-        case 'unavailable':
-          return null;
-        default:
-          await this.redisClient.set('queryFlag', 'unavailable');
-          const pub = this.redisClient.duplicate();
-          await pub.publish('predictor', 'init');
-          return null;
-      }
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async insertLabeledTextAs(label, email, text_id) {
+  async insertLabeledText(label, email, text_id) {
     try {
       const statment = "UPDATE text_data SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
       const result = await this.pgClient.query(statment, [label, email, text_id]);
@@ -73,28 +47,6 @@ class TextRepository {
         const pub = this.redisClient.duplicate();
         await pub.publish('learner', 'update');
       }
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async insertLabeledText(label, email, text_id) {
-    try {
-      const statement = "UPDATE queries SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
-      const result = await this.pgClient.query(statement, [label, email, text_id]);
-      if (result.rowCount !== 1) {
-        throw new Error('Insertion failed');
-      }
-      const isFull = await this.isQueryTableFull();
-      if (isFull) {
-        await this.redisClient.set('queryFlag', 'unavailable');
-        const pub = this.redisClient.duplicate();
-        await pub.publish('learner', 'update');
-        return true;
-      }
-      return false;
-
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
