@@ -10,6 +10,7 @@ if __name__ == '__main__':
     subscriber.subscribe('predictor')
     print('Initialized redis', flush=True)
     r.set('queryFlag', 'unavailable')
+    r.set('queryCounter', 0)
     conn = pg_helper.connect()
 
     for new_msg in subscriber.listen():
