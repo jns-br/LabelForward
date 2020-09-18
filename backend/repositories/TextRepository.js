@@ -17,6 +17,23 @@ class TextRepository {
     });
   }
 
+  async getNextTextAs(email) {
+    try {
+      const queryFlag = await this.redisClient.get('queryFlag');
+      switch (queryFlag) {
+        case 'available':
+          const statement = "SELECT text_id, text_data FROM text_data WHERE NOT ($1 = ANY (users)) ORDER BY uncertainty ASC LIMIT 1";
+          const result = await this.pgClient.query(statement, [email]);
+          return result.rows[0];
+        default:
+          return null;
+      }
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
+
   async getNextText(email) {
     try {
       const queryFlag = await this.redisClient.get('queryFlag');
