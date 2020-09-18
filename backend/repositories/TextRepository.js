@@ -60,6 +60,25 @@ class TextRepository {
     }
   }
 
+  async insertLabeledTextAs(label, email, text_id) {
+    try {
+      const statment = "UPDATE text_data SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
+      const result = await this.pgClient.query(statment, [label, email, text_id]);
+      if(result.rowCount !== 1) {
+        throw new Error('Insertion failed');
+      }
+      const queryCounter = parseInt(await this.redisClient.get('queryCounter'));
+      await this.redisClient.set('queryCounter', (queryCounter + 1));
+      if ((queryCounter + 1) >= parseInt(keys.batchSize)) {
+        const pub = this.redisClient.duplicate();
+        await pub.publish('learner', 'update');
+      }
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
+
   async insertLabeledText(label, email, text_id) {
     try {
       const statement = "UPDATE queries SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";

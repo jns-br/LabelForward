@@ -8,7 +8,7 @@ module.exports = {
     pgPassword: process.env.PGPASSWORD,
     pgPort: process.env.PGPORT,
     jwtSecret: process.env.JWT_SECRET,
-    setSize: process.env.SET_SIZE,
+    batchSize: process.env.BATCH_SIZE,
     queryThreshold: process.env.QUERY_THRESHOLD,
     minLabelCount: process.env.MIN_LABEL_COUNT
   };
