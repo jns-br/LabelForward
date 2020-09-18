@@ -1,5 +1,5 @@
 import psycopg2
-import keys
+from exampledata import keys
 import pandas as pd
 import redis
 
