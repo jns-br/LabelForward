@@ -20,6 +20,7 @@ def connect():
 
 
 def load_labels(conn):
+    print('Loading labels', flush=True)
     label_statement = """
         SELECT label FROM labels
     """
@@ -28,9 +29,11 @@ def load_labels(conn):
 
 
 def is_new_batch_ready(conn):
+    print('Checking new batch', flush=True)
     cur = conn.cursor()
+    update_counter = 0
     select_all_statement = """
-        SELECT text_id, labels FROM text_data WHERE array_length(labels, 1) >= %(min_label_count)s
+        SELECT text_id, labels, major_label FROM text_data WHERE array_length(labels, 1) >= %(min_label_count)s
     """
     df = pd.read_sql_query(select_all_statement, con=conn, params={"min_label_count": int(keys.min_label_count)})
     update_statement = """
@@ -39,15 +42,12 @@ def is_new_batch_ready(conn):
 
     for index, row in df.iterrows():
         majority_label = find_max_occurences(row['labels'])
-        text_id = int(row['text_id'])
-        cur.execute(update_statement, (majority_label, text_id))
+        if majority_label != row['major_label']:
+            text_id = int(row['text_id'])
+            cur.execute(update_statement, (majority_label, text_id))
+            update_counter += 1
     conn.commit()
-    select_new_statement = """
-        SELECT COUNT(*) FROM text_data WHERE taught = false AND major_label IS NOT NULL AND major_label != %s
-    """
-    cur.execute(select_new_statement, ('ignored', ))
-    data = cur.fetchone()
-    if int(data[0]) >= int(keys.batch_size):
+    if update_counter >= int(keys.batch_size):
         return True
     else:
         return False
@@ -116,17 +116,6 @@ def save_model(data, conn):
         id = cur.fetchone()[0]
         cur.close()
         return id
-
-
-def update_label(tweet_id, majority_label, labels, users, conn):
-    if conn is not None:
-        statement = """
-            UPDATE text_data SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE text_id = %s
-        """
-        cur = conn.cursor()
-        cur.execute(statement, (majority_label, labels, users, True, tweet_id))
-        conn.commit()
-        cur.close()
 
 
 def save_score(clf_id, precision_score, conn):
