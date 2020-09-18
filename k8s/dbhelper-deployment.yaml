@@ -4,7 +4,6 @@ metadata:
   name: dbhelper-deployment
 spec:
   replicas: 1
-  restartPolicy: Never
   selector:
     matchLabels:
       component: dbhelper

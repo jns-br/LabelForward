@@ -28,6 +28,6 @@ spec:
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
-                secrectKeyRef:
+                secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
