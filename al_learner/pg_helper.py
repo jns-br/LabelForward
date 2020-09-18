@@ -1,5 +1,6 @@
 import psycopg2, keys
 import pandas as pd
+from collections import Counter
 
 
 def connect():
@@ -18,34 +19,45 @@ def connect():
     return conn
 
 
-# legacy, maybe useful if online learning is implemented
-def read_labeled_data_partial():
-    print('Reading labeled data partial', flush=True)
-    conn = connect()
-    if conn is not None:
-        cur = conn.cursor()
-        indices_statement = """
-            SELECT start_index, end_index FROM result_indices ORDER BY ri_id DESC LIMIT 1
-        """
-        cur.execute(indices_statement)
-        indices_data = cur.fetchone()
-        start_index = indices_data[0]
-        end_index = indices_data[1]
-
-        data_statement = """
-            SELECT * FROM results WHERE  result_id >= %(start_index)s AND result_id <= %(end_index)s
-        """
-        df = pd.read_sql_query(data_statement, con=conn, params={"start_index": start_index, "end_index": end_index})
-
-    return df
+def load_labels(conn):
+    label_statement = """
+        SELECT label FROM labels
+    """
+    df = pd.read_sql_query(label_statement, con=conn)
+    return df['label'].to_numpy()
 
 
-def read_labeled_data_full():
+def is_new_batch_ready(conn):
+    cur = conn.cursor()
+    select_all_statement = """
+        SELECT text_id, labels FROM text_data WHERE array_length(labels, 1) >= %(min_label_count)s
+    """
+    df = pd.read_sql_query(select_all_statement, con=conn, params={"min_label_count": int(keys.min_label_count)})
+    update_statement = """
+        UPDATE text_data SET major_label = %s WHERE text_id = %s
+    """
+
+    for index, row in df.iterrows():
+        majority_label = find_max_occurences(row['labels'])
+        text_id = int(row['text_id'])
+        cur.execute(update_statement, (majority_label, text_id))
+    conn.commit()
+    select_new_statement = """
+        SELECT COUNT(*) FROM text_data WHERE taught = false AND major_label IS NOT NULL AND major_label != %s
+    """
+    cur.execute(select_new_statement, ('ignored', ))
+    data = cur.fetchone()
+    if int(data[0]) >= int(keys.batch_size):
+        return True
+    else:
+        return False
+
+
+def read_labeled_data_full(conn):
     print('Reading labeled data full', flush=True)
-    conn = connect()
     if conn is not None:
         statement = """
-            SELECT * FROM text_data WHERE labeled = true AND major_label != %(ignored)s
+            SELECT text_id, text_data, major_label FROM text_data WHERE major_label IS NOT NULL AND major_label != %(ignored)s
         """
         df = pd.read_sql_query(statement, con=conn, params={"ignored": "ignored"})
         if len(df.index) == 0:
@@ -54,32 +66,17 @@ def read_labeled_data_full():
             return df
 
 
-def read_new_labeled_data():
-    print('Reading new labeled data', flush=True)
-    conn = connect()
-    if conn is not None:
-        statement = """
-            SELECT * FROM queries
-        """
-        df = pd.read_sql_query(statement, con=conn)
-        return df
-
-
-def read_all_text():
+def read_all_text(conn):
     print('Reading all text data', flush=True)
-    conn = connect()
-    if conn is not None:
-        statement = """
-            SELECT text_data FROM text_data
-        """
-        df = pd.read_sql_query(statement, con=conn)
-
-    return df
+    statement = """
+        SELECT text_data FROM text_data
+    """
+    df = pd.read_sql_query(statement, con=conn)
+    return df.to_numpy()
 
 
-def save_countvec(data):
+def save_countvec(data, conn):
     print('Saving count vectorizer', flush=True)
-    conn = connect()
     if conn is not None:
         statement = """
             INSERT INTO countvecs(countvec) VALUES (%s)
@@ -90,9 +87,8 @@ def save_countvec(data):
         conn.commit()
 
 
-def load_last_countvec():
+def load_last_countvec(conn):
     print('Loading last countvec', flush=True)
-    conn = connect()
     if conn is not None:
         statement = """
             SELECT countvec FROM countvecs ORDER BY countvec_id DESC LIMIT 1
@@ -108,9 +104,8 @@ def load_last_countvec():
             return data[0]
 
 
-def save_model(data):
+def save_model(data, conn):
     print('Saving model', flush=True)
-    conn = connect()
     if conn is not None:
         statement = """
             INSERT INTO classifiers(clf) VALUES (%s) RETURNING clf_id
@@ -123,8 +118,7 @@ def save_model(data):
         return id
 
 
-def update_label(tweet_id, majority_label, labels, users):
-    conn = connect()
+def update_label(tweet_id, majority_label, labels, users, conn):
     if conn is not None:
         statement = """
             UPDATE text_data SET major_label = %s, labels = %s, users = %s, labeled = %s  WHERE text_id = %s
@@ -135,8 +129,7 @@ def update_label(tweet_id, majority_label, labels, users):
         cur.close()
 
 
-def save_score(clf_id, precision_score):
-    conn = connect()
+def save_score(clf_id, precision_score, conn):
     if conn is not None:
         statement = """
             UPDATE classifiers SET precision_score = %s WHERE clf_id = %s
@@ -145,3 +138,11 @@ def save_score(clf_id, precision_score):
         cur.execute(statement, (precision_score, clf_id))
         conn.commit()
         cur.close()
+
+
+def find_max_occurences(arr):
+    if len(arr) > 0:
+        most_common = Counter(arr).most_common(1)[0][0]
+        return most_common
+    else:
+        return None
