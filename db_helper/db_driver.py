@@ -1,5 +1,5 @@
 import psycopg2
-from exampledata import keys
+import keys
 import pandas as pd
 import redis
 
@@ -140,10 +140,8 @@ def read_labels(conn):
     cur.close()
 
 if __name__ == '__main__':
-    r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
     conn = connect()
     create_table(conn)
     create_test_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
-    r.publish('learner', 'init')
