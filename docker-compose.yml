@@ -25,6 +25,8 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
   nginx:
     restart: always
     build: 
@@ -53,9 +55,7 @@ services:
       - JWT_SECRET=need_a_better_secret
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - SET_SIZE=10
-      - QUERY_THRESHOLD=0.8
-      - MIN_LABEL_COUNT=1
+      - BATCH_SIZE=10
   client:
     stdin_open: true
     restart: always
@@ -87,6 +87,8 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - BATCH_SIZE=10
+      - MIN_LABEL_COUNT=1
     deploy:
       resources:
         reservations:
@@ -110,25 +112,3 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - SET_SIZE=10
-  pgbackups:
-    image: prodrigestivill/postgres-backup-local
-    restart: always
-    user: postgres:postgres
-    volumes:
-      - /Users/jba/test/pgbackups:/backups
-    links:
-      - postgres
-    depends_on:
-      - postgres
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres_password
-      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
-      - SCHEDULE=@daily
-      - BACKUP_KEEP_DAYS=7
-      - BACKUP_KEEP_WEEKS=4
-      - BACKUP_KEEP_MONTHS=6
-      - HEALTHCHECK_PORT=8080

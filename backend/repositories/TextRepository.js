@@ -22,19 +22,10 @@ class TextRepository {
       const queryFlag = await this.redisClient.get('queryFlag');
       switch (queryFlag) {
         case 'available':
-          const statement = "SELECT text_id, text_data FROM queries WHERE NOT ($1 = ANY (users)) ORDER BY (array_length(users, 1)) DESC LIMIT 1";
+          const statement = "SELECT text_id, text_data FROM text_data WHERE NOT ($1 = ANY (users)) ORDER BY uncertainty ASC LIMIT 1";
           const result = await this.pgClient.query(statement, [email]);
-          if (result.rowCount !== 1) {
-            return null;
-          } else {
-            return result.rows[0];
-          }
-        case 'unavailable':
-          return null;
+          return result.rows[0];
         default:
-          await this.redisClient.set('queryFlag', 'unavailable');
-          const pub = this.redisClient.duplicate();
-          await pub.publish('predictor', 'init');
           return null;
       }
     } catch (err) {
@@ -45,19 +36,24 @@ class TextRepository {
 
   async insertLabeledText(label, email, text_id) {
     try {
-      const statement = "UPDATE queries SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
-      const result = await this.pgClient.query(statement, [label, email, text_id]);
-      if (result.rowCount !== 1) {
-        throw new Error('Insertion failed');
-      }
-      const isFull = await this.isQueryTableFull();
-      if (isFull) {
-        await this.redisClient.set('queryFlag', 'unavailable');
-        const pub = this.redisClient.duplicate();
-        await pub.publish('learner', 'update');
+      const queryFlag = await this.redisClient.get('queryFlag');
+      if (queryFlag == 'available') {
+        const statment = "UPDATE text_data SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
+        const result = await this.pgClient.query(statment, [label, email, text_id]);
+        if (result.rowCount !== 1) {
+          throw new Error('Insertion failed');
+        }
+        const queryCounter = parseInt(await this.redisClient.get('queryCounter'));
+        await this.redisClient.set('queryCounter', (queryCounter + 1));
+        if ((queryCounter + 1) % parseInt(keys.batchSize) == 0) {
+          const pub = this.redisClient.duplicate();
+          await pub.publish('learner', 'update');
+        }
         return true;
+      } else {
+        return false;
       }
-      return false;
+
 
     } catch (err) {
       console.error('DB error', err.message);
@@ -75,23 +71,6 @@ class TextRepository {
       throw err;
     }
   }
-
-  async isQueryTableFull() {
-    try {
-      const statement = "SELECT COUNT(*) AS cnt FROM queries WHERE array_length(labels, 1) >= $1";
-      const result = await this.pgClient.query(statement, [keys.minLabelCount]);
-      const count = parseInt(result.rows[0].cnt);
-      if (count / parseInt(keys.setSize) >= parseFloat(keys.queryThreshold)) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
 }
 
 module.exports = new TextRepository();
