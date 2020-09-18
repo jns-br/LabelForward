@@ -1,6 +1,7 @@
 import psycopg2
 import keys
 import pandas as pd
+import redis
 
 def connect():
     conn = None
@@ -33,18 +34,10 @@ def create_table(conn):
             text_data TEXT NOT NULL,
             labeled BOOL NOT NULL,
             selected BOOL NOT NULL,
+            taught BOOL NOT NULL,
             labels TEXT [],
             users TEXT [],
-            major_label VARCHAR(50)
-        )
-    """,
-    """
-        CREATE TABLE IF NOT EXISTS queries(
-            query_id SERIAL PRIMARY KEY,
-            text_id INTEGER NOT NULL,
-            text_data TEXT NOT NULL,
-            labels TEXT [],
-            users TEXT [],
+            major_label VARCHAR(50),
             uncertainty FLOAT
         )
     """,
@@ -111,12 +104,12 @@ def read_text_data(conn):
     text_data = pd.read_csv('data.csv')
     cur = conn.cursor()
     statement = """
-        INSERT INTO text_data(text_data, labels, users, labeled, selected) VALUES(%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+        INSERT INTO text_data(text_data, labels, users, labeled, selected, taught) VALUES(%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
     """
     doc_counter = 0
     for index, row in text_data.iterrows():
         try:
-            cur.execute(statement, (row['data'], [], [], False, False))
+            cur.execute(statement, (row['data'], [], [], False, False, False))
             doc_counter += 1
             if doc_counter % 10000 == 0:
                 conn.commit()
@@ -147,8 +140,10 @@ def read_labels(conn):
     cur.close()
 
 if __name__ == '__main__':
+    r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
     conn = connect()
     create_table(conn)
     create_test_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
+    r.publish('learner', 'init')
