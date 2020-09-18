@@ -9,12 +9,13 @@ if __name__ == '__main__':
     subscriber = r.pubsub()
     subscriber.subscribe('predictor')
     print('Initialized redis', flush=True)
+    r.set('queryFlag', 'unavailable')
+    conn = pg_helper.connect()
 
     for new_msg in subscriber.listen():
         print('Message: ', new_msg['data'], flush=True)
         if new_msg['data'] == 'update':
-            model_helper.make_queries()
-            r.set('queryFlag', 'available')
-        if new_msg['data'] == 'init':
-            pg_helper.get_initial_batch()
+            data = model_helper.update_uncertainties(conn)
+            r.set('queryFlag', 'unavailable')
+            pg_helper.insert_uncertainties(data, conn)
             r.set('queryFlag', 'available')
