@@ -53,9 +53,7 @@ services:
       - JWT_SECRET=need_a_better_secret
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - SET_SIZE=10
-      - QUERY_THRESHOLD=0.8
-      - MIN_LABEL_COUNT=1
+      - BATCH_SIZE=10
   client:
     stdin_open: true
     restart: always
