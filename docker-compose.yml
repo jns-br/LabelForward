@@ -85,6 +85,8 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - BATCH_SIZE=10
+      - MIN_LABEL_COUNT=1
     deploy:
       resources:
         reservations:
