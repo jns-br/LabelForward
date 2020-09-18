@@ -53,8 +53,6 @@ class TextRepository {
       } else {
         return false;
       }
-
-
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
