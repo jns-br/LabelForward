@@ -63,23 +63,6 @@ class TextRepository {
       throw err;
     }
   }
-
-  async isQueryTableFull() {
-    try {
-      const statement = "SELECT COUNT(*) AS cnt FROM queries WHERE array_length(labels, 1) >= $1";
-      const result = await this.pgClient.query(statement, [keys.minLabelCount]);
-      const count = parseInt(result.rows[0].cnt);
-      if (count / parseInt(keys.setSize) >= parseFloat(keys.queryThreshold)) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
 }
 
 module.exports = new TextRepository();
