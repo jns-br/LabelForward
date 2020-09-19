@@ -33,4 +33,4 @@ spec:
                 secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
-      restartPolicy: Never
+      restartPolicy: OnFailure
