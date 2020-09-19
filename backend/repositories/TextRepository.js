@@ -11,15 +11,12 @@ class TextRepository {
       password: keys.pgPassword,
       port: keys.pgPort
     });
-    this.redisClient = new Redis({
-      port: keys.redisPort,
-      host: keys.redisHost
-    });
   }
 
   async getNextText(email) {
     try {
-      const queryFlag = await this.redisClient.get('queryFlag');
+      const redisClient = new Redis({ port: keys.redisPort, host: keys.redisHost });
+      const queryFlag = await redisClient.get('queryFlag');
       switch (queryFlag) {
         case 'available':
           const statement = "SELECT text_id, text_data FROM text_data WHERE NOT ($1 = ANY (users)) ORDER BY uncertainty ASC LIMIT 1";
@@ -36,17 +33,18 @@ class TextRepository {
 
   async insertLabeledText(label, email, text_id) {
     try {
-      const queryFlag = await this.redisClient.get('queryFlag');
+      const redisClient = new Redis({ port: keys.redisPort, host: keys.redisHost });
+      const queryFlag = await redisClient.get('queryFlag');
       if (queryFlag == 'available') {
         const statment = "UPDATE text_data SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
         const result = await this.pgClient.query(statment, [label, email, text_id]);
         if (result.rowCount !== 1) {
           throw new Error('Insertion failed');
         }
-        const queryCounter = parseInt(await this.redisClient.get('queryCounter'));
+        const queryCounter = parseInt(await redisClient.get('queryCounter'));
         await this.redisClient.set('queryCounter', (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
-          const pub = this.redisClient.duplicate();
+          const pub = redisClient.duplicate();
           await pub.publish('learner', 'update');
         }
         return true;
