@@ -1,12 +1,8 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: dbhelper-deployment
+  name: dbhelper-job
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      component: dbhelper
   template:
     metadata:
       labels:
@@ -37,3 +33,4 @@ spec:
                 secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
+      restartPolicy: Never
