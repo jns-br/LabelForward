@@ -32,7 +32,7 @@ spec:
               value: '5432'
             - name: NODE_PORT
               value: '5000'
-            - name: SET_SIZE
+            - name: BATCH_SIZE
               value: '10'
             - name: PGPASSWORD
               valueFrom:
