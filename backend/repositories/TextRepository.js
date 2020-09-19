@@ -42,7 +42,7 @@ class TextRepository {
           throw new Error('Insertion failed');
         }
         const queryCounter = parseInt(await redisClient.get('queryCounter'));
-        await this.redisClient.set('queryCounter', (queryCounter + 1));
+        await redisClient.set('queryCounter', (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
           const pub = redisClient.duplicate();
           await pub.publish('learner', 'update');
@@ -51,8 +51,6 @@ class TextRepository {
       } else {
         return false;
       }
-
-
     } catch (err) {
       console.error('DB error', err.message);
       throw err;

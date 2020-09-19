@@ -9,7 +9,7 @@ class WaitCard extends Component {
         <Card className="WaitCard">
           <Card.Body>
             <Card.Text>
-              Waiting for new tweets...
+              Waiting for new data to label ...
             </Card.Text>
           </Card.Body>
           <Card.Footer className="WaitFooter">

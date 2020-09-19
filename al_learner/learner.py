@@ -16,7 +16,6 @@ if __name__ == '__main__':
 
     for new_msg in subscriber.listen():
         print('Message: ', new_msg['data'], flush=True)
-        # read indices, select records to df
         if new_msg['data'] == 'init':
             model_helper.init(conn)
             r.publish('predictor', 'update')

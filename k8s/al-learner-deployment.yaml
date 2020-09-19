@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: al-learner-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: allearner
+  template:
+    metadata:
+      labels:
+        component: allearner
+    spec:
+      containers:
+        - name: allearner
+          image: jnsbr/covidstate-learner
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: PGHOST
+              value: postgres-cluster-ip-service
+            - name: PGUSER
+              value: postgres
+            - name: PGDATABASE
+              value: postgres
+            - name: PGPORT
+              value: '5432'
+            - name: BATCH_SIZE
+              value: '10'
+            - name: MIN_LABEL_COUNT
+              value: '1'
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
