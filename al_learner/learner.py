@@ -14,10 +14,11 @@ if __name__ == '__main__':
     conn = pg_helper.connect()
     print('Initialized postgres connection', flush=True)
 
-    model_helper.init(conn)
-    r.publish('predictor', 'update')
     for new_msg in subscriber.listen():
         print('Message: ', new_msg['data'], flush=True)
+        if new_msg['data'] == 'init':
+            model_helper.init(conn)
+            r.publish('predictor', 'update')
         if new_msg['data'] == 'update':
             X_test, y_test, clf, id = model_helper.update(conn)
             if clf != None:
