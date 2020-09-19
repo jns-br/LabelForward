@@ -45,7 +45,7 @@ class TextRepository {
         }
         const queryCounter = parseInt(await this.redisClient.get('queryCounter'));
         await this.redisClient.set('queryCounter', (queryCounter + 1));
-        if ((queryCounter + 1) % parseInt(keys.batchSize) == 0) {
+        if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
           const pub = this.redisClient.duplicate();
           await pub.publish('learner', 'update');
         }
