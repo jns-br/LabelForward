@@ -1,21 +1,21 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: al-learner-deployment
+  name: dbhelper-job
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      component: allearner
   template:
     metadata:
       labels:
-        component: allearner
+        component: dbhelper
     spec:
       containers:
-        - name: allearner
-          image: jnsbr/covidstate-learner
+        - name: dbhelper
+          image: jnsbr/covidstate-dbhelper
           env:
+            - name: DATA_PATH
+              value: exampledata/data.csv
+            - name: LABEL_PATH
+              value: exampledata/labels.csv
             - name: REDIS_HOST
               value: redis-cluster-ip-service
             - name: REDIS_PORT
@@ -28,12 +28,9 @@ spec:
               value: postgres
             - name: PGPORT
               value: '5432'
-            - name: BATCH_SIZE
-              value: '10'
-            - name: MIN_LABEL_COUNT
-              value: '1'
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
+      restartPolicy: OnFailure

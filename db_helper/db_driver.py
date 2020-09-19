@@ -145,3 +145,5 @@ if __name__ == '__main__':
     create_test_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
+    r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
+    r.publish('learner', 'init')
