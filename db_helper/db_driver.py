@@ -2,6 +2,7 @@ import psycopg2
 import keys
 import pandas as pd
 import redis
+import sys
 
 def connect():
     conn = None
@@ -139,9 +140,26 @@ def read_labels(conn):
     print('Inserted labels', flush=True)
     cur.close()
 
+
+def check_for_existing_data(conn):
+    cur = conn.cursor()
+    statement = """
+        SELECT COUNT(*) AS cnt FROM text_data
+    """
+    cur.execute(statement)
+    result = cur.fetchone()
+    if result[0] == 0:
+        return False
+    else:
+        return True
+
+
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
+    data_exists = check_for_existing_data(conn)
+    if data_exists:
+        sys.exit()
     create_test_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
