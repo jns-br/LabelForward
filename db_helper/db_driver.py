@@ -134,7 +134,7 @@ def read_accessors(conn):
     for index, row in accessor_data.iterrows():
         try:
             cur.execute(statement, (row['accessor'], ))
-        except: psycopg2.DatabaseError as error:
+        except psycopg2.DatabaseError as error:
             print('error: ', error)
     
     conn.commit()
@@ -158,7 +158,7 @@ def check_for_existing_data(conn):
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
-    create_test_accessors(conn)
+    read_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
     data_exists = check_for_existing_data(conn)
