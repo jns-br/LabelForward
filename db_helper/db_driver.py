@@ -87,20 +87,6 @@ def create_table(conn):
         print('error: ', error)
 
 
-def create_test_accessors(conn):
-    statement = "INSERT INTO accessors(email) VALUES (%s) ON CONFLICT DO NOTHING"
-    cur = conn.cursor()
-    test_felix = "felix@test.com"
-    test_jonas = "jonas@test.com"
-    try:
-        cur.execute(statement, (test_felix,))
-        cur.execute(statement, (test_jonas,))
-        cur.close()
-        conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print('error: ', error)
-
-
 def read_text_data(conn):
     text_data = pd.read_csv(keys.data_path)
     cur = conn.cursor()
@@ -138,6 +124,21 @@ def read_labels(conn):
 
     conn.commit()
     print('Inserted labels', flush=True)
+    cur.close()
+
+def read_accessors(conn):
+    accessor_data = pd.read_csv(keys.accessor_path)
+    cur = conn.cursor()
+    statement = "INSERT INTO accessors(email) VALUES (%s) ON CONFLICT DO NOTHING"
+
+    for index, row in accessor_data.iterrows():
+        try:
+            cur.execute(statement, (row['accessor'], ))
+        except: psycopg2.DatabaseError as error:
+            print('error: ', error)
+    
+    conn.commit()
+    print('Inserted accessors', flush=True)
     cur.close()
 
 
