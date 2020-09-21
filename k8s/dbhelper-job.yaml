@@ -12,6 +12,8 @@ spec:
         - name: dbhelper
           image: jnsbr/covidstate-dbhelper
           env:
+            - name: ACCESSOR_PATH
+              value: exampledata/accessors.csv
             - name: DATA_PATH
               value: exampledata/data.csv
             - name: LABEL_PATH
