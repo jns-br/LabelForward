@@ -58,6 +58,7 @@ The aforementioned process builds the project with example data, a news headline
 
 ## 1. Prepare your data
 The data and the labels must be provided as a CSV file. Each file must only contain a single column, the data file one column with one text data point in each row, the label file one column with one label in each row. You also need to define a list of accessors (eg. email addresses of annotators) in the same format. See the db_helper/exampledata for examples.
+Note that you need to locate your data, samples and accessors somewhere within the db_helper folder.
 
 ## 2. Adjust the docker-compose files
 In the docker-compose files, you need to adjust the paths DATA_PATH, LABEL_PATH AND ACCESSOR_PATH to your CSV file paths. 
