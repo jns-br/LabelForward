@@ -47,7 +47,6 @@ For production mode:
 docker-compose -f docker-compose-prod.yml up --build
 ```
 
-
 # Troubleshooting
 Sometimes the project might not update correctly when being rebuilt with changes in the services. Instead of pulling the project again and rebuild it from scratch, try executing the following command in the main directory:
 ```shell
