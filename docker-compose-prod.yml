@@ -27,9 +27,9 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - DATA_PATH=exampledata/data.csv
-      - LABEL_PATH=exampledata/labels.csv
-      - ACCESSOR_PATH=exampledata/accessors.csv
+      - DATA_PATH=exampledata/data.csv # adjust to path of your data file
+      - LABEL_PATH=exampledata/labels.csv # adjust to path of your label file
+      - ACCESSOR_PATH=exampledata/accessors.csv # adjust to path of your accesor file
   nginx:
     restart: always
     build: 
@@ -55,10 +55,10 @@ services:
       - PGPASSWORD=postgres_password
       - PGPORT=5432
       - NODE_PORT=5000
-      - JWT_SECRET=need_a_better_secret
+      - JWT_SECRET=need_a_better_secret # set your ownn secret
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - BATCH_SIZE=10
+      - BATCH_SIZE=10 # set size when al learner should try an update
   client:
     stdin_open: true
     restart: always
@@ -90,8 +90,8 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - BATCH_SIZE=10
-      - MIN_LABEL_COUNT=1
+      - BATCH_SIZE=10 # set batch size of new data to be trained on
+      - MIN_LABEL_COUNT=1 # set count of minimum labels needed to trigger a vote on a majority label
     deploy:
       resources:
         reservations:
