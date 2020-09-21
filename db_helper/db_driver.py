@@ -144,7 +144,7 @@ def read_labels(conn):
 def check_for_existing_data(conn):
     cur = conn.cursor()
     statement = """
-        SELECT COUNT(*) AS cnt FROM text_data
+        SELECT COUNT(*) AS cnt FROM text_data WHERE uncertainty IS NOT NULL
     """
     cur.execute(statement)
     result = cur.fetchone()
@@ -157,11 +157,10 @@ def check_for_existing_data(conn):
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
-    data_exists = check_for_existing_data(conn)
-    if data_exists:
-        sys.exit()
     create_test_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
-    r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
-    r.publish('learner', 'init')
+    data_exists = check_for_existing_data(conn)
+    if not data_exists:
+        r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
+        r.publish('learner', 'init')
