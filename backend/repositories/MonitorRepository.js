@@ -14,7 +14,7 @@ class MonitorRepository {
 
   async getClfData() {
     try {
-      const statement = "SELECT clf_id, precision_score, created_at FROM classifiers";
+      const statement = "SELECT clf_id, precision_score, created_at, download FROM classifiers";
       const result = await this.pgClient.query(statement);
       const clfData = result.rows.map(val => {
         return {
