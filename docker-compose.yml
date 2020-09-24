@@ -1,7 +1,7 @@
 version: '3'
 volumes: 
   web_data:
-    external: true
+
 services:
   redis:
     image: redis:latest
