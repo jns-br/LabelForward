@@ -31,8 +31,18 @@ router.post('/download', JWTService.requireJWT(), async (req, res) => {
     await redis.publish('dl_manager', clfMsg);
     res.status(200).json();
   } catch (err) {
-    res.status(500),json({msg: err.message});
+    res.status(500).json({msg: err.message});
   }
-})
+});
+
+router.get('/download', JWTService.requireJWT(), async (req, res) => {
+  try {
+    const clfId = req.params.clfId;
+    const fileLocation = '/usr/share/data/' + clfId + '/data.zip';
+    res.download(fileLocation, err => console.log(err));
+  } catch (err) {
+    res.status(500).json({err: err.message});
+  }
+});
 
 module.exports = router;
