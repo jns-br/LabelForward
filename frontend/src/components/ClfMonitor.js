@@ -18,10 +18,12 @@ class ClfMonitor extends Component {
     return (
       <Table striped bordered hover>
         <thead>
-          <th>Classifier</th>
-          <th>Precision</th>
-          <th>Created at</th>
-          <th>Download</th>
+          <tr>
+            <th>Classifier</th>
+            <th>Precision</th>
+            <th>Created at</th>
+            <th>Download</th>
+          </tr>
         </thead>
         <tbody>
           {this.props.clfs.map((value, index) => {
