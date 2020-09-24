@@ -21,11 +21,19 @@ class MonitorService {
 
   async requestDownload(clfId) {
     try {
-      const res = await axios.post('/api/monitor/download', {
+      await axios.post('/api/monitor/download', {
         clfId: clfId
       });
-      return res;
     } catch (err) {
+      throw err;
+    }
+  }
+
+  async startDownload(clfId) {
+    try {
+      const res = await axios.get('/api/monitor/download', { params: { clfId: clfId}});
+      return res;
+    } catch (error) {
       throw err;
     }
   }
