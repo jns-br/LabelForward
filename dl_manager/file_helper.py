@@ -5,7 +5,10 @@ from os.path import basename
 
 
 def save_df_to_csv(fn, clf_id, df):
-    os.mkdir('/usr/share/data/'+ clf_id)
+    try:
+        os.mkdir('/usr/share/data/'+ clf_id +'/')
+    except FileExistsError as error:
+        print(error)
     path = '/usr/share/data/' + clf_id + "/" + fn + '.csv'
     df.to_csv(path_or_buf=path, mode='w+')
 
