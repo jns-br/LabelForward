@@ -16,12 +16,6 @@ class TextCard extends Component {
           </Card.Body>
         </Card>
         <Card className="SelectorCard">
-          <Card.Header>
-            <div>Selected Label (click label to delete)</div>
-            {
-              <Badge pill variant="secondary" onClick={this.props.onDeleteLabel}>{this.props.selected}</Badge>
-            }
-          </Card.Header>
           <Card.Body>
             <Form>
               <Form.Group>
