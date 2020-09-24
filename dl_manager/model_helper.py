@@ -11,5 +11,5 @@ def create_labels(conn, clf_id):
     labels = clf.predict(X)
     labels_df = pd.DataFrame(labels, columns=['major_label'])
     data_df['major_label'] = labels_df['major_label']
-    return data_df
+    return data_df, clf
 
