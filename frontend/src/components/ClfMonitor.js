@@ -4,7 +4,7 @@ import { Button, Table } from 'react-bootstrap';
 class ClfMonitor extends Component {
 
   rederButton = (downloadState, reqHandler, dlHandler) => {
-    state = parseInt(downloadState);
+    const state = parseInt(downloadState);
     if(state === 0) {
       return (<Button variant="primary" onClick={reqHandler}>Request DL</Button>)
     } else if (state === 1) {

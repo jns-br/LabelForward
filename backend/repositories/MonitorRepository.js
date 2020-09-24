@@ -20,7 +20,8 @@ class MonitorRepository {
         return {
           clfId : val.clf_id,
           precision : val.precision_score,
-          timestamp : val.created_at
+          timestamp : val.created_at,
+          download : val.download
         }
       });
       return clfData;

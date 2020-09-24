@@ -32,6 +32,7 @@ class Monitor extends Component {
     try {
       const result = await MonitorService.getClfData();
       const data = Array.from(result.clfData);
+      console.log(data);
       this.setState({ clfArray: data});
     } catch (err) {
       console.error(err.message);
@@ -48,11 +49,11 @@ class Monitor extends Component {
   }
 
   requestDownload = async () => {
-
+    console.log('request download')
   }
 
   download = async () => {
-
+    console.log('download')
   }
 
   renderRedirect = () => {
