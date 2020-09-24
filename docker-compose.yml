@@ -1,4 +1,7 @@
 version: '3'
+volumes: 
+  web_data:
+    external: true
 services:
   redis:
     image: redis:latest
@@ -48,6 +51,7 @@ services:
     volumes: 
       - /usr/src/app/node_modules
       - ./backend:/usr/src/app
+      - web_data:/usr/share/data
     environment: 
       - PGUSER=postgres
       - PGHOST=postgres
@@ -107,6 +111,25 @@ services:
     build: 
       dockerfile: Dockerfile.dev
       context: ./al_predictor
+    environment: 
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+  dlmanager:
+    restart: always
+    depends_on: 
+      - postgres
+      - api
+      - client
+      - redis
+      - db_helper
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./dl_manager
     environment: 
       - PGUSER=postgres
       - PGHOST=postgres
