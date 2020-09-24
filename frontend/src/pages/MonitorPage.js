@@ -61,7 +61,7 @@ class Monitor extends Component {
     console.log('download');
     try {
       await MonitorService.startDownload(event.target.id);
-    } catch (error) {
+    } catch (err) {
       console.error(err.message);
     }
   }
