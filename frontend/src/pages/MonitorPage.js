@@ -48,8 +48,14 @@ class Monitor extends Component {
     }
   }
 
-  requestDownload = async () => {
+  requestDownload = async event => {
     console.log('request download')
+    console.log(event.target.id);
+    try {
+      await MonitorService.requestDownload(event.target.id);
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
   download = async () => {
