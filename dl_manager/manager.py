@@ -4,7 +4,7 @@ import pg_helper
 import model_helper
 import file_helper
 
-if __name__ == '__mainn__':
+if __name__ == '__main__':
     print('Starting DL Manager', flush=True)
     r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
     subscriber = r.pubsub()
