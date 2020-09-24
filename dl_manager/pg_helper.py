@@ -63,3 +63,12 @@ def load_count_vec(conn):
     else:
         cur.close()
         return data[0]
+
+
+def update_download_status(conn, clf_id, status):
+    cur = conn.cursor()
+    statement = """
+        UPDATE classifiers SET download = %s WHERE clf_id = %s
+    """
+    cur.execute(statement, (status, clf_id))
+    conn.commit()
