@@ -1,5 +1,6 @@
 import keys
 import psycopg2
+import pandas as pd
 
 def connect():
     conn = None
@@ -30,3 +31,11 @@ def load_model_by_id(conn, clf_id):
     else:
         cur.close()
         return data[0]
+
+
+def load_unlabeled_data(conn):
+    statement = """
+        SELECT text_id, text_data FROM text_data WHERE major_label IS NULL
+    """
+    df = pd.read_sql_query(statement, con=conn)
+    return df
