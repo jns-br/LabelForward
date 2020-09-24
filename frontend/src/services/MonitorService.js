@@ -18,6 +18,17 @@ class MonitorService {
       throw err;
     }
   }
+
+  async requestDownload(clfId) {
+    try {
+      const res = await axios.post('/api/monitor/download', {
+        clfId: clfId
+      });
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default new MonitorService();
