@@ -32,7 +32,7 @@ class MonitorService {
   async startDownload(clfId) {
     try {
       await axios.get('/api/monitor/download', { params: { clfId: clfId}});
-    } catch (error) {
+    } catch (err) {
       throw err;
     }
   }
