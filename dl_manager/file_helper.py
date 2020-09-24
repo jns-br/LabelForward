@@ -5,8 +5,9 @@ from os.path import basename
 
 
 def save_df_to_csv(fn, clf_id, df):
-    path = '/usr/share/data/' + clf_id + "/" + fn
-    df.to_csv(path_or_buf=path)
+    os.mkdir('/usr/share/data/'+ clf_id)
+    path = '/usr/share/data/' + clf_id + "/" + fn + '.csv'
+    df.to_csv(path_or_buf=path, mode='w+')
 
 
 def save_clf(clf, clf_id):
