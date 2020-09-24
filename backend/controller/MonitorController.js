@@ -36,8 +36,9 @@ router.post('/download', JWTService.requireJWT(), async (req, res) => {
 
 router.get('/download', JWTService.requireJWT(), async (req, res) => {
   try {
-    const clfId = req.params.clfId;
-    const fileLocation = '/usr/share/data/' + clfId + '/data.zip';
+    const clfId = req.query.clfId;
+    console.log(req.query)
+    const fileLocation = '/web_data/' + clfId + '/data.zip';
     res.download(fileLocation, err => console.log(err));
   } catch (err) {
     res.status(500).json({err: err.message});
