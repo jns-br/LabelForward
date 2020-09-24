@@ -48,3 +48,18 @@ def load_human_labeled_data(conn):
     """
     df = pd.read_sql_query(statement, con=conn)
     return df
+
+
+def load_count_vec(conn):
+    cur = conn.cursor()
+    statement = """
+        SELECT countvec FROM countvecs ORDER BY countvec_id DESC LIMIT 1
+    """
+    cur.execute(statement)
+    data = cur.fetchone()
+    if data is None:
+        cur.close()
+        return None
+    else:
+        cur.close()
+        return data[0]
