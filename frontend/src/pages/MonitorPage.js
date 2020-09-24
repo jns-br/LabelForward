@@ -47,6 +47,14 @@ class Monitor extends Component {
     }
   }
 
+  requestDownload = async () => {
+
+  }
+
+  download = async () => {
+
+  }
+
   renderRedirect = () => {
     if(this.state.redirect) {
       return <Redirect to="/" />;
@@ -61,7 +69,11 @@ class Monitor extends Component {
         <div className="ClfTable">
           <LabelMonitor labelShare={this.state.labelShare} />
           <br />
-          <ClfMonitor clfs={this.state.clfArray} />
+          <ClfMonitor 
+            clfs={this.state.clfArray}
+            reqHandler={this.requestDownload}
+            dlHandler={this.download} 
+          />
         </div>
       </div>
     )
