@@ -126,7 +126,7 @@ services:
       - api
       - client
       - redis
-      - db_helper
+      - dbhelper
     build: 
       dockerfile: Dockerfile.dev
       context: ./dl_manager
