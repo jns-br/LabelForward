@@ -4,7 +4,6 @@ const MonitorRepository = require('../repositories/MonitorRepository');
 const JWTService = require('../services/JWTService');
 const Redis = require('ioredis');
 const keys = require('../keys');
-const { json } = require('body-parser');
 
 router.get('/classifiers', JWTService.requireJWT(), async (req, res) => {
   try {
