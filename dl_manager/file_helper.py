@@ -21,9 +21,16 @@ def save_clf(clf, clf_id):
 
 def create_zip_file(clf_id):
     dir_name = '/usr/share/data/' + clf_id
-    zip_name = dir_name + '/data.zip'
+    zip_name = dir_name + '/data-' + clf_id + '.zip'
     with ZipFile(zip_name, 'w') as zip_obj:
         for folder_name, subfolders, filenames in os.walk(dir_name):
             for filename in filenames:
                 filepath = os.path.join(folder_name, filename)
                 zip_obj.write(filepath, basename(filepath))
+
+
+def move_zip(clf_id):
+    filename = 'data-' + clf_id + '.zip'
+    filepath = '/usr/share/data/' + clf_id + '/' + filename
+    new_path = '/usr/share/data/' + filename
+    os.rename(filepath, new_path)
