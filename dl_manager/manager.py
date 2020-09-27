@@ -12,7 +12,7 @@ if __name__ == '__main__':
     subscriber.subscribe('dl_manager')
     print('Initialized redis', flush=True)
     try:
-        os.mkdir('/usr/share/data/')
+        os.mkdir('/app/data/')
     except FileExistsError as error:
         print(error)
     conn = pg_helper.connect()
@@ -31,4 +31,6 @@ if __name__ == '__main__':
                 hld_file_name = 'human_labeled_data'
                 file_helper.save_df_to_csv(hld_file_name, str(clf_id), human_labeled_df)
                 file_helper.create_zip_file(str(clf_id))
+                filename = '/app/data/data-' + str(clf_id) + '.zip'
+                pg_helper.persist_download(conn, str(clf_id), filename)
                 pg_helper.update_download_status(conn, clf_id, 2)

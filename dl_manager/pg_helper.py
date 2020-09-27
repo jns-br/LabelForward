@@ -72,3 +72,12 @@ def update_download_status(conn, clf_id, status):
     """
     cur.execute(statement, (status, clf_id))
     conn.commit()
+
+
+def persist_download(conn, clf_id, filename):
+    cur = conn.cursor()
+    statement = """
+        INSERT INTO downloads(clf_id, file) VALUES(%s, %s)
+    """
+    with open(filename, 'rb') as zip_archive:
+        cur.execute(statement, (clf_id, zip_archive.read()))
