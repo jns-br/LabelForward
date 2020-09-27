@@ -81,3 +81,22 @@ def persist_download(conn, clf_id, filename):
     """
     with open(filename, 'rb') as zip_archive:
         cur.execute(statement, (clf_id, zip_archive.read()))
+
+
+def save_labeled_data(conn, df, clf_id):
+    table_name = 'data-' + clf_id
+    cur = conn.cursor()
+    create_statement = """
+        CREATE TABLE IF NOT EXISTS {0}(
+            text_id INTEGER PRIMARY KEY,
+            text_data TEXT NOT NULL,
+            label VARCHAR(50) NOT NULL
+        )
+    """.format(table_name)
+    cur.execute(create_statement)
+    insert_statement = """
+        INSERT INTO {0} (text_id, text_data, label) VALUES (%s, %s, %s)
+    """.format(table_name)
+    for index, row in df.iterrows():
+        cur.execute(insert_statement, (row['text_id'], row['text_data'], row['major_label']))
+    conn.commit()
