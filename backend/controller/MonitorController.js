@@ -37,9 +37,8 @@ router.post('/download', JWTService.requireJWT(), async (req, res) => {
 router.get('/download', JWTService.requireJWT(), async (req, res) => {
   try {
     const clfId = req.query.clfId;
-    console.log(req.query)
-    const fileLocation = '/app/data/data-' + clfId + '.zip' 
-    res.download(fileLocation, err => console.log(err));
+    const filePath = await MonitorRepository.create_zip(clfId);
+    res.download(filePath, err => console.log(err));
   } catch (err) {
     res.status(500).json({err: err.message});
   }

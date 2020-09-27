@@ -1,4 +1,8 @@
 version: '3'
+volumes: 
+  web_data:
+    external: true
+user: root
 services:
   redis:
     image: redis:latest
@@ -48,6 +52,7 @@ services:
     volumes: 
       - /usr/src/app/node_modules
       - ./backend:/usr/src/app
+      - web_data:/usr/share/data
     environment: 
       - PGUSER=postgres
       - PGHOST=postgres

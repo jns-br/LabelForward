@@ -1,5 +1,6 @@
 const keys = require('../keys');
 const { Pool } = require('pg');
+const fs = require('fs/promises');
 
 class MonitorRepository {
   constructor () {
@@ -44,6 +45,21 @@ class MonitorRepository {
       return labelCount / totalCount;
     } catch (err) {
       
+    }
+  }
+
+  async create_zip(clfId) {
+    try {
+      console.log('Creating zip');
+      const statement = "SELECT file FROM downloads WHERE clf_id = $1";
+      const res = await this.pgClient.query(statement, [clfId]);
+      const filePath = '/app/data/data-' + clfId + '.zip';
+      await fs.writeFile(filePath, res.rows[0].file);
+      console.log('zip created');
+      return filePath;
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
     }
   }
 }
