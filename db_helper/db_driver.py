@@ -75,6 +75,13 @@ def create_table(conn):
             countvec_id SERIAL PRIMARY KEY,
             countvec BYTEA NOT NULL
         )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS downloads(
+            download_id SERIAL PRIMARY KEY,
+            clf_id INTEGER NOT NULL,
+            file BYTEA NOT NULL
+        )
     """
     )
     try:
