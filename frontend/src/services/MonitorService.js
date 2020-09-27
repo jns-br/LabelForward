@@ -31,7 +31,23 @@ class MonitorService {
 
   async startDownload(clfId) {
     try {
-      await axios.get('/api/monitor/download', { params: { clfId: clfId }});
+      const data = await axios.get('/api/monitor/download', { 
+        params: { clfId: clfId },
+        responseType: 'blob',
+        headers: {
+          'Content-Type': 'application/zip'
+        }
+      });
+      
+      const dlUrl = window.URL.createObjectURL(new Blob([data], {type: 'application/zip'}));
+      const link = document.createElement('a');
+      link.href = dlUrl;
+      const fileName = 'data-' + clfId + '.zip' 
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
     } catch (err) {
       throw err;
     }
