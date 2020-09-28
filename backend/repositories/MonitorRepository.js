@@ -52,6 +52,7 @@ class MonitorRepository {
   async create_zip(clfId) {
     try {
       console.log('Creating zip');
+      await fs.mkdir('/app/data/', {recursive: true});
       const statement = "SELECT file FROM downloads WHERE clf_id = $1";
       const res = await this.pgClient.query(statement, [clfId]);
       const filePath = '/app/data/data-' + clfId + '.zip';
