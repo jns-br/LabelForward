@@ -44,7 +44,8 @@ class MonitorRepository {
 
       return labelCount / totalCount;
     } catch (err) {
-      
+      console.error('DB error', err.message);
+      throw err;
     }
   }
 
