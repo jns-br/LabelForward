@@ -8,7 +8,7 @@ class TextCard extends Component {
     return (
       <div>
         <Card className="TextCard">
-          <Card.Header as="h5">Tweet</Card.Header>
+          <Card.Header as="h5">Text sample</Card.Header>
           <Card.Body>
             <Card.Text>
               {this.props.tweet}

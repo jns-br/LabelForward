@@ -34,10 +34,10 @@ class SignUp extends Component {
   renderAlertRegisterSuccess = () => {
     if (this.state.alert === 'success') {
       return <Alert variant="light" className="AlertRegister" onClose={() => this.setAlert("")} dismissible>
-        <Alert.Heading>Welcome to CovidState</Alert.Heading>
+        <Alert.Heading>Welcome to LabelForward</Alert.Heading>
         <hr />
         <p>
-          You can now log in to the CovidStateApp.
+          You can now log in to the LabelForwardApp.
         </p>
       </Alert>
     }
@@ -116,7 +116,7 @@ class SignUp extends Component {
         {this.renderAlertRegisterSuccess()}
         {this.renderAlertRegisterFailure()}
         {this.renderAlertPassword()}
-        <h2 className="SignUpHeader">CovidState Registration</h2>
+        <h2 className="SignUpHeader">LabelForward Registration</h2>
         <Form>
           <Form.Group controlId="formSignupEmail">
             <Form.Label>Email address</Form.Label>

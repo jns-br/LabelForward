@@ -1,4 +1,4 @@
-# CovidStateWeb Kubernetes
+# LabelForward Kubernetes
 
 In this directory you will find the configuration files needed for a deployment on a kubernetes cluster. 
 

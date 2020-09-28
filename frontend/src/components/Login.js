@@ -67,7 +67,7 @@ class Login extends Component {
       <div className="LoginForm">
         {this.renderRedirect()}
         {this.renderLoginAlert()}
-        <h2 className="LoginHeader">CovidState Login</h2>
+        <h2 className="LoginHeader">LabelForward Login</h2>
         <Form>
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
