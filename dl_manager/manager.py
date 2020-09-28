@@ -11,10 +11,7 @@ if __name__ == '__main__':
     subscriber = r.pubsub()
     subscriber.subscribe('dl_manager')
     print('Initialized redis', flush=True)
-    try:
-        os.mkdir('/app/data/')
-    except FileExistsError as error:
-        print(error)
+    
     conn = pg_helper.connect()
 
     for new_msg in subscriber.listen():
