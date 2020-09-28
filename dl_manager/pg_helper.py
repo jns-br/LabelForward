@@ -102,3 +102,4 @@ def save_labeled_data(conn, df, clf_id):
     for index, row in df.iterrows():
         cur.execute(insert_statement, (row['text_id'], row['text_data'], row['major_label']))
     conn.commit()
+

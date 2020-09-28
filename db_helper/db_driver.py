@@ -4,6 +4,7 @@ import pandas as pd
 import redis
 import sys
 
+
 def connect():
     conn = None
     try:
