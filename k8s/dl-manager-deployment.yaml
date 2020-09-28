@@ -12,6 +12,10 @@ spec:
       labels:
         compoment: dlmanager
     spec:
+      volumes:
+        - name: dlmanager-storage
+          persistentVolumeClaim:
+            claimName: dl-manager-persistent-volume-claim
       containers:
         - name: dlmanager
           image: jnsbr/covidstate-dlmanager
