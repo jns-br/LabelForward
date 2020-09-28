@@ -31,14 +31,14 @@ class MonitorService {
 
   async startDownload(clfId) {
     try {
-      const data = await axios.get('/api/monitor/download', { 
+      const res = await axios.get('/api/monitor/download', { 
         params: { clfId: clfId },
         responseType: 'blob',
         headers: {
           'Content-Type': 'application/zip'
         }
       });
-      
+      const data = res.data;
       const dlUrl = window.URL.createObjectURL(new Blob([data], {type: 'application/zip'}));
       const link = document.createElement('a');
       link.href = dlUrl;

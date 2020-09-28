@@ -53,7 +53,7 @@ class MonitorRepository {
       console.log('Creating zip');
       const statement = "SELECT file FROM downloads WHERE clf_id = $1";
       const res = await this.pgClient.query(statement, [clfId]);
-      const filePath = '/app/controller/data/data-' + clfId + '.zip';
+      const filePath = '/app/data/data-' + clfId + '.zip';
       await fs.writeFile(filePath, res.rows[0].file);
       console.log('zip created');
       return filePath;
