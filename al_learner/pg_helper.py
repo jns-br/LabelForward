@@ -109,10 +109,10 @@ def save_model(data, conn):
     print('Saving model', flush=True)
     if conn is not None:
         statement = """
-            INSERT INTO classifiers(clf) VALUES (%s) RETURNING clf_id
+            INSERT INTO classifiers(clf, download) VALUES (%s, %s) RETURNING clf_id
         """
         cur = conn.cursor()
-        cur.execute(statement, (data,))
+        cur.execute(statement, (data, 0))
         conn.commit()
         id = cur.fetchone()[0]
         cur.close()

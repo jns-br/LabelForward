@@ -32,6 +32,7 @@ class Monitor extends Component {
     try {
       const result = await MonitorService.getClfData();
       const data = Array.from(result.clfData);
+      data.shift();
       this.setState({ clfArray: data});
     } catch (err) {
       console.error(err.message);
@@ -42,6 +43,25 @@ class Monitor extends Component {
     try {
       const result = await MonitorService.getLabelShare();
       this.setState({ labelShare: result.labelShare});
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  requestDownload = async event => {
+    console.log('request download')
+    try {
+      await MonitorService.requestDownload(event.target.id);
+      window.location.reload();
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  download = async event => {
+    console.log('download');
+    try {
+      await MonitorService.startDownload(event.target.id);
     } catch (err) {
       console.error(err.message);
     }
@@ -61,7 +81,11 @@ class Monitor extends Component {
         <div className="ClfTable">
           <LabelMonitor labelShare={this.state.labelShare} />
           <br />
-          <ClfMonitor clfs={this.state.clfArray} />
+          <ClfMonitor 
+            clfs={this.state.clfArray}
+            reqHandler={this.requestDownload}
+            dlHandler={this.download} 
+          />
         </div>
       </div>
     )

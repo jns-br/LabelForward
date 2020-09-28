@@ -66,13 +66,21 @@ def create_table(conn):
             clf_id SERIAL PRIMARY KEY,
             clf BYTEA NOT NULL,
             precision_score FLOAT,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            download INTEGER NOT NULL
         )
     """,
     """
         CREATE TABLE IF NOT EXISTS countvecs(
             countvec_id SERIAL PRIMARY KEY,
             countvec BYTEA NOT NULL
+        )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS downloads(
+            download_id SERIAL PRIMARY KEY,
+            clf_id INTEGER NOT NULL,
+            file BYTEA NOT NULL
         )
     """
     )

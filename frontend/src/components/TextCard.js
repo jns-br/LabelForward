@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, Form, Badge } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 import '../styles/TextCard.css';
 
 class TextCard extends Component {

@@ -1,14 +1,29 @@
 import React, { Component } from 'react';
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 
 class ClfMonitor extends Component {
+
+  rederButton = (clfId, downloadState, reqHandler, dlHandler) => {
+    const state = parseInt(downloadState);
+    if(state === 0) {
+      return (<Button id={clfId} variant="primary" onClick={reqHandler}>Request DL</Button>)
+    } else if (state === 1) {
+      return (<Button id={clfId} variant="secondary" disabled>Processing DL</Button>)
+    } else {
+      return(<Button id={clfId} variant="primary" onClick={dlHandler}>Download</Button>)
+    }
+  };
+
   render() {
     return (
       <Table striped bordered hover>
         <thead>
-          <th>Classifier</th>
-          <th>Precision</th>
-          <th>Created at</th>
+          <tr>
+            <th>Classifier</th>
+            <th>Precision</th>
+            <th>Created at</th>
+            <th>Download</th>
+          </tr>
         </thead>
         <tbody>
           {this.props.clfs.map((value, index) => {
@@ -16,6 +31,7 @@ class ClfMonitor extends Component {
               <td key={index}>{value.clfId}</td>
               <td key={index}>{value.precision}</td>
               <td key={index}>{value.timestamp}</td>
+              <td key={index}>{this.rederButton(value.clfId, value.download, this.props.reqHandler, this.props.dlHandler)}</td>
             </tr>)
           })}
         </tbody>

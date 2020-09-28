@@ -6,7 +6,7 @@ class LabelMonitor extends Component {
     return (
       <Card>
         <Card.Header>Labeled Data</Card.Header>
-        <Card.Body>{this.props.labelShare} of all datapoints habe been labeled by humans</Card.Body>
+        <Card.Body>{this.props.labelShare} of all datapoints have been labeled by humans</Card.Body>
       </Card>
     )
   }

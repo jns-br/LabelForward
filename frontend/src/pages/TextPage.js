@@ -33,10 +33,11 @@ class Text extends Component {
 
   async fetchLables() {
     try {
-      const startArray = ["-"];
+      const startArray = [];
       const labels = await TextService.getLabels();
       const concatArray = startArray.concat(labels.data.labels);
       this.setState({ labels: concatArray });
+      this.setState({ selectedLabel: concatArray[0]});
     } catch (err) {
       console.error(err.message);
     }
@@ -71,7 +72,7 @@ class Text extends Component {
     if (this.state.selectedLabel === "") {
       return;
     }
-    console.log(this.state.selectedLabel);
+    
     try {
       const result = await TextService.postText(this.state.selectedLabel, this.state.text_id)
       if (result.status === 204) {
