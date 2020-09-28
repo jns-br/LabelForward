@@ -34,7 +34,7 @@ class MonitorRepository {
 
   async getLabelShare() {
     try {
-      const countStatment = "SELECT COUNT(*) AS cnt FROM text_data WHERE labeled = true";
+      const countStatment = "SELECT COUNT(*) AS cnt FROM text_data WHERE major_label IS NOT NULL";
       const countResult = await this.pgClient.query(countStatment);
       const labelCount = countResult.rows[0].cnt;
 
