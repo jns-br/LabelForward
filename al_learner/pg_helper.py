@@ -1,7 +1,7 @@
 import psycopg2, keys
 import pandas as pd
 from collections import Counter
-
+import sys
 
 def connect():
     conn = None
@@ -15,6 +15,7 @@ def connect():
 
     except (Exception, psycopg2.DatabaseError) as error:
         print('error: ', error)
+        sys.exit(1)
 
     return conn
 
