@@ -72,7 +72,7 @@ class Text extends Component {
     if (this.state.selectedLabel === "") {
       return;
     }
-    console.log(this.state.selectedLabel);
+    
     try {
       const result = await TextService.postText(this.state.selectedLabel, this.state.text_id)
       if (result.status === 204) {
