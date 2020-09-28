@@ -37,14 +37,14 @@ The aforementioned steps will create the example project and will contain the ex
 You will also need to build and push your own adjusted docker images to [Docker Hub](https://hub.docker.com/). You can do this by applying the following steps to eacht subproject.
 
 ## 1. Build the subproject
-In the subproject directory, execute the following command to build the development version:
+In the subproject directory, execute the following command to build the production version:
 ```shell
   docker build -t <dockerhub-username>/<tag-name> .
 ```
 
-To build the prodution version, execute the following command:
+To build the development version, execute the following command (not recommended):
 ```shell
-  docker build -f docker-compose-prod.yaml -t <dockerhub-username>/<tag-name>
+  docker build -t <dockerhub-username>/<tag-name> -f Dockerfile.dev
 ```
 
 ## 2. Push the subproject to Docker Hub
