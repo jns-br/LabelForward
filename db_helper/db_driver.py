@@ -24,6 +24,7 @@ def connect():
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print('error: ', error)
+        sys.exit(1)
 
     return conn
 
