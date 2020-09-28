@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: allearner
-          image: jnsbr/covidstate-learner
+          image: jnsbr/labelforward-learner
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service

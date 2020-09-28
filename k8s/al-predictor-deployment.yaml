@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: alpredictor
-          image: jnsbr/covidstate-predictor
+          image: jnsbr/labelforward-predictor
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service

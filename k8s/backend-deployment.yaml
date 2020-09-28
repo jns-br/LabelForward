@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: jnsbr/covidstate-backend
+          image: jnsbr/labelforward-backend
           ports:
             - containerPort: 5000
           env:

@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: jnsbr/covidstate-frontend
+          image: jnsbr/labelforward-frontend
           ports:
             - containerPort: 3000

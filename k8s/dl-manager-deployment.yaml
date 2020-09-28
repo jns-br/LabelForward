@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: dlmanager
-          image: jnsbr/covidstate-dlmanager
+          image: jnsbr/labelforward-dlmanager
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service

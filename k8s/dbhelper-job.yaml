@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: dbhelper
-          image: jnsbr/covidstate-dbhelper
+          image: jnsbr/labelforward-dbhelper
           env:
             - name: ACCESSOR_PATH
               value: exampledata/accessors.csv
