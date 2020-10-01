@@ -134,6 +134,16 @@ def save_model(data, conn):
         return id
 
 
+def save_ignore_model(data, conn):
+    print('Saving ignore model', flush=True)
+    if conn is not None:
+        statement = """
+            INSERT INTO classifiers(clf_ignore) VALUES (%s)  
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (data,))
+        conn.commit()
+
 def save_score(clf_id, precision_score, conn):
     if conn is not None:
         statement = """
