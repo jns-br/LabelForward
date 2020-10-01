@@ -20,26 +20,22 @@ def init(conn):
     create_model(X, y, conn)
 
 
-def update(conn):
-    batch_ready = pg_helper.is_new_batch_ready(conn)
-    if batch_ready == True:
-        data = pg_helper.read_labeled_data_not_ignored(conn)
-        if data is None:
-            return
-        X_text = data['text_data'].to_numpy(dtype=str)
-        y = data['major_label'].to_numpy()
-        X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
-        clf, id = create_model(X_train, y_train, conn)
-        cur = conn.cursor()
-        update_statement = """
+def train_label_clf(conn):
+    data = pg_helper.read_labeled_data_not_ignored(conn)
+    if data is None:
+        return
+    X_text = data['text_data'].to_numpy(dtype=str)
+    y = data['major_label'].to_numpy()
+    X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
+    clf, id = create_model(X_train, y_train, conn)
+    cur = conn.cursor()
+    update_statement = """
             UPDATE text_data SET taught = true WHERE text_id = %s
         """
-        for index, row in data.iterrows():
-            cur.execute(update_statement, (row['text_id'], ))
-        conn.commit()
-        return X_test, y_test, clf, id
-    else:
-        return None, None, None, None        
+    for index, row in data.iterrows():
+        cur.execute(update_statement, (row['text_id'],))
+    conn.commit()
+    return X_test, y_test, clf, id
 
 
 def create_count_vectorizer(conn):

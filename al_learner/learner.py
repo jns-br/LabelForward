@@ -20,8 +20,10 @@ if __name__ == '__main__':
             model_helper.init(conn)
             r.publish('predictor', 'update')
         if new_msg['data'] == 'update':
-            X_test, y_test, clf, id = model_helper.update(conn)
-            if clf != None:
-                r.publish('predictor', 'update')
-                model_helper.create_precision_score(X_test, y_test, clf, id, conn)
+            batch_ready = pg_helper.is_new_batch_ready(conn)
+            if batch_ready:
+                X_test, y_test, clf, id = model_helper.train_label_clf(conn)
+                if clf != None:
+                    r.publish('predictor', 'update')
+                    model_helper.create_precision_score(X_test, y_test, clf, id, conn)
 

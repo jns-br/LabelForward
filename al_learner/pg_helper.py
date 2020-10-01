@@ -3,6 +3,7 @@ import pandas as pd
 from collections import Counter
 import sys
 
+
 def connect():
     conn = None
     try:
