@@ -23,7 +23,7 @@ def init(conn):
 def update(conn):
     batch_ready = pg_helper.is_new_batch_ready(conn)
     if batch_ready == True:
-        data = pg_helper.read_labeled_data_full(conn)
+        data = pg_helper.read_labeled_data_not_ignored(conn)
         if data is None:
             return
         X_text = data['text_data'].to_numpy(dtype=str)

@@ -55,7 +55,7 @@ def is_new_batch_ready(conn):
         return False
 
 
-def read_labeled_data_full(conn):
+def read_labeled_data_not_ignored(conn):
     print('Reading labeled data full', flush=True)
     if conn is not None:
         statement = """
