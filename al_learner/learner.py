@@ -23,7 +23,16 @@ if __name__ == '__main__':
             batch_ready = pg_helper.is_new_batch_ready(conn)
             if batch_ready:
                 X_test, y_test, clf, id = model_helper.train_label_clf(conn)
-                if clf != None:
+                X_test_ignore, y_test_ignore, clf_ignore, id_ignore = model_helper.train_ignore_clf(conn)
+                if clf is not None:
                     r.publish('predictor', 'update')
                     model_helper.create_precision_score(X_test, y_test, clf, id, conn)
+                    model_helper.create_precision_score(
+                        X_test_ignore,
+                        y_test_ignore,
+                        clf_ignore,
+                        id_ignore,
+                        conn,
+                        ignore=True
+                    )
 
