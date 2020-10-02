@@ -20,26 +20,36 @@ def init(conn):
     create_model(X, y, conn)
 
 
-def update(conn):
-    batch_ready = pg_helper.is_new_batch_ready(conn)
-    if batch_ready == True:
-        data = pg_helper.read_labeled_data_full(conn)
-        if data is None:
-            return
-        X_text = data['text_data'].to_numpy(dtype=str)
-        y = data['major_label'].to_numpy()
-        X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
-        clf, id = create_model(X_train, y_train, conn)
-        cur = conn.cursor()
-        update_statement = """
+def train_label_clf(conn):
+    data = pg_helper.read_labeled_data_not_ignored(conn)
+    if data is None:
+        return None, None, None, None
+    X_text = data['text_data'].to_numpy(dtype=str)
+    y = data['major_label'].to_numpy()
+    X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
+    clf, id = create_model(X_train, y_train, conn)
+    cur = conn.cursor()
+    update_statement = """
             UPDATE text_data SET taught = true WHERE text_id = %s
         """
-        for index, row in data.iterrows():
-            cur.execute(update_statement, (row['text_id'], ))
-        conn.commit()
-        return X_test, y_test, clf, id
-    else:
-        return None, None, None, None        
+    for index, row in data.iterrows():
+        cur.execute(update_statement, (row['text_id'],))
+    conn.commit()
+    return X_test, y_test, clf, id
+
+
+def train_ignore_clf(conn):
+    data = pg_helper.read_labeled_data_full(conn)
+    if data is None:
+        return None, None, None, None
+    X_text = data['text_data'].to_numpy(dtype=str)
+    y = data['major_label'].to_numpy()
+    y_bool = (y != 'ignored').astype(int)
+    if np.count_nonzero(y_bool) == 0:
+        return None, None, None
+    X_train, X_test, y_train, y_test = train_test_split(X_text, y_bool, test_size=0.1, random_state=42)
+    clf, id = create_model(X_train, y_train, conn, ignore=True)
+    return X_test, y_test, clf, id
 
 
 def create_count_vectorizer(conn):
@@ -61,7 +71,7 @@ def get_last_vectorizer(conn):
     return count_vec
 
 
-def create_model(X, y, conn):
+def create_model(X, y, conn, ignore=False):
     print('Creating new model', flush=True)
     count_vec = get_last_vectorizer(conn)
     if count_vec is None:
@@ -70,14 +80,21 @@ def create_model(X, y, conn):
     clf = LogisticRegression(random_state=42)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
-    id = pg_helper.save_model(data, conn)
+    if ignore:
+        id = pg_helper.save_ignore_model(data, conn)
+    else:
+        id = pg_helper.save_model(data, conn)
     return clf, id
 
 
-def create_precision_score(X_test, y_test, clf, id, conn):
+def create_precision_score(X_test, y_test, clf, id, conn, ignore=False):
     print('Creating precision score', flush=True)
     count_vec = get_last_vectorizer(conn)
     X_test_vect = count_vec.transform(X_test)
     y_pred = clf.predict(X_test_vect)
-    score = precision_score(y_test, y_pred, average='micro')
-    pg_helper.save_score(id, score, conn)
+    if ignore:
+        score = precision_score(y_test, y_pred, average='binary')
+        pg_helper.save_score_ignore(id, score, conn)
+    else:
+        score = precision_score(y_test, y_pred, average='micro')
+        pg_helper.save_score(id, score, conn)

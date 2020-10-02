@@ -3,6 +3,7 @@ import pandas as pd
 from collections import Counter
 import sys
 
+
 def connect():
     conn = None
     try:
@@ -55,13 +56,26 @@ def is_new_batch_ready(conn):
         return False
 
 
-def read_labeled_data_full(conn):
-    print('Reading labeled data full', flush=True)
+def read_labeled_data_not_ignored(conn):
+    print('Reading labeled data full without ignored', flush=True)
     if conn is not None:
         statement = """
             SELECT text_id, text_data, major_label FROM text_data WHERE major_label IS NOT NULL AND major_label != %(ignored)s
         """
         df = pd.read_sql_query(statement, con=conn, params={"ignored": "ignored"})
+        if len(df.index) == 0:
+            return None
+        else:
+            return df
+
+
+def read_labeled_data_full(conn):
+    print('Reading labeld data full', flush=True)
+    if conn is not None:
+        statement = """
+            SELECT text_id, text_data, major_label FROM text_data WHERE major_label IS NOT NULL 
+        """
+        df = pd.read_sql_query(statement, con=conn)
         if len(df.index) == 0:
             return None
         else:
@@ -120,10 +134,35 @@ def save_model(data, conn):
         return id
 
 
+def save_ignore_model(data, conn):
+    print('Saving ignore model', flush=True)
+    if conn is not None:
+        statement = """
+            INSERT INTO ignoreclf(clf, download) VALUES (%s, %s) RETURNING clf_id
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (data, 0))
+        conn.commit()
+        id = cur.fetchone()[0]
+        cur.close()
+        return id
+
+
 def save_score(clf_id, precision_score, conn):
     if conn is not None:
         statement = """
             UPDATE classifiers SET precision_score = %s WHERE clf_id = %s
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (precision_score, clf_id))
+        conn.commit()
+        cur.close()
+
+
+def save_score_ignore(clf_id, precision_score, conn):
+    if conn is not None:
+        statement = """
+            UPDATE ignoreclf SET precision_score = %s WHERE clf_id = %s
         """
         cur = conn.cursor()
         cur.execute(statement, (precision_score, clf_id))
