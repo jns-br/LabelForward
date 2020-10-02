@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   return next();
 });
 
-app.use('/', controller);
+app.use('/api', controller);
 
 app.listen(port, "0.0.0.0", async (err) => {
   await Passport.init();
