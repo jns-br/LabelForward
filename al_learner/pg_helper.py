@@ -138,11 +138,14 @@ def save_ignore_model(data, conn):
     print('Saving ignore model', flush=True)
     if conn is not None:
         statement = """
-            INSERT INTO ignoreclf(clf, download) VALUES (%s, %s)
+            INSERT INTO ignoreclf(clf, download) VALUES (%s, %s) RETURNING clf_id
         """
         cur = conn.cursor()
         cur.execute(statement, (data, 0))
         conn.commit()
+        id = cur.fetchone()[0]
+        cur.close()
+        return id
 
 
 def save_score(clf_id, precision_score, conn):
