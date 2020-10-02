@@ -159,6 +159,17 @@ def save_score(clf_id, precision_score, conn):
         cur.close()
 
 
+def save_score_ignore(clf_id, precision_score, conn):
+    if conn is not None:
+        statement = """
+            UPDATE ignoreclf SET precision_score = %s WHERE clf_id = %s
+        """
+        cur = conn.cursor()
+        cur.execute(statement, (precision_score, clf_id))
+        conn.commit()
+        cur.close()
+
+
 def find_max_occurences(arr):
     if len(arr) > 0:
         most_common = Counter(arr).most_common(1)[0][0]
