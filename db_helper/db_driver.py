@@ -84,6 +84,15 @@ def create_table(conn):
             clf_id INTEGER NOT NULL,
             file BYTEA NOT NULL
         )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS ignoreclf(
+            clf_id SERIAL PRIMARY KEY,
+            clf BYTEA NOT NULL,
+            precision_score FLOAT,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            download INTEGER NOT NULL
+        )
     """
     )
     try:
