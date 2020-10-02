@@ -27,12 +27,13 @@ if __name__ == '__main__':
                 if clf is not None:
                     r.publish('predictor', 'update')
                     model_helper.create_precision_score(X_test, y_test, clf, id, conn)
-                    model_helper.create_precision_score(
-                        X_test_ignore,
-                        y_test_ignore,
-                        clf_ignore,
-                        id_ignore,
-                        conn,
-                        ignore=True
-                    )
+                    if clf_ignore is not None:
+                        model_helper.create_precision_score(
+                            X_test_ignore,
+                            y_test_ignore,
+                            clf_ignore,
+                            id_ignore,
+                            conn,
+                            ignore=True
+                        )
 

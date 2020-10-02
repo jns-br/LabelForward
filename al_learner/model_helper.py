@@ -23,7 +23,7 @@ def init(conn):
 def train_label_clf(conn):
     data = pg_helper.read_labeled_data_not_ignored(conn)
     if data is None:
-        return
+        return None, None, None, None
     X_text = data['text_data'].to_numpy(dtype=str)
     y = data['major_label'].to_numpy()
     X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
@@ -41,10 +41,12 @@ def train_label_clf(conn):
 def train_ignore_clf(conn):
     data = pg_helper.read_labeled_data_full(conn)
     if data is None:
-        return
+        return None, None, None, None
     X_text = data['text_data'].to_numpy(dtype=str)
     y = data['major_label'].to_numpy()
-    y_bool = (y == 'ignored').astype(int)
+    y_bool = (y != 'ignored').astype(int)
+    if np.count_nonzero(y_bool) == 0:
+        return None, None, None
     X_train, X_test, y_train, y_test = train_test_split(X_text, y_bool, test_size=0.1, random_state=42)
     clf, id = create_model(X_train, y_train, conn, ignore=True)
     return X_test, y_test, clf, id
