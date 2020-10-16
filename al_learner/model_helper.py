@@ -11,6 +11,7 @@ import numpy as np
 def init(conn):
     init_data = pg_helper.read_init_data(conn)
     if init_data is None:
+        print('Random intializion', flush=True)
         X_text = pg_helper.read_all_text(conn)
         labels = pg_helper.load_labels(conn)
         batch_size = int(keys.batch_size)
@@ -21,6 +22,7 @@ def init(conn):
         y = np.array(y_list)
         create_model(X, y, conn)
     else:
+        print('Data-backed initialization', flush=True)
         X = init_data['text_data'].to_numpy()
         y = init_data['label'].to_numpy()
         create_model(X, y, conn)
