@@ -9,15 +9,21 @@ import numpy as np
 
 
 def init(conn):
-    X_text = pg_helper.read_all_text(conn)
-    labels = pg_helper.load_labels(conn)
-    batch_size = int(keys.batch_size)
-    X = X_text[:batch_size]
-    y_list = []
-    for i in range(batch_size):
-        y_list.append(np.random.choice(labels))
-    y = np.array(y_list)
-    create_model(X, y, conn)
+    init_data = pg_helper.read_init_data(conn)
+    if init_data is None:
+        X_text = pg_helper.read_all_text(conn)
+        labels = pg_helper.load_labels(conn)
+        batch_size = int(keys.batch_size)
+        X = X_text[:batch_size]
+        y_list = []
+        for i in range(batch_size):
+            y_list.append(np.random.choice(labels))
+        y = np.array(y_list)
+        create_model(X, y, conn)
+    else:
+        X = init_data['text_data'].to_numpy()
+        y = init_data['label'].to_numpy()
+        create_model(X, y, conn)
 
 
 def train_label_clf(conn):
