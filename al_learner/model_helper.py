@@ -63,6 +63,10 @@ def train_ignore_clf(conn):
 def create_count_vectorizer(conn):
     print('Creating new count vectorizer', flush=True)
     X_text = pg_helper.read_all_text(conn)
+    init_data = pg_helper.read_init_data(conn)
+    if init_data is not None:
+        X_init_text = init_data['text_data'].to_numpy()
+        X_text = np.concatenate((np.squeeze(X_text), X_init_text))
     count_vec = CountVectorizer()
     count_vec.fit(X_text.ravel())
     data = pickle.dumps(count_vec)
