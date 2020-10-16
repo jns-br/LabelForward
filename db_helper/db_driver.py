@@ -181,6 +181,25 @@ def check_for_existing_data(conn):
         return True
 
 
+def read_init_data(conn):
+    init_data = pd.read_csv(keys.init_data_path)
+    if init_data is None:
+        return
+    else:
+        cur = conn.cursor()
+        statement = "INSERT INTO init_data(text_data, label) VALUES (%s, %s) ON CONFLICT DO NOTHING"
+
+        for index, row in init_data.iterrows():
+            try:
+                cur.execute(statement, (row['data'], row['label']))
+            except psycopg2.DatabaseError as error:
+                print('error: ', error)
+        
+        conn.commit()
+        print('Inserted init data')
+        cur.close()
+
+
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
