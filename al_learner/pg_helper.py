@@ -91,6 +91,19 @@ def read_all_text(conn):
     return df.to_numpy()
 
 
+def read_init_data(conn):
+    print('Reading init data', flush=True)
+    if conn is not None:
+        statement = """
+            SELECT text_data, label FROM init_data
+        """
+        df = pd.read_sql_query(statement, con=conn)
+        if len(df.index) == 0:
+            return None
+        else:
+            return df
+
+
 def save_countvec(data, conn):
     print('Saving count vectorizer', flush=True)
     if conn is not None:

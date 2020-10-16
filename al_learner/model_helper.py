@@ -9,15 +9,23 @@ import numpy as np
 
 
 def init(conn):
-    X_text = pg_helper.read_all_text(conn)
-    labels = pg_helper.load_labels(conn)
-    batch_size = int(keys.batch_size)
-    X = X_text[:batch_size]
-    y_list = []
-    for i in range(batch_size):
-        y_list.append(np.random.choice(labels))
-    y = np.array(y_list)
-    create_model(X, y, conn)
+    init_data = pg_helper.read_init_data(conn)
+    if init_data is None:
+        print('Random intializion', flush=True)
+        X_text = pg_helper.read_all_text(conn)
+        labels = pg_helper.load_labels(conn)
+        batch_size = int(keys.batch_size)
+        X = X_text[:batch_size]
+        y_list = []
+        for i in range(batch_size):
+            y_list.append(np.random.choice(labels))
+        y = np.array(y_list)
+        create_model(X, y, conn)
+    else:
+        print('Data-backed initialization', flush=True)
+        X = init_data['text_data'].to_numpy()
+        y = init_data['label'].to_numpy()
+        create_model(X, y, conn)
 
 
 def train_label_clf(conn):
@@ -77,7 +85,7 @@ def create_model(X, y, conn, ignore=False):
     if count_vec is None:
         count_vec = create_count_vectorizer(conn)
     X_vect = count_vec.transform(X.ravel())
-    clf = LogisticRegression(random_state=42)
+    clf = LogisticRegression(random_state=42, max_iter=100000)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
     if ignore:

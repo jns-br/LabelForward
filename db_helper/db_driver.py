@@ -93,6 +93,13 @@ def create_table(conn):
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             download INTEGER NOT NULL
         )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS init_data(
+            init_id SERIAL PRIMARY KEY,
+            text_data TEXT NOT NULL,
+            label TEXT NOT NULL
+        )
     """
     )
     try:
@@ -174,9 +181,29 @@ def check_for_existing_data(conn):
         return True
 
 
+def read_init_data(conn):
+    try:
+        init_data = pd.read_csv(keys.init_data_path)
+        cur = conn.cursor()    
+        statement = "INSERT INTO init_data(text_data, label) VALUES (%s, %s) ON CONFLICT DO NOTHING"
+
+        for index, row in init_data.iterrows():
+            try:
+                cur.execute(statement, (row['data'], row['label']))
+            except psycopg2.DatabaseError as error:
+                print('error: ', error)
+        
+        conn.commit()
+        print('Inserted init data')
+        cur.close()
+    except FileNotFoundError:
+        print('No init data found')
+
+
 if __name__ == '__main__':
     conn = connect()
     create_table(conn)
+    read_init_data(conn)
     read_accessors(conn)
     read_text_data(conn)
     read_labels(conn)
