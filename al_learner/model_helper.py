@@ -85,7 +85,7 @@ def create_model(X, y, conn, ignore=False):
     if count_vec is None:
         count_vec = create_count_vectorizer(conn)
     X_vect = count_vec.transform(X.ravel())
-    clf = LogisticRegression(random_state=42)
+    clf = LogisticRegression(random_state=42, max_iter=100000)
     clf.fit(X_vect, y)
     data = pickle.dumps(clf)
     if ignore:
