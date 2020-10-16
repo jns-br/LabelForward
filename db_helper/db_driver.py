@@ -93,6 +93,13 @@ def create_table(conn):
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             download INTEGER NOT NULL
         )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS init_data(
+            init_id SERIAL PRIMARY KEY,
+            text_data TEXT NOT NULL,
+            label TEXT NOT NULL
+        )
     """
     )
     try:
