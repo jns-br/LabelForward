@@ -55,6 +55,9 @@ def train_ignore_clf(conn):
     y_bool = (y != 'ignored').astype(int)
     if np.count_nonzero(y_bool) == 0:
         return None, None, None
+    y_bool = (y == 'ignored').astype(int)
+    if np.count_nonzero(y_bool) == 0:
+        return None, None, None
     X_train, X_test, y_train, y_test = train_test_split(X_text, y_bool, test_size=0.1, random_state=42)
     clf, id = create_model(X_train, y_train, conn, ignore=True)
     return X_test, y_test, clf, id
