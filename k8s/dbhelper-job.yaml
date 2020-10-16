@@ -18,6 +18,8 @@ spec:
               value: exampledata/data.csv
             - name: LABEL_PATH
               value: exampledata/labels.csv
+            - name: INIT_DATA_PATH
+              value: exampledata/init_data.csv
             - name: REDIS_HOST
               value: redis-cluster-ip-service
             - name: REDIS_PORT
