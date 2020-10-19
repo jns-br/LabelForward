@@ -1,4 +1,5 @@
 const keys = require('./keys');
+const constants = require('./constants');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -16,9 +17,9 @@ app.use(bodyParser.json());
 
 const port = keys.node_port || 8080;
 
-app.use('/api', controller);
+app.use(constants.routeApi, controller);
 
-app.listen(port, "0.0.0.0", async (err) => {
+app.listen(port, constants.keyHostAll, async (err) => {
   await Passport.init();
   console.log(`Server listening at port ${port}`);
 });
