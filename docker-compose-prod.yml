@@ -45,10 +45,10 @@ services:
       - redis
     build:
       dockerfile: Dockerfile
-      context: ./backend
+      context: ./api
     volumes: 
       - /usr/src/app/node_modules
-      - ./backend:/usr/src/app
+      - ./api:/usr/src/app
     environment: 
       - PGUSER=postgres
       - PGHOST=postgres
