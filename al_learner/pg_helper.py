@@ -2,6 +2,7 @@ import psycopg2, keys
 import pandas as pd
 from collections import Counter
 import sys
+import constants
 
 
 def connect():
@@ -23,9 +24,7 @@ def connect():
 
 def load_labels(conn):
     print('Loading labels', flush=True)
-    label_statement = """
-        SELECT label FROM labels
-    """
+    label_statement = constants.sql_select_labels
     df = pd.read_sql_query(label_statement, con=conn)
     return df['label'].to_numpy()
 
@@ -34,20 +33,16 @@ def is_new_batch_ready(conn):
     print('Checking new batch', flush=True)
     cur = conn.cursor()
     update_counter = 0
-    select_all_statement = """
-        SELECT text_id, labels, major_label FROM text_data WHERE array_length(labels, 1) >= %(min_label_count)s
-    """
-    df = pd.read_sql_query(select_all_statement, con=conn, params={"min_label_count": int(keys.min_label_count)})
-    update_statement = """
-        UPDATE text_data SET major_label = %s WHERE text_id = %s
-    """
+    select_all_statement = constants.sql_select_all_min_label_count
+    df = pd.read_sql_query(select_all_statement, con=conn, params={constants.key_min_label_count: int(keys.min_label_count)})
+    update_statement = constants.sql_update_major_label
 
     for index, row in df.iterrows():
-        majority_label = find_max_occurences(row['labels'])
-        if majority_label != row['major_label']:
-            text_id = int(row['text_id'])
+        majority_label = find_max_occurences(row[constants.key_labels])
+        if majority_label != row[constants.key_major_label]:
+            text_id = int(row[constants.key_text_id])
             cur.execute(update_statement, (majority_label, text_id))
-            if majority_label != 'ignored':
+            if majority_label != constants.key_ignored:
                 update_counter += 1
     conn.commit()
     if update_counter >= int(keys.batch_size):
@@ -59,10 +54,8 @@ def is_new_batch_ready(conn):
 def read_labeled_data_not_ignored(conn):
     print('Reading labeled data full without ignored', flush=True)
     if conn is not None:
-        statement = """
-            SELECT text_id, text_data, major_label FROM text_data WHERE major_label IS NOT NULL AND major_label != %(ignored)s
-        """
-        df = pd.read_sql_query(statement, con=conn, params={"ignored": "ignored"})
+        statement = constants.sql_select_not_ignored
+        df = pd.read_sql_query(statement, con=conn, params={constants.key_ignored: constants.key_ignored})
         if len(df.index) == 0:
             return None
         else:
@@ -72,9 +65,7 @@ def read_labeled_data_not_ignored(conn):
 def read_labeled_data_full(conn):
     print('Reading labeld data full', flush=True)
     if conn is not None:
-        statement = """
-            SELECT text_id, text_data, major_label FROM text_data WHERE major_label IS NOT NULL 
-        """
+        statement = constants.sql_select_major_label_not_null
         df = pd.read_sql_query(statement, con=conn)
         if len(df.index) == 0:
             return None
@@ -84,9 +75,7 @@ def read_labeled_data_full(conn):
 
 def read_all_text(conn):
     print('Reading all text data', flush=True)
-    statement = """
-        SELECT text_data FROM text_data
-    """
+    statement = constants.sql_all_text
     df = pd.read_sql_query(statement, con=conn)
     return df.to_numpy()
 
@@ -94,9 +83,7 @@ def read_all_text(conn):
 def read_init_data(conn):
     print('Reading init data', flush=True)
     if conn is not None:
-        statement = """
-            SELECT text_data, label FROM init_data
-        """
+        statement = constants.sql_select_init_data
         df = pd.read_sql_query(statement, con=conn)
         if len(df.index) == 0:
             return None
@@ -107,9 +94,7 @@ def read_init_data(conn):
 def save_countvec(data, conn):
     print('Saving count vectorizer', flush=True)
     if conn is not None:
-        statement = """
-            INSERT INTO countvecs(countvec) VALUES (%s)
-        """
+        statement = constants.sql_insert_countvec
         cur = conn.cursor()
         cur.execute(statement, (data,))
         cur.close()
@@ -119,9 +104,7 @@ def save_countvec(data, conn):
 def load_last_countvec(conn):
     print('Loading last countvec', flush=True)
     if conn is not None:
-        statement = """
-            SELECT countvec FROM countvecs ORDER BY countvec_id DESC LIMIT 1
-        """
+        statement = constants.sql_select_countvec
         cur = conn.cursor()
         cur.execute(statement)
         data = cur.fetchone()
@@ -136,9 +119,7 @@ def load_last_countvec(conn):
 def save_model(data, conn):
     print('Saving model', flush=True)
     if conn is not None:
-        statement = """
-            INSERT INTO classifiers(clf, download) VALUES (%s, %s) RETURNING clf_id
-        """
+        statement = constants.sql_insert_clf
         cur = conn.cursor()
         cur.execute(statement, (data, 0))
         conn.commit()
@@ -150,9 +131,7 @@ def save_model(data, conn):
 def save_ignore_model(data, conn):
     print('Saving ignore model', flush=True)
     if conn is not None:
-        statement = """
-            INSERT INTO ignoreclf(clf, download) VALUES (%s, %s) RETURNING clf_id
-        """
+        statement = constants.sql_insert_ignore_clf
         cur = conn.cursor()
         cur.execute(statement, (data, 0))
         conn.commit()
@@ -163,9 +142,7 @@ def save_ignore_model(data, conn):
 
 def save_score(clf_id, precision_score, conn):
     if conn is not None:
-        statement = """
-            UPDATE classifiers SET precision_score = %s WHERE clf_id = %s
-        """
+        statement = constants.sql_insert_precision_score
         cur = conn.cursor()
         cur.execute(statement, (precision_score, clf_id))
         conn.commit()
@@ -174,9 +151,7 @@ def save_score(clf_id, precision_score, conn):
 
 def save_score_ignore(clf_id, precision_score, conn):
     if conn is not None:
-        statement = """
-            UPDATE ignoreclf SET precision_score = %s WHERE clf_id = %s
-        """
+        statement = constants.sql_update_precision_score_ignore
         cur = conn.cursor()
         cur.execute(statement, (precision_score, clf_id))
         conn.commit()
