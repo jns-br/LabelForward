@@ -1,4 +1,5 @@
 const keys = require('../keys');
+const statements = require('./statements');
 const UserService = require('../services/UserService');
 const { Pool } = require('pg');
 
@@ -15,17 +16,17 @@ class UserRepository {
 
   async createUser(email, password) {
     try {
-      const statementAccess = "SELECT * FROM accessors WHERE email = $1";
+      const statementAccess = statements.selectAccesor;
       const result = await this.pgClient.query(statementAccess, [email]);
       if (result.rowCount !== 1) {
         return false;
       }
       
       const hashedPassword = await UserService.hashPassword(password);
-      const statementInsert = "INSERT INTO users(email, password) VALUES ($1, $2)";
+      const statementInsert = statements.insertUser;
       await this.pgClient.query(statementInsert, [email, hashedPassword]);
 
-      const statementDelete = "DELETE FROM accessors WHERE email = $1";
+      const statementDelete = statements.deleteAccessor;
       await this.pgClient.query(statementDelete, [email]);
 
       return true;
@@ -37,7 +38,7 @@ class UserRepository {
 
   async findUserById(id) {
     try {
-      const statement = "SELECT * FROM users WHERE user_id = $1";
+      const statement = statements.selectUserById;
       const result = await this.pgClient.query(statement, [id]);
       if (result.rowCount !== 1) {
         return null;
@@ -51,7 +52,7 @@ class UserRepository {
 
   async findUserByEmail(email) {
     try {
-      const statement = "SELECT * FROM users WHERE email = $1";
+      const statement = statements.selectUserByEmail;
       const result = await this.pgClient.query(statement, [email]);
       if(result.rowCount !== 1) {
         return null;
@@ -72,7 +73,7 @@ class UserRepository {
           return false;
         }
 
-        const statement = "UPDATE users SET email = $1 WHERE user_id = $2";
+        const statement = statements.updateUserEmail;
         await this.pgClient.query(statement, [newEmail, user.user_id]);
         return true;
       } else {
@@ -94,7 +95,7 @@ class UserRepository {
           return false;
         }
 
-        const statement = "UPDATE users SET password = $1 WHERE user_id = $2";
+        const statement = statements.updateUserPassword;
         const hashedNew = await UserService.hashPassword(newPassword);
         await this.pgClient.query(statement, [hashedNew, user.user_id]);
         return true;
