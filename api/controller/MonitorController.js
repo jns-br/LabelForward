@@ -4,8 +4,9 @@ const MonitorRepository = require('../repositories/MonitorRepository');
 const JWTService = require('../services/JWTService');
 const Redis = require('ioredis');
 const keys = require('../keys');
+const constants = require('../constants');
 
-router.get('/classifiers', JWTService.requireJWT(), async (req, res) => {
+router.get(constants.routeClassifiers, JWTService.requireJWT(), async (req, res) => {
   try {
     const clfData = await MonitorRepository.getClfData();
     res.status(200).json({clfData: clfData});
@@ -14,7 +15,7 @@ router.get('/classifiers', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.get('/label', JWTService.requireJWT(), async (req, res) => {
+router.get(constants.routeLabel, JWTService.requireJWT(), async (req, res) => {
   try {
     const labelShare = await MonitorRepository.getLabelShare();
     res.status(200).json({labelShare: labelShare});
@@ -23,7 +24,7 @@ router.get('/label', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.post('/download', JWTService.requireJWT(), async (req, res) => {
+router.post(constants.routeDownload, JWTService.requireJWT(), async (req, res) => {
   try {
     const clfMsg = "clf-" + req.body.clfId;
     const redis = new Redis({ port: keys.redisPort, host: keys.redisHost });
@@ -34,7 +35,7 @@ router.post('/download', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.get('/download', JWTService.requireJWT(), async (req, res) => {
+router.get(constants.routeDownload, JWTService.requireJWT(), async (req, res) => {
   try {
     const clfId = req.query.clfId;
     await MonitorRepository.create_zip(clfId);
