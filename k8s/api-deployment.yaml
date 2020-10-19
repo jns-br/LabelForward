@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: api-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: backend
+      component: api
   template:
     metadata:
       labels:
-        component: backend
+        component: api
     spec:
       containers:
-        - name: backend
-          image: jnsbr/labelforward-backend
+        - name: api
+          image: jnsbr/labelforward-api
           ports:
             - containerPort: 5000
           env:
