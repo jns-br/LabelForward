@@ -2,6 +2,8 @@ module.exports = {
   keyAccessToken: 'access_token',
   keyEmail: 'email',
   keyHostAll: "0.0.0.0",
+  keyJwt: 'jwt',
+  keyLocal: 'local',
   routeApi: '/api',
   routeBase: '/',
   routeClassifiers: '/classifiers',
