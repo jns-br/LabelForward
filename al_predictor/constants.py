@@ -2,6 +2,7 @@ key_data = 'data'
 key_predictor = 'predictor'
 key_query_counter = 'queryCounter'
 key_query_flag = 'queryFlag'
+key_text_data = 'text_data'
 key_text_id = 'text_id'
 key_uncertainty = 'uncertainty'
 
