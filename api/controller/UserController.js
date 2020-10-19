@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const UserRepository = require('../repositories/UserRepository');
 const JWTService = require('../services/JWTService');
+const constants = require('../constants');
 
-router.post('/signup', async (req, res) => {
+router.post(constants.routeSignUp, async (req, res) => {
   try {
     const user = await UserRepository.createUser(req.body.email, req.body.password);
     if(!user) {
@@ -16,7 +17,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/email', JWTService.requireJWT(), async (req, res) => {
+router.post(constants.routeEmail, JWTService.requireJWT(), async (req, res) => {
   try {
     const id = req.user.user_id;
     const { newEmail, password } = req.body;
@@ -31,7 +32,7 @@ router.post('/email', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.post('/password', JWTService.requireJWT(), async (req, res) => {
+router.post(constants.routePassword, JWTService.requireJWT(), async (req, res) => {
   try {
     const id = req.user.user_id;
     const {oldPassword, newPassword} = req.body;
