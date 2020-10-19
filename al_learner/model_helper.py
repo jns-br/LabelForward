@@ -5,6 +5,7 @@ from sklearn.metrics import precision_score
 import pg_helper
 import pickle
 import keys
+import constants
 import numpy as np
 
 
@@ -23,8 +24,8 @@ def init(conn):
         create_model(X, y, conn)
     else:
         print('Data-backed initialization', flush=True)
-        X = init_data['text_data'].to_numpy()
-        y = init_data['label'].to_numpy()
+        X = init_data[constants.key_text_data].to_numpy()
+        y = init_data[constants.key_label].to_numpy()
         create_model(X, y, conn)
 
 
@@ -32,16 +33,14 @@ def train_label_clf(conn):
     data = pg_helper.read_labeled_data_not_ignored(conn)
     if data is None:
         return None, None, None, None
-    X_text = data['text_data'].to_numpy(dtype=str)
-    y = data['major_label'].to_numpy()
+    X_text = data[constants.key_text_data].to_numpy(dtype=str)
+    y = data[constants.key_major_label].to_numpy()
     X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
     clf, id = create_model(X_train, y_train, conn)
     cur = conn.cursor()
-    update_statement = """
-            UPDATE text_data SET taught = true WHERE text_id = %s
-        """
+    update_statement = constants.sql_update_taught
     for index, row in data.iterrows():
-        cur.execute(update_statement, (row['text_id'],))
+        cur.execute(update_statement, (row[constants.key_text_id],))
     conn.commit()
     return X_test, y_test, clf, id
 
@@ -50,12 +49,12 @@ def train_ignore_clf(conn):
     data = pg_helper.read_labeled_data_full(conn)
     if data is None:
         return None, None, None, None
-    X_text = data['text_data'].to_numpy(dtype=str)
-    y = data['major_label'].to_numpy()
-    y_bool = (y != 'ignored').astype(int)
+    X_text = data[constants.key_text_data].to_numpy(dtype=str)
+    y = data[constants.key_major_label].to_numpy()
+    y_bool = (y != constants.key_ignored).astype(int)
     if np.count_nonzero(y_bool) == 0:
         return None, None, None
-    y_bool = (y == 'ignored').astype(int)
+    y_bool = (y == constants.key_ignored).astype(int)
     if np.count_nonzero(y_bool) == 0:
         return None, None, None
     X_train, X_test, y_train, y_test = train_test_split(X_text, y_bool, test_size=0.1, random_state=42)
@@ -68,7 +67,7 @@ def create_count_vectorizer(conn):
     X_text = pg_helper.read_all_text(conn)
     init_data = pg_helper.read_init_data(conn)
     if init_data is not None:
-        X_init_text = init_data['text_data'].to_numpy()
+        X_init_text = init_data[constants.key_text_data].to_numpy()
         X_text = np.concatenate((np.squeeze(X_text), X_init_text))
     count_vec = CountVectorizer()
     count_vec.fit(X_text.ravel())
