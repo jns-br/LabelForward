@@ -1,9 +1,14 @@
 module.exports = {
   keyAccessToken: 'access_token',
+  keyAvailable: 'available',
   keyEmail: 'email',
   keyHostAll: "0.0.0.0",
   keyJwt: 'jwt',
+  keyLearner: 'learner',
   keyLocal: 'local',
+  keyQueryCounter: 'queryCounter',
+  keyQueryFlag: 'queryFlag',
+  msgUpdate: 'update',
   routeApi: '/api',
   routeBase: '/',
   routeClassifiers: '/classifiers',
@@ -19,5 +24,5 @@ module.exports = {
   routeText: '/text',
   routeTexts: '/texts',
   routeUsers: '/users'
-  
+
 };

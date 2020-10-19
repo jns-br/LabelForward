@@ -1,4 +1,6 @@
 const keys = require('../keys');
+const statments = require('./statements');
+const constants = require('../constants');
 const Redis = require('ioredis');
 const { Pool } = require('pg');
 
@@ -16,10 +18,10 @@ class TextRepository {
   async getNextText(email) {
     try {
       const redisClient = new Redis({ port: keys.redisPort, host: keys.redisHost });
-      const queryFlag = await redisClient.get('queryFlag');
+      const queryFlag = await redisClient.get(constants.keyQueryFlag);
       switch (queryFlag) {
-        case 'available':
-          const statement = "SELECT text_id, text_data FROM text_data WHERE NOT ($1 = ANY (users)) ORDER BY uncertainty ASC LIMIT 1";
+        case constants.keyAvailable:
+          const statement = statments.selectNextText;
           const result = await this.pgClient.query(statement, [email]);
           return result.rows[0];
         default:
@@ -34,18 +36,18 @@ class TextRepository {
   async insertLabeledText(label, email, text_id) {
     try {
       const redisClient = new Redis({ port: keys.redisPort, host: keys.redisHost });
-      const queryFlag = await redisClient.get('queryFlag');
-      if (queryFlag == 'available') {
-        const statment = "UPDATE text_data SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3";
+      const queryFlag = await redisClient.get(constants.keyQueryFlag);
+      if (queryFlag == constants.keyAvailable) {
+        const statment = statments.insertText;
         const result = await this.pgClient.query(statment, [label, email, text_id]);
         if (result.rowCount !== 1) {
           throw new Error('Insertion failed');
         }
-        const queryCounter = parseInt(await redisClient.get('queryCounter'));
-        await redisClient.set('queryCounter', (queryCounter + 1));
+        const queryCounter = parseInt(await redisClient.get(constants.keyQueryCounter));
+        await redisClient.set(constants.keyQueryCounter, (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
           const pub = redisClient.duplicate();
-          await pub.publish('learner', 'update');
+          await pub.publish(constants.keyLearner, constants.msgUpdate);
         }
         return true;
       } else {
@@ -59,7 +61,7 @@ class TextRepository {
 
   async getLabels() {
     try {
-      const statement = "SELECT label FROM labels";
+      const statement = statments.selectLabels;
       const results = await this.pgClient.query(statement);
       return Array.from(results.rows, result => result.label);
     } catch (err) {
