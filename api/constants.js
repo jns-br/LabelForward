@@ -7,9 +7,11 @@ module.exports = {
   routeClassifiers: '/classifiers',
   routeDownload: '/download',
   routeLabel: '/label',
+  routeLabels: '/labels',
   routeLogin: '/login',
   routeLogout: '/logout',
   routeMonitor: '/monitor',
+  routeText: '/text',
   routeTexts: '/texts',
   routeUsers: '/users'
   
