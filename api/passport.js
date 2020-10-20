@@ -5,11 +5,12 @@ const ExtractJWT = require('passport-jwt').ExtractJwt;
 const JWT_SECRET = require('./keys').jwtSecret;
 const UserRepository = require('./repositories/UserRepository');
 const UserService = require('./services/UserService');
+const constants = require('./constants');
 
 const cookieExtractor = req => {
   let token = null;
   if (req && req.cookies) {
-    token = req.cookies['access_token'];
+    token = req.cookies[constants.keyAccessToken];
   }
   return token;
 }
@@ -37,7 +38,7 @@ class Passport {
 
     //authentication
     passport.use(new LocalStrategy({
-      usernameField: 'email'
+      usernameField: constants.keyEmail
     }, async (email, password, done) => {
       try {
         const user = await UserRepository.findUserByEmail(email);

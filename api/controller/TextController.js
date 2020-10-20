@@ -3,8 +3,9 @@ const { restart } = require('nodemon');
 const router = express.Router();
 const TextRepository = require('../repositories/TextRepository');
 const JWTService = require('../services/JWTService');
+const constants = require('../constants');
 
-router.get('/text', JWTService.requireJWT(), async (req, res) => {
+router.get(constants.routeText, JWTService.requireJWT(), async (req, res) => {
   try {
     const email = req.user.email;
     const nextText = await TextRepository.getNextText(email);
@@ -18,7 +19,7 @@ router.get('/text', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.get('/labels', JWTService.requireJWT(), async (req, res) => {
+router.get(constants.routeLabels, JWTService.requireJWT(), async (req, res) => {
   try {
     const labels = await TextRepository.getLabels();
     res.status(200).json({labels: labels});
@@ -27,7 +28,7 @@ router.get('/labels', JWTService.requireJWT(), async (req, res) => {
   }
 });
 
-router.post('/text', JWTService.requireJWT(), async (req, res) => {
+router.post(constants.routeText, JWTService.requireJWT(), async (req, res) => {
   try {
     const label = req.body.label;
     const text_id = req.body.text_id;

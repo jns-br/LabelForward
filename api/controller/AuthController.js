@@ -1,11 +1,12 @@
+const constants = require('../constants');
 const express = require('express');
 const JWTService = require('../services/JWTService');
 const router = express.Router();
 
-router.post('/', JWTService.requireCredentials(), async (req, res) => {
+router.post(constants.routeBase, JWTService.requireCredentials(), async (req, res) => {
   try {
     const token = await JWTService.signToken(req.user);
-    res.cookie('access_token', token, {
+    res.cookie(constants.keyAccessToken, token, {
       httpOnly: true
     });
     res.status(200).json({success : true});
@@ -14,7 +15,7 @@ router.post('/', JWTService.requireCredentials(), async (req, res) => {
   }
 });
 
-router.get('/', JWTService.requireJWT(), async (req,res) => {
+router.get(constants.routeBase, JWTService.requireJWT(), async (req,res) => {
   try {
     res.status(200).json();
   } catch (err) {
@@ -22,9 +23,9 @@ router.get('/', JWTService.requireJWT(), async (req,res) => {
   }
 });
 
-router.get('/logout', JWTService.requireJWT(), async (req, res) => {
+router.get(constants.routeLogout, JWTService.requireJWT(), async (req, res) => {
   try {
-    res.clearCookie('access_token');
+    res.clearCookie(constants.keyAccessToken);
     res.json();
   } catch (err) {
     res.status(500).json({msg: err.message});

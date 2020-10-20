@@ -1,5 +1,6 @@
 import psycopg2
 import keys
+import constants
 import pandas as pd
 import sys
 
@@ -23,18 +24,14 @@ def connect():
 
 def load_data(conn):
     print('Loading untaught data', flush=True)
-    statement = """
-        SELECT text_id, text_data FROM text_data
-    """
+    statement = constants.sql_select_data
     df = pd.read_sql_query(statement, con=conn)
     return df
 
 
 def load_last_model(conn):
     print('Loading last model', flush=True)
-    statement = """
-        SELECT clf FROM classifiers ORDER BY clf_id DESC LIMIT 1
-    """
+    statement = constants.sql_select_last_model
     cur = conn.cursor()
     cur.execute(statement)
     data = cur.fetchone()
@@ -49,19 +46,15 @@ def load_last_model(conn):
 def insert_uncertainties(data, conn):
     print('Inserting uncertainties', flush=True)
     cur = conn.cursor()
-    statement = """
-        UPDATE text_data SET uncertainty = %s WHERE text_id = %s
-    """
+    statement = constants.sql_update_uncertainty
     for index, row in data.iterrows():
-        cur.execute(statement, (row['uncertainty'], row['text_id']))
+        cur.execute(statement, (row[constants.key_uncertainty], row[constants.key_text_id]))
     conn.commit()
 
 
 def load_count_vec(conn):
     print('Loading count vec')
-    statement = """
-        SELECT countvec FROM countvecs ORDER BY countvec_id DESC LIMIT 1
-    """
+    statement = constants.sql_select_last_countvec
     cur = conn.cursor()
     cur.execute(statement)
     data = cur.fetchone()
