@@ -114,7 +114,7 @@ def create_table(conn):
 
 
 def read_text_data(conn):
-    text_data = pd.read_csv(keys.data_path)
+    text_data = pd.read_json(keys.data_path)
     cur = conn.cursor()
     statement = """
         INSERT INTO text_data(text_data, labels, users, labeled, selected, taught) VALUES(%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
@@ -136,7 +136,7 @@ def read_text_data(conn):
 
 
 def read_labels(conn):
-    label_data = pd.read_csv(keys.label_path)
+    label_data = pd.read_json(keys.label_path)
     cur = conn.cursor()
     statement = """
         INSERT INTO labels(label) VALUES (%s) ON CONFLICT DO NOTHING
@@ -153,7 +153,7 @@ def read_labels(conn):
     cur.close()
 
 def read_accessors(conn):
-    accessor_data = pd.read_csv(keys.accessor_path)
+    accessor_data = pd.read_json(keys.accessor_path)
     cur = conn.cursor()
     statement = "INSERT INTO accessors(email) VALUES (%s) ON CONFLICT DO NOTHING"
 
@@ -183,7 +183,7 @@ def check_for_existing_data(conn):
 
 def read_init_data(conn):
     try:
-        init_data = pd.read_csv(keys.init_data_path)
+        init_data = pd.read_json(keys.init_data_path)
         cur = conn.cursor()    
         statement = "INSERT INTO init_data(text_data, label) VALUES (%s, %s) ON CONFLICT DO NOTHING"
 
