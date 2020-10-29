@@ -4,13 +4,13 @@ import os
 from os.path import basename
 
 
-def save_df_to_csv(fn, clf_id, df):
+def save_df_to_json(fn, clf_id, df):
     try:
         os.mkdir('/app/data/'+ clf_id +'/')
     except FileExistsError as error:
         print(error)
-    path = '/app/data/' + clf_id + "/" + fn + '.csv'
-    df.to_csv(path_or_buf=path, mode='w+')
+    path = '/app/data/' + clf_id + "/" + fn + '.json'
+    df.to_json(path)
 
 
 def save_clf(clf, clf_id):
