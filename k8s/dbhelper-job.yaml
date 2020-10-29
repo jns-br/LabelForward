@@ -13,13 +13,13 @@ spec:
           image: jnsbr/labelforward-dbhelper
           env:
             - name: ACCESSOR_PATH
-              value: exampledata/accessors.csv
+              value: exampledata/accessors.json
             - name: DATA_PATH
-              value: exampledata/data.csv
+              value: exampledata/data.json
             - name: LABEL_PATH
-              value: exampledata/labels.csv
+              value: exampledata/labels.json
             - name: INIT_DATA_PATH
-              value: exampledata/init_data.csv
+              value: exampledata/init_data.json
             - name: REDIS_HOST
               value: redis-cluster-ip-service
             - name: REDIS_PORT
