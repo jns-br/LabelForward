@@ -41,7 +41,8 @@ def create_table(conn):
             labels TEXT [],
             users TEXT [],
             major_label VARCHAR(50),
-            uncertainty FLOAT
+            uncertainty FLOAT,
+            predicted_label TEXT
         )
     """,
     """
