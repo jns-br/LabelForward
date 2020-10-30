@@ -30,7 +30,7 @@ def init(conn):
 
 
 def train_label_clf(conn):
-    data = pg_helper.read_labeled_data_not_ignored(conn)
+    data = pg_helper.read_labeled_data_full(conn)
     if data is None:
         return None, None, None, None
     X_text = data[constants.key_text_data].to_numpy(dtype=str)
