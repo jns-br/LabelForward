@@ -27,4 +27,5 @@ def update_uncertainties(conn):
     data[constants.key_uncertainty] = probas_df[constants.key_uncertainty]
     predicted_labels = clf.predict(X)
     predicted_labels_df = pd.DataFrame(predicted_labels, columns=[constants.key_predicted_label])
+    data[constants.key_predicted_label] = predicted_labels_df[constants.key_predicted_label]
     return data
