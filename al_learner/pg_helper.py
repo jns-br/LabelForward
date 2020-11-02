@@ -127,30 +127,9 @@ def save_model(data, conn):
         return id
 
 
-def save_ignore_model(data, conn):
-    print('Saving ignore model', flush=True)
-    if conn is not None:
-        statement = constants.sql_insert_ignore_clf
-        cur = conn.cursor()
-        cur.execute(statement, (data, 0))
-        conn.commit()
-        id = cur.fetchone()[0]
-        cur.close()
-        return id
-
-
 def save_score(clf_id, precision_score, conn):
     if conn is not None:
         statement = constants.sql_insert_precision_score
-        cur = conn.cursor()
-        cur.execute(statement, (precision_score, clf_id))
-        conn.commit()
-        cur.close()
-
-
-def save_score_ignore(clf_id, precision_score, conn):
-    if conn is not None:
-        statement = constants.sql_update_precision_score_ignore
         cur = conn.cursor()
         cur.execute(statement, (precision_score, clf_id))
         conn.commit()
