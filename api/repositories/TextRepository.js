@@ -1,5 +1,5 @@
 const keys = require('../keys');
-const statments = require('./statements');
+const statements = require('./statements');
 const constants = require('../constants');
 const Redis = require('ioredis');
 const { Pool } = require('pg');
@@ -21,9 +21,28 @@ class TextRepository {
       const queryFlag = await redisClient.get(constants.keyQueryFlag);
       switch (queryFlag) {
         case constants.keyAvailable:
-          const statement = statments.selectNextText;
+          const statement = statements.selectNextText;
           const result = await this.pgClient.query(statement, [email]);
-          return result.rows[0];
+          const uncertainty = parseFloat(result.rows[0].uncertainty);
+
+          const statement_ignore = statements.selectNextTextIgnored;
+          const result_ignore = await this.pgClient.query(statement_ignore, [email]);
+          let uncertainty_ignore;
+          if(result_ignore.rowCount > 0) {
+            uncertainty_ignore = parseFloat(result_ignore.rows[0].uncertainty);
+          }
+          
+          const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
+          if (uncertainty_ignore) {
+            if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
+              return result_ignore.rows[0];
+            } else {
+              return result.rows[0];
+            }
+          } else {
+            return result.rows[0];
+          }
+          
         default:
           return null;
       }
@@ -38,7 +57,7 @@ class TextRepository {
       const redisClient = new Redis({ port: keys.redisPort, host: keys.redisHost });
       const queryFlag = await redisClient.get(constants.keyQueryFlag);
       if (queryFlag == constants.keyAvailable) {
-        const statment = statments.insertText;
+        const statment = statements.insertText;
         const result = await this.pgClient.query(statment, [label, email, text_id]);
         if (result.rowCount !== 1) {
           throw new Error('Insertion failed');
@@ -61,7 +80,7 @@ class TextRepository {
 
   async getLabels() {
     try {
-      const statement = statments.selectLabels;
+      const statement = statements.selectLabels;
       const results = await this.pgClient.query(statement);
       return Array.from(results.rows, result => result.label);
     } catch (err) {

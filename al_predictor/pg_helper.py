@@ -48,7 +48,7 @@ def insert_uncertainties(data, conn):
     cur = conn.cursor()
     statement = constants.sql_update_uncertainty
     for index, row in data.iterrows():
-        cur.execute(statement, (row[constants.key_uncertainty], row[constants.key_text_id]))
+        cur.execute(statement, (row[constants.key_uncertainty], row[constants.key_predicted_label], row[constants.key_text_id]))
     conn.commit()
 
 

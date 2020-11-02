@@ -25,4 +25,7 @@ def update_uncertainties(conn):
     highest_probas = np.array([np.max(probas[i]) for i in range(probas.shape[0])])
     probas_df = pd.DataFrame(highest_probas, columns=[constants.key_uncertainty])
     data[constants.key_uncertainty] = probas_df[constants.key_uncertainty]
+    predicted_labels = clf.predict(X)
+    predicted_labels_df = pd.DataFrame(predicted_labels, columns=[constants.key_predicted_label])
+    data[constants.key_predicted_label] = predicted_labels_df[constants.key_predicted_label]
     return data

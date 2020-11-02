@@ -10,7 +10,9 @@ if __name__ == '__main__':
     subscriber = r.pubsub()
     subscriber.subscribe(constants.key_predictor)
     print('Initialized redis', flush=True)
-    r.set(constants.key_query_flag, constants.msg_unavailable)
+    query_flag = r.get(constants.key_query_flag)
+    if query_flag is None:
+        r.set(constants.key_query_flag, constants.msg_unavailable)
     r.set(constants.key_query_counter, 0)
     conn = pg_helper.connect()
 

@@ -41,7 +41,8 @@ def create_table(conn):
             labels TEXT [],
             users TEXT [],
             major_label VARCHAR(50),
-            uncertainty FLOAT
+            uncertainty FLOAT,
+            predicted_label TEXT
         )
     """,
     """
@@ -83,15 +84,6 @@ def create_table(conn):
             download_id SERIAL PRIMARY KEY,
             clf_id INTEGER NOT NULL,
             file BYTEA NOT NULL
-        )
-    """,
-    """
-        CREATE TABLE IF NOT EXISTS ignoreclf(
-            clf_id SERIAL PRIMARY KEY,
-            clf BYTEA NOT NULL,
-            precision_score FLOAT,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-            download INTEGER NOT NULL
         )
     """,
     """
@@ -142,9 +134,19 @@ def read_labels(conn):
         INSERT INTO labels(label) VALUES (%s) ON CONFLICT DO NOTHING
     """
 
+    ignore_flag = False
+
     for index, row in label_data.iterrows():
         try:
             cur.execute(statement, (row['labels'], ))
+            if row['labels'] == 'ignore':
+                ignore_flag = True
+        except psycopg2.DatabaseError as error:
+            print('error: ', error)
+
+    if ignore_flag == False:
+        try:
+            cur.execute(statement, ('ignored',))
         except psycopg2.DatabaseError as error:
             print('error: ', error)
 

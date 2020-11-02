@@ -42,8 +42,7 @@ def is_new_batch_ready(conn):
         if majority_label != row[constants.key_major_label]:
             text_id = int(row[constants.key_text_id])
             cur.execute(update_statement, (majority_label, text_id))
-            if majority_label != constants.key_ignored:
-                update_counter += 1
+            update_counter += 1
     conn.commit()
     if update_counter >= int(keys.batch_size):
         return True
@@ -128,30 +127,9 @@ def save_model(data, conn):
         return id
 
 
-def save_ignore_model(data, conn):
-    print('Saving ignore model', flush=True)
-    if conn is not None:
-        statement = constants.sql_insert_ignore_clf
-        cur = conn.cursor()
-        cur.execute(statement, (data, 0))
-        conn.commit()
-        id = cur.fetchone()[0]
-        cur.close()
-        return id
-
-
 def save_score(clf_id, precision_score, conn):
     if conn is not None:
         statement = constants.sql_insert_precision_score
-        cur = conn.cursor()
-        cur.execute(statement, (precision_score, clf_id))
-        conn.commit()
-        cur.close()
-
-
-def save_score_ignore(clf_id, precision_score, conn):
-    if conn is not None:
-        statement = constants.sql_update_precision_score_ignore
         cur = conn.cursor()
         cur.execute(statement, (precision_score, clf_id))
         conn.commit()
