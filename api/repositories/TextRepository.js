@@ -109,6 +109,24 @@ class TextRepository {
       throw err;
     }
   }
+
+  async insertEndTime(email, textId) {
+    try {
+      const statementUser = 'SELECT user_id FROM users WHERE email = $1'
+      const resultUser = await this.pgClient.query(statementUser, [email]);
+      const userId = parseInt(resultUser.rows[0].user_id);
+
+      const date = Date.now() / 1000;
+      const statementInsert = 'UPDATE sample_timestamps SET end_time = to_timestamp($1) WHERE text_id = $2 AND user_id = $3';
+      const resultInsert = await this.pgClient.query(statementInsert, [date, textId, userId]);
+      if (resultInsert.rowCount !== 1) {
+        throw new Error('Insertion failed');
+      }
+    } catch (err) {
+      console.error('DB error', err.message);
+      throw err;
+    }
+  }
 }
 
 module.exports = new TextRepository();
