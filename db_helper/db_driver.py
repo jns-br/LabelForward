@@ -87,15 +87,6 @@ def create_table(conn):
         )
     """,
     """
-        CREATE TABLE IF NOT EXISTS ignoreclf(
-            clf_id SERIAL PRIMARY KEY,
-            clf BYTEA NOT NULL,
-            precision_score FLOAT,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-            download INTEGER NOT NULL
-        )
-    """,
-    """
         CREATE TABLE IF NOT EXISTS init_data(
             init_id SERIAL PRIMARY KEY,
             text_data TEXT NOT NULL,
