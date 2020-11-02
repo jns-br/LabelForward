@@ -32,7 +32,7 @@ class TextRepository {
             uncertainty_ignore = parseFloat(result_ignore.rows[0].uncertainty);
           }
           
-          const uncertainty_threshold = 0.2
+          const uncertainty_threshold = parseInt(keys.uncertaintyThreshold);
           if (uncertainty_ignore) {
             if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
               return result_ignore.rows[0];
