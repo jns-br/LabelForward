@@ -92,6 +92,15 @@ def create_table(conn):
             text_data TEXT NOT NULL,
             label TEXT NOT NULL
         )
+    """,
+    """
+        CREATE TABLE IF NOT EXISTS timestamps(
+            stamp_id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            text_id INTEGER NOT NULL,
+            start TIMESTAMP,
+            end TIMESTAMP
+        )
     """
     )
     try:
