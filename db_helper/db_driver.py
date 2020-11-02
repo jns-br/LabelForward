@@ -148,7 +148,7 @@ def read_labels(conn):
     for index, row in label_data.iterrows():
         try:
             cur.execute(statement, (row['labels'], ))
-            if row['labels'] == 'ignore':
+            if row['labels'] == 'ignored':
                 ignore_flag = True
         except psycopg2.DatabaseError as error:
             print('error: ', error)
