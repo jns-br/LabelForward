@@ -94,7 +94,7 @@ def create_table(conn):
         )
     """,
     """
-        CREATE TABLE IF NOT EXISTS timestamps(
+        CREATE TABLE IF NOT EXISTS sample_timestamps(
             stamp_id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             text_id INTEGER NOT NULL,
