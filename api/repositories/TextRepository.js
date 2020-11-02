@@ -99,7 +99,7 @@ class TextRepository {
       const userId = parseInt(resultUser.rows[0].user_id);
 
       const date = Date.now() / 1000;
-      const statementInsert = 'INSERT INTO sample_timestamps(user_id, text_id, start) VALUES($1, $2, to_timestamp($3))';
+      const statementInsert = 'INSERT INTO sample_timestamps(user_id, text_id, start_time) VALUES($1, $2, to_timestamp($3))';
       const resultInsert = await this.pgClient.query(statementInsert, [userId, textId, date])
       if (resultInsert.rowCount !== 1) {
         throw new Error('Insertion failed');
