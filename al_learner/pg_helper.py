@@ -42,8 +42,7 @@ def is_new_batch_ready(conn):
         if majority_label != row[constants.key_major_label]:
             text_id = int(row[constants.key_text_id])
             cur.execute(update_statement, (majority_label, text_id))
-            if majority_label != constants.key_ignored:
-                update_counter += 1
+            update_counter += 1
     conn.commit()
     if update_counter >= int(keys.batch_size):
         return True
