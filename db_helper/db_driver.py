@@ -80,6 +80,15 @@ def create_table(conn):
         )
     """,
     """
+        CREATE TABLE IF NOT EXISTS sample_timestamps(
+            stamp_id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            text_id INTEGER NOT NULL,
+            start_time TIMESTAMP,
+            end_time TIMESTAMP
+        )
+    """,
+    """
         CREATE TABLE IF NOT EXISTS downloads(
             download_id SERIAL PRIMARY KEY,
             clf_id INTEGER NOT NULL,
@@ -91,15 +100,6 @@ def create_table(conn):
             init_id SERIAL PRIMARY KEY,
             text_data TEXT NOT NULL,
             label TEXT NOT NULL
-        )
-    """,
-    """
-        CREATE TABLE IF NOT EXISTS sample_timestamps(
-            stamp_id SERIAL PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            text_id INTEGER NOT NULL,
-            start TIMESTAMP,
-            end TIMESTAMP
         )
     """
     )
