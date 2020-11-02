@@ -23,16 +23,26 @@ class TextRepository {
         case constants.keyAvailable:
           const statement = statments.selectNextText;
           const result = await this.pgClient.query(statement, [email]);
-          const statement_ignored = statements.selectNextTextIgnored;
-          const result_ignore = await this.pgClient.query(statement_ignored, [email]);
           const uncertainty = parseFloat(result.rows[0].uncertainty);
-          const uncertainty_ignore = parseFloat(result_ignore.rows[0].uncertainty);
+
+          const statement_ignore = statements.selectNextTextIgnored;
+          const result_ignore = await this.pgClient.query(statement_ignore, [email]);
+          let uncertainty_ignore;
+          if(result_ignore.rowCount > 0) {
+            uncertainty_ignore = parseFloat(result_ignore.rows[0].uncertainty);
+          }
+          
           const uncertainty_threshold = 0.2
-          if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
-            return result_ignore.rows[0];
+          if (uncertainty_ignore) {
+            if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
+              return result_ignore.rows[0];
+            } else {
+              return result.rows[0];
+            }
           } else {
             return result.rows[0];
           }
+          
         default:
           return null;
       }
