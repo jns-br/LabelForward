@@ -194,7 +194,7 @@ def check_for_existing_data(conn):
 
 def read_init_data(conn):
     try:
-        init_data = pd.read_csv(keys.init_data_path)
+        init_data = pd.read_json(keys.init_data_path)
         cur = conn.cursor()    
         statement = "INSERT INTO init_data(text_data, label) VALUES (%s, %s) ON CONFLICT DO NOTHING"
 
