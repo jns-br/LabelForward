@@ -65,6 +65,7 @@ class TextRepository {
         if (result.rowCount !== 1) {
           throw new Error('Insertion failed');
         }
+        await this.insertEndTime(email, text_id);
         const queryCounter = parseInt(await redisClient.get(constants.keyQueryCounter));
         await redisClient.set(constants.keyQueryCounter, (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
