@@ -45,23 +45,6 @@ def train_label_clf(conn):
     return X_test, y_test, clf, id
 
 
-def train_ignore_clf(conn):
-    data = pg_helper.read_labeled_data_full(conn)
-    if data is None:
-        return None, None, None, None
-    X_text = data[constants.key_text_data].to_numpy(dtype=str)
-    y = data[constants.key_major_label].to_numpy()
-    y_bool = (y != constants.key_ignored).astype(int)
-    if np.count_nonzero(y_bool) == 0:
-        return None, None, None, None
-    y_bool = (y == constants.key_ignored).astype(int)
-    if np.count_nonzero(y_bool) == 0:
-        return None, None, None, None
-    X_train, X_test, y_train, y_test = train_test_split(X_text, y_bool, test_size=0.1, random_state=42)
-    clf, id = create_model(X_train, y_train, conn, ignore=True)
-    return X_test, y_test, clf, id
-
-
 def create_count_vectorizer(conn):
     print('Creating new count vectorizer', flush=True)
     X_text = pg_helper.read_all_text(conn)
