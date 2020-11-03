@@ -143,19 +143,9 @@ def read_labels(conn):
         INSERT INTO labels(label) VALUES (%s) ON CONFLICT DO NOTHING
     """
 
-    ignore_flag = False
-
     for index, row in label_data.iterrows():
         try:
             cur.execute(statement, (row['labels'], ))
-            if row['labels'] == 'ignored':
-                ignore_flag = True
-        except psycopg2.DatabaseError as error:
-            print('error: ', error)
-
-    if ignore_flag == False:
-        try:
-            cur.execute(statement, ('ignored',))
         except psycopg2.DatabaseError as error:
             print('error: ', error)
 
