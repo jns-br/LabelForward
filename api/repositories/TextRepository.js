@@ -61,10 +61,7 @@ class TextRepository {
       const queryFlag = await redisClient.get(constants.keyQueryFlag);
       if (queryFlag == constants.keyAvailable) {
         const statment = statements.insertText;
-        const result = await this.pgClient.query(statment, [label, email, text_id]);
-        if (result.rowCount !== 1) {
-          throw new Error('Insertion failed');
-        }
+        await this.pgClient.query(statment, [label, email, text_id]);
         await this.insertEndTime(email, text_id);
         const queryCounter = parseInt(await redisClient.get(constants.keyQueryCounter));
         await redisClient.set(constants.keyQueryCounter, (queryCounter + 1));
@@ -101,10 +98,7 @@ class TextRepository {
 
       const date = Date.now() / 1000;
       const statementInsert = 'INSERT INTO sample_timestamps(user_id, text_id, start_time) VALUES($1, $2, to_timestamp($3))';
-      const resultInsert = await this.pgClient.query(statementInsert, [userId, textId, date])
-      if (resultInsert.rowCount !== 1) {
-        throw new Error('Insertion failed');
-      }
+      await this.pgClient.query(statementInsert, [userId, textId, date])
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
@@ -119,10 +113,7 @@ class TextRepository {
 
       const date = Date.now() / 1000;
       const statementInsert = 'UPDATE sample_timestamps SET end_time = to_timestamp($1) WHERE text_id = $2 AND user_id = $3';
-      const resultInsert = await this.pgClient.query(statementInsert, [date, textId, userId]);
-      if (resultInsert.rowCount !== 1) {
-        throw new Error('Insertion failed');
-      }
+      await this.pgClient.query(statementInsert, [date, textId, userId]);
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
