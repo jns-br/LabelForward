@@ -9,5 +9,6 @@ module.exports = {
     pgPort: process.env.PGPORT,
     jwtSecret: process.env.JWT_SECRET,
     batchSize: process.env.BATCH_SIZE,
-    uncertaintyThreshold: process.env.UNCERTAINTY_THRESHOLD
+    uncertaintyThreshold: process.env.UNCERTAINTY_THRESHOLD,
+    activeLearning: process.env.ACTIVE_LEARNING
   };
