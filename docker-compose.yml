@@ -62,6 +62,7 @@ services:
       - REDIS_PORT=6379
       - BATCH_SIZE=10 # set size when al learner should try an update
       - UNCERTAINTY_THRESHOLD=0.2 # for hierachical text selection, set to 1 to turn off hierachy
+      - ACTIVE_LEARNING=true
   client:
     stdin_open: true
     restart: always

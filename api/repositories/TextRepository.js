@@ -21,28 +21,40 @@ class TextRepository {
       const queryFlag = await redisClient.get(constants.keyQueryFlag);
       switch (queryFlag) {
         case constants.keyAvailable:
-          const statement = statements.selectNextText;
-          const result = await this.pgClient.query(statement, [email]);
-          const uncertainty = parseFloat(result.rows[0].uncertainty);
+          if(keys.activeLearning === 'true') {
+            const statement = statements.selectNextText;
+            const result = await this.pgClient.query(statement, [email]);
+            let uncertainty;
+            if (result.rowCount > 0) {
+              uncertainty = parseFloat(result.rows[0].uncertainty);
+            }
 
-          const statement_ignore = statements.selectNextTextIgnored;
-          const result_ignore = await this.pgClient.query(statement_ignore, [email]);
-          let uncertainty_ignore;
-          if(result_ignore.rowCount > 0) {
-            uncertainty_ignore = parseFloat(result_ignore.rows[0].uncertainty);
-          }
-          
-          const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
-          if (uncertainty_ignore) {
-            if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
-              await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
-              return result_ignore.rows[0];
-            } else {
+            const statement_ignore = statements.selectNextTextIgnored;
+            const result_ignore = await this.pgClient.query(statement_ignore, [email]);
+            let uncertainty_ignore;
+            if(result_ignore.rowCount > 0) {
+              uncertainty_ignore = parseFloat(result_ignore.rows[0].uncertainty);
+            }
+            
+            const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
+            if (uncertainty_ignore && result) {
+              if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
+                await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+                return result_ignore.rows[0];
+              } else {
+                await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+                return result.rows[0];
+              }
+            } else if (uncertainty) {
               await this.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
+            } else {
+              await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+              return result_ignore.rows[0];
             }
           } else {
-            await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+            const statement = statements.selectNextTextNonAL;
+            const result = await this.pgClient.query(statement, [email]);
             return result.rows[0];
           }
           
