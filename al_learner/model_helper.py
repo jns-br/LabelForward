@@ -33,8 +33,16 @@ def train_label_clf(conn):
     data = pg_helper.read_labeled_data_full(conn)
     if data is None:
         return None, None, None, None
-    X_text = data[constants.key_text_data].to_numpy(dtype=str)
-    y = data[constants.key_major_label].to_numpy()
+    X_text = data[constants.key_text_data]
+    y = data[constants.key_major_label]
+    init_data = pg_helper.read_init_data(conn)
+    if init_data is not None:
+        X_init = init_data[constants.key_text_data]
+        y_init = init_data[constants.key_label]
+        X_text = X_text.append(X_init, ignore_index=False)
+        y = y.append(y_init)
+    X_text = X_text.to_numpy(dtype=str)
+    y = y.to_numpy()
     X_train, X_test, y_train, y_test = train_test_split(X_text, y, test_size=0.1, random_state=42)
     clf, id = create_model(X_train, y_train, conn)
     cur = conn.cursor()
