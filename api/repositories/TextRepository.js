@@ -37,7 +37,7 @@ class TextRepository {
             }
             
             const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
-            if (uncertainty_ignore && result) {
+            if (uncertainty_ignore && uncertainty) {
               if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
                 await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
                 return result_ignore.rows[0];
@@ -48,14 +48,20 @@ class TextRepository {
             } else if (uncertainty) {
               await this.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
-            } else {
+            } else if (uncertainty_ignore) {
               await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
               return result_ignore.rows[0];
+            } else {
+              return null;
             }
           } else {
             const statement = statements.selectNextTextNonAL;
             const result = await this.pgClient.query(statement, [email]);
-            return result.rows[0];
+            if (result.rowCount > 0) {
+              return result.rows[0];
+            } else {
+              return null;
+            }
           }
           
         default:
