@@ -57,17 +57,6 @@ def is_new_batch_ready(conn):
         return False
 
 
-def read_labeled_data_not_ignored(conn):
-    print('Reading labeled data full without ignored', flush=True)
-    if conn is not None:
-        statement = constants.sql_select_not_ignored
-        df = pd.read_sql_query(statement, con=conn, params={constants.key_ignored: constants.key_ignored})
-        if len(df.index) == 0:
-            return None
-        else:
-            return df
-
-
 def read_labeled_data_full(conn):
     print('Reading labeld data full', flush=True)
     if conn is not None:
