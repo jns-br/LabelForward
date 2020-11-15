@@ -3,9 +3,12 @@ import pandas as pd
 from collections import Counter
 import sys
 import constants
+import logging
 
+logger = logging.getLogger('logger')
 
 def connect():
+    logger.info('Initializing Postgres connection')
     conn = None
     try:
         conn = psycopg2.connect(
@@ -15,10 +18,10 @@ def connect():
             password=keys.pg_password,
             port=keys.pg_port)
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print('error: ', error)
+    except (Exception, psycopg2.DatabaseError):
+        logger.exception('Postgres connection failed')
         sys.exit(1)
-
+    logger.info('Postgres connection initialized')
     return conn
 
 
