@@ -26,14 +26,16 @@ def connect():
 
 
 def load_labels(conn):
+    logger.info('Loading labels from DB')
     print('Loading labels', flush=True)
     label_statement = constants.sql_select_labels
     df = pd.read_sql_query(label_statement, con=conn)
+    logger.info('Labels loaded')
     return df['label'].to_numpy()
 
 
 def is_new_batch_ready(conn):
-    print('Checking new batch', flush=True)
+    logger.info('Checking batch size')
     cur = conn.cursor()
     update_counter = 0
     select_all_statement = constants.sql_select_all_min_label_count
@@ -48,8 +50,10 @@ def is_new_batch_ready(conn):
             update_counter += 1
     conn.commit()
     if update_counter >= int(keys.batch_size):
+        logger.info('New batch is ready')
         return True
     else:
+        logger.info('New datapoints below batch size')
         return False
 
 
