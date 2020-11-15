@@ -12,7 +12,7 @@ handlers:
     class: logging.FileHandler
     level: DEBUG
     formatter: simple
-    filename: 'al_learner_logs.log'
+    filename: 'db_driver.log'
 loggers:
   logger:
     level: DEBUG
