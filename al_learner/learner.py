@@ -27,6 +27,7 @@ if __name__ == '__main__':
         if new_msg[constants.key_data] == constants.msg_init:
             logger.info('Received init message')
             model_helper.init(conn)
+            logger.info('Sending update message to predictor')
             r.publish(constants.key_predictor, constants.msg_update)
         if new_msg[constants.key_data] == constants.msg_update:
             logger.info('Received update message')
@@ -34,5 +35,6 @@ if __name__ == '__main__':
             if batch_ready:
                 X_test, y_test, clf, id = model_helper.train_label_clf(conn)
                 if clf is not None:
+                    logger.info('Sending update message to predictor')
                     r.publish(constants.key_predictor, constants.msg_update)
                     model_helper.create_precision_score(X_test, y_test, clf, id, conn)
