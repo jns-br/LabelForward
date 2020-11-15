@@ -85,7 +85,8 @@ services:
     build: 
       dockerfile: Dockerfile
       context: ./al_learner
-    environment: 
+    environment:
+      - PYTHONUNBUFFERED=1 
       - PGUSER=postgres
       - PGHOST=postgres
       - PGDATABASE=postgres
