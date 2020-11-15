@@ -30,7 +30,7 @@ def load_labels(conn):
     print('Loading labels', flush=True)
     label_statement = constants.sql_select_labels
     df = pd.read_sql_query(label_statement, con=conn)
-    logger.info('Labels loaded')
+    logger.info('Labels loaded from DB')
     return df['label'].to_numpy()
 
 
@@ -58,46 +58,52 @@ def is_new_batch_ready(conn):
 
 
 def read_labeled_data_full(conn):
-    print('Reading labeld data full', flush=True)
+    logger.info('Loading all labeled data from DB')
     if conn is not None:
         statement = constants.sql_select_major_label_not_null
         df = pd.read_sql_query(statement, con=conn)
         if len(df.index) == 0:
+            logger.info('No labeled data available')
             return None
         else:
+            logger.info('All labeled data loaded from DB')
             return df
 
 
 def read_all_text(conn):
-    print('Reading all text data', flush=True)
+    logger.info('Loading all text data from DB')
     statement = constants.sql_all_text
     df = pd.read_sql_query(statement, con=conn)
+    logger.info('All text data loaded from DB')
     return df.to_numpy()
 
 
 def read_init_data(conn):
-    print('Reading init data', flush=True)
+    logger.info('Loading init data from DB')
     if conn is not None:
         statement = constants.sql_select_init_data
         df = pd.read_sql_query(statement, con=conn)
         if len(df.index) == 0:
+            logger.info('No init data available')
             return None
         else:
+            logger.info('Init data loaded from DB')
             return df
 
 
 def save_countvec(data, conn):
-    print('Saving count vectorizer', flush=True)
+    logger.info('Saving count vectorizer to DB')
     if conn is not None:
         statement = constants.sql_insert_countvec
         cur = conn.cursor()
         cur.execute(statement, (data,))
         cur.close()
         conn.commit()
+        logger.info('Count vectorizer saved to DB')
 
 
 def load_last_countvec(conn):
-    print('Loading last countvec', flush=True)
+    logger.info('Loading count vectorizer')
     if conn is not None:
         statement = constants.sql_select_countvec
         cur = conn.cursor()
@@ -105,14 +111,16 @@ def load_last_countvec(conn):
         data = cur.fetchone()
         if data is None:
             cur.close()
+            logger.info('No count vectorizer available')
             return None
         else:
             cur.close()
+            logger.info('Count vectorizer loaded from DB')
             return data[0]
 
 
 def save_model(data, conn):
-    print('Saving model', flush=True)
+    logger.info('Saving model to DB')
     if conn is not None:
         statement = constants.sql_insert_clf
         cur = conn.cursor()
@@ -120,16 +128,19 @@ def save_model(data, conn):
         conn.commit()
         id = cur.fetchone()[0]
         cur.close()
+        logger.info('Model saved to DB')
         return id
 
 
 def save_score(clf_id, precision_score, conn):
+    logger.info('Saving precision score to DB')
     if conn is not None:
         statement = constants.sql_insert_precision_score
         cur = conn.cursor()
         cur.execute(statement, (precision_score, clf_id))
         conn.commit()
         cur.close()
+        logger.info('Precision score saved to DB')
 
 
 def find_max_occurences(arr):
