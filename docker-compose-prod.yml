@@ -20,6 +20,7 @@ services:
     volumes:
       - ./db_helper:/app
     environment: 
+      - PYTHONUNBUFFERED=1
       - PGUSER=postgres
       - PGHOST=postgres
       - PGDATABASE=postgres
@@ -85,7 +86,8 @@ services:
     build: 
       dockerfile: Dockerfile
       context: ./al_learner
-    environment: 
+    environment:
+      - PYTHONUNBUFFERED=1 
       - PGUSER=postgres
       - PGHOST=postgres
       - PGDATABASE=postgres
@@ -110,7 +112,8 @@ services:
     build: 
       dockerfile: Dockerfile
       context: ./al_predictor
-    environment: 
+    environment:
+      - PYTHONUNBUFFERED=1 
       - PGUSER=postgres
       - PGHOST=postgres
       - PGDATABASE=postgres
@@ -129,7 +132,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./dl_manager
-    environment: 
+    environment:
+      - PYTHONUNBUFFERED=1 
       - PGUSER=postgres
       - PGHOST=postgres
       - PGPASSWORD=postgres_password

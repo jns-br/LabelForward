@@ -3,34 +3,29 @@ import keys
 import pandas as pd
 import redis
 import sys
+import logging
+import logging.config
+import yaml
 
+logger = logging.getLogger('logger')
 
 def connect():
+    logger.info('Initializing Postgres connection')
     conn = None
     try:
-        print('Connecting to Postgres database')
+        
         conn = psycopg2.connect(host=keys.host, dbname=keys.dbname, user=keys.user, password=keys.password, port=keys.port)
-
         cur = conn.cursor()
-
-        # execute a statement
-        print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
-
-        # display the PostgreSQL database server version
-        db_version = cur.fetchone()
-        print(db_version)
-
-        # close the communication with the PostgreSQL
         cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print('error: ', error)
+    except (Exception, psycopg2.DatabaseError):
+        logger.exception('Postgres connection failed')
         sys.exit(1)
-
+    logger.info('Postgres connection initialized')
     return conn
 
 
 def create_table(conn):
+    logger.info('Creating tables')
     statements = ("""
         CREATE TABLE IF NOT EXISTS text_data(
             text_id SERIAL PRIMARY KEY,
@@ -109,12 +104,13 @@ def create_table(conn):
             cur.execute(statement)
         cur.close()
         conn.commit()
-        print('Created tables!', flush=True)
-    except (Exception, psycopg2.DatabaseError) as error:
-        print('error: ', error)
+        logger.info('Table creation successful')
+    except (Exception, psycopg2.DatabaseError):
+        logger.exception('Table creation failed')
 
 
 def read_text_data(conn):
+    logger.info('Inserting text data')
     text_data = pd.read_json(keys.data_path)
     cur = conn.cursor()
     statement = """
@@ -127,16 +123,16 @@ def read_text_data(conn):
             doc_counter += 1
             if doc_counter % 10000 == 0:
                 conn.commit()
-                print('Inserted text docs: ', doc_counter, flush=True)
-        except psycopg2.DatabaseError as error:
-            print('error: ', error, flush=True)
+        except psycopg2.DatabaseError:
+            logger.exception('Text data insertion failed')
 
     conn.commit()
-    print('Inserted text docs: ', doc_counter, flush=True)
     cur.close()
+    logger.info('Inserted text datapoints: ' + str(doc_counter))
 
 
 def read_labels(conn):
+    logger.info('Inserting labels')
     label_data = pd.read_json(keys.label_path)
     cur = conn.cursor()
     statement = """
@@ -146,14 +142,15 @@ def read_labels(conn):
     for index, row in label_data.iterrows():
         try:
             cur.execute(statement, (row['labels'], ))
-        except psycopg2.DatabaseError as error:
-            print('error: ', error)
+        except psycopg2.DatabaseError:
+            logger.exception('Label insertion failed')
 
     conn.commit()
-    print('Inserted labels', flush=True)
     cur.close()
+    logger.info('Label insertion successful')
 
 def read_accessors(conn):
+    logger.info('Inserting accessors')
     accessor_data = pd.read_json(keys.accessor_path)
     cur = conn.cursor()
     statement = "INSERT INTO accessors(email) VALUES (%s) ON CONFLICT DO NOTHING"
@@ -161,12 +158,12 @@ def read_accessors(conn):
     for index, row in accessor_data.iterrows():
         try:
             cur.execute(statement, (row['accessor'], ))
-        except psycopg2.DatabaseError as error:
-            print('error: ', error)
+        except psycopg2.DatabaseError:
+            logger.info('Accessor insertion failed')
     
     conn.commit()
-    print('Inserted accessors', flush=True)
     cur.close()
+    logger.info('Accessor inerstion successful')
 
 
 def check_for_existing_data(conn):
@@ -183,6 +180,7 @@ def check_for_existing_data(conn):
 
 
 def read_init_data(conn):
+    logger.info('Insertion init data')
     try:
         init_data = pd.read_json(keys.init_data_path)
         cur = conn.cursor()    
@@ -191,17 +189,21 @@ def read_init_data(conn):
         for index, row in init_data.iterrows():
             try:
                 cur.execute(statement, (row['data'], row['label']))
-            except psycopg2.DatabaseError as error:
-                print('error: ', error)
+            except psycopg2.DatabaseError:
+                logger.exception('Init data insertion failed')
         
         conn.commit()
-        print('Inserted init data')
         cur.close()
+        logger.info('Init data insertion successful')
     except (ValueError, FileNotFoundError):
-        print('No init data found')
+        logger.warn('No init data found')
 
 
 if __name__ == '__main__':
+    with open('logger-config.yaml', 'r') as f:
+        config = yaml.safe_load(f.read())
+        logging.config.dictConfig(config)
+
     conn = connect()
     create_table(conn)
     read_init_data(conn)

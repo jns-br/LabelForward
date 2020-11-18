@@ -5,7 +5,9 @@ import keys
 import numpy as np
 import pandas as pd
 import constants
+import logging
 
+logger = logging.getLogger('logger')
 
 def get_last_model(conn):
     data = pg_helper.load_last_model(conn)
@@ -17,6 +19,7 @@ def get_last_model(conn):
 
 
 def update_uncertainties(conn):
+    logger.info('Calculating new propabilites for text data')
     data = pg_helper.load_data(conn)
     clf = get_last_model(conn)
     count_vec = pickle.loads(pg_helper.load_count_vec(conn))
@@ -28,4 +31,5 @@ def update_uncertainties(conn):
     predicted_labels = clf.predict(X)
     predicted_labels_df = pd.DataFrame(predicted_labels, columns=[constants.key_predicted_label])
     data[constants.key_predicted_label] = predicted_labels_df[constants.key_predicted_label]
+    logger.info('New propabilities calculated')
     return data
