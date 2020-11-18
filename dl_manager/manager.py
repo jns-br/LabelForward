@@ -4,13 +4,21 @@ import pg_helper
 import model_helper
 import file_helper
 import os
+import logging
+import logging.config
+import yaml
 
 if __name__ == '__main__':
-    print('Starting DL Manager', flush=True)
+    with open('logger-config.yaml', 'r') as f:
+        config = yaml.safe_load(f.read())
+        logging.config.dictConfig(config)
+
+    logger = logging.getLogger('logger')
+    logger.info('Connecting to Redis')
     r = redis.Redis(host=keys.redis_host, port=keys.redis_port, decode_responses=True)
     subscriber = r.pubsub()
     subscriber.subscribe('dl_manager')
-    print('Initialized redis', flush=True)
+    logger.info('Redis connection initialized')
     try:
         os.mkdir('/app/data/')
     except FileExistsError as error:
@@ -19,7 +27,7 @@ if __name__ == '__main__':
     conn = pg_helper.connect()
 
     for new_msg in subscriber.listen():
-        print('Message: ', new_msg['data'], flush=True)
+        logger.info('Received download request')
         if type(new_msg['data']) == str:
             if new_msg['data'].startswith('clf'):
                 clf_id = int(new_msg['data'].split('-')[1])
