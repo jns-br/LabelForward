@@ -11,11 +11,14 @@ router.get(constants.routeText, JWTService.requireJWT(), async (req, res) => {
     const nextText = await TextRepository.getNextText(email);
     if (!nextText) {
       res.status(204);
+    } else if (!nextText.text_id){
+      res.status(205).json({});
     } else {
       res.status(200).json({text: nextText.text_data, text_id: nextText.text_id});
     }
-  } catch (error) {
-   res.status(500).json({msg: err.message});
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({msg: err.message});
   }
 });
 
@@ -23,7 +26,8 @@ router.get(constants.routeLabels, JWTService.requireJWT(), async (req, res) => {
   try {
     const labels = await TextRepository.getLabels();
     res.status(200).json({labels: labels});
-  } catch (error) {
+  } catch (err) {
+    console.log(err.message);
     res.status(500).json({msg: err.message});
   }
 });
