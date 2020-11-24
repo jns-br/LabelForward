@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 import Navigation from '../components/Navigation';
 import TweetCard from '../components/TextCard';
 import WaitCard from '../components/WaitComponent';
+import CompleteCard from '../components/CompleteComponent'
 import '../styles/TextPage.css';
 import AuthService from '../services/AuthService';
 import TextService from '../services/TextService';
@@ -16,7 +17,8 @@ class Text extends Component {
       text_id: 0,
       labels: ['label'],
       selectedLabel: "",
-      available: false
+      available: false,
+      completed: false
     }
   }
 
@@ -49,8 +51,11 @@ class Text extends Component {
       if (text.status === 200) {
         this.setState({ available: true});
         this.setState({ text: text.data.text, text_id: text.data.text_id });
+      } else if (text.status === 205){
+        this.setState({ available: false});
+        this.setState({ completed: true });
       } else {
-        this.setState({ available: false})
+        this.setState({ available: false});
       }
     } catch (err) {
       console.error(err.message);
@@ -135,17 +140,29 @@ class Text extends Component {
         </div>
       )
     } else {
-      return (
-        <div className="TextMain">
-          {this.renderRedirect()}
-          <Navigation></Navigation>
-          <div className="TextModal">
-            <WaitCard
-              onFetch={this.getText}
-            />
+      if (this.state.completed) {
+        return (
+          <div className="TextMain">
+            {this.renderRedirect()}
+            <Navigation></Navigation>
+            <div className="TextModal">
+              <CompleteCard></CompleteCard>
+            </div>
           </div>
-        </div>
-      )
+        )
+      } else {
+        return (
+          <div className="TextMain">
+            {this.renderRedirect()}
+            <Navigation></Navigation>
+            <div className="TextModal">
+              <WaitCard
+                onFetch={this.getText}
+              />
+            </div>
+          </div>
+        )
+      }
     }
   }
 }
