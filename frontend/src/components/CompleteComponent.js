@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Card } from 'react-bootstrap';
 
 class CompleteCard extends Component {
