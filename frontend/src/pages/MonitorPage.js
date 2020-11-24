@@ -41,7 +41,8 @@ class Monitor extends Component {
   async fetchLabelShare() {
     try {
       const result = await MonitorService.getLabelShare();
-      this.setState({ labelShare: result.labelShare});
+      const formattedResult = (parseFloat(result.labelShare) * 100).toFixed(2);
+      this.setState({ labelShare: formattedResult});
     } catch (err) {
       console.error(err.message);
     }
