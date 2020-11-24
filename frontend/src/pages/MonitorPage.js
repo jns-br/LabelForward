@@ -32,7 +32,6 @@ class Monitor extends Component {
     try {
       const result = await MonitorService.getClfData();
       const data = Array.from(result.clfData);
-      data.shift();
       this.setState({ clfArray: data});
     } catch (err) {
       console.error(err.message);
