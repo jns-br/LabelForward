@@ -52,7 +52,7 @@ class TextRepository {
               await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
               return result_ignore.rows[0];
             } else {
-              return null;
+              return {};
             }
           } else {
             const statement = statements.selectNextTextNonAL;
@@ -60,7 +60,7 @@ class TextRepository {
             if (result.rowCount > 0) {
               return result.rows[0];
             } else {
-              return null;
+              return {};
             }
           }
           
