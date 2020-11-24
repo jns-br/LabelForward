@@ -14,6 +14,7 @@ services:
       - redis
       - api
       - client
+      - allearner
     build: 
       dockerfile: Dockerfile.dev
       context: ./db_helper
@@ -28,7 +29,7 @@ services:
       - PGPORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - DATA_PATH=exampledata/data.json # adjust to path of your data file
+      - DATA_PATH=exampledata/data_short.json # adjust to path of your data file
       - LABEL_PATH=exampledata/labels.json # adjust to path of your label file
       - ACCESSOR_PATH=exampledata/accessors.json # adjust to path of your accesor file
       - INIT_DATA_PATH=exampledata/init_data.json # adjust to path of your init data file
@@ -83,7 +84,7 @@ services:
       - api
       - client
       - redis
-      - dbhelper
+      - alpredictor
     build: 
       dockerfile: Dockerfile.dev
       context: ./al_learner
@@ -109,7 +110,6 @@ services:
       - api
       - client
       - redis
-      - dbhelper
     build: 
       dockerfile: Dockerfile.dev
       context: ./al_predictor
