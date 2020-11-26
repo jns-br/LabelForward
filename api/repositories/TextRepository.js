@@ -22,14 +22,14 @@ class TextRepository {
       switch (queryFlag) {
         case constants.keyAvailable:
           if(keys.activeLearning === 'true') {
-            const statement = statements.selectNextText;
+            const statement = keys.noVote === 'true' ? statements.selectNextTextNoVote : statements.selectNextText;
             const result = await this.pgClient.query(statement, [email]);
             let uncertainty;
             if (result.rowCount > 0) {
               uncertainty = parseFloat(result.rows[0].uncertainty);
             }
 
-            const statement_ignore = statements.selectNextTextIgnored;
+            const statement_ignore = keys.noVote === 'true' ? statements.selectNextTextIgnoredNoVote : statements.selectNextTextIgnored;
             const result_ignore = await this.pgClient.query(statement_ignore, [email]);
             let uncertainty_ignore;
             if(result_ignore.rowCount > 0) {
@@ -55,7 +55,7 @@ class TextRepository {
               return {};
             }
           } else {
-            const statement = statements.selectNextTextNonAL;
+            const statement = keys.noVote === 'true' ? statements.selectNextTextNonALNoVote : statements.selectNextTextNonAL;
             const result = await this.pgClient.query(statement, [email]);
             if (result.rowCount > 0) {
               return result.rows[0];
