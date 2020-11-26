@@ -40,6 +40,9 @@ if __name__ == '__main__':
                 human_labeled_df = pg_helper.load_human_labeled_data(conn)
                 hld_file_name = 'human_labeled_data'
                 file_helper.save_df_to_json(hld_file_name, str(clf_id), human_labeled_df)
+                timestamps_df = pg_helper.load_timestamps(conn)
+                timestamps_file_name = 'sample_timestamps'
+                file_helper.save_df_to_json(timestamps_file_name, str(clf_id), timestamps_df)
                 file_helper.create_zip_file(str(clf_id))
                 filename = '/app/data/data-' + str(clf_id) + '.zip'
                 pg_helper.persist_download(conn, str(clf_id), filename)
