@@ -62,6 +62,16 @@ def load_human_labeled_data(conn):
     return df
 
 
+def load_timestamps(conn):
+    logger.info('Loading timestamps from DB')
+    statement = """
+        SELECT * FROM sample_timestamps
+    """
+    df = pd.read_sql_query(statement, con=conn)
+    logger.info('Timestamps loaded from DB')
+    return df
+    
+
 def load_count_vec(conn):
     logger.info('Loading count vectorizer from DB')
     cur = conn.cursor()
