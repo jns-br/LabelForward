@@ -18,6 +18,8 @@ spec:
           ports:
             - containerPort: 5000
           env:
+            - name: NO_VOTE
+              value: false
             - name: ACTIVE_LEARNING
               value: true
             - name: REDIS_HOST
