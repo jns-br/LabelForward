@@ -10,5 +10,6 @@ module.exports = {
     jwtSecret: process.env.JWT_SECRET,
     batchSize: process.env.BATCH_SIZE,
     uncertaintyThreshold: process.env.UNCERTAINTY_THRESHOLD,
-    activeLearning: process.env.ACTIVE_LEARNING
+    activeLearning: process.env.ACTIVE_LEARNING,
+    noVote: process.env.NO_VOTE
   };
