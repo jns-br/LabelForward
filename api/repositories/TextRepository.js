@@ -58,6 +58,7 @@ class TextRepository {
             const statement = keys.noVote === 'true' ? statements.selectNextTextNonALNoVote : statements.selectNextTextNonAL;
             const result = await this.pgClient.query(statement, [email]);
             if (result.rowCount > 0) {
+              await this.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else {
               return {};
