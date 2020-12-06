@@ -57,7 +57,7 @@ docker-compose down --volumes && docker-compose up --build
 The aforementioned process builds the project with example data, a news headline dataset with with labels [link](https://www.kaggle.com/rmisra/news-category-dataset). To use it with your own data, you need to make a few adjustments.
 
 ## 1. Prepare your data
-The data and the labels must be provided as a CSV file. Each file must only contain a single column, the data file one column with one text data point in each row, the label file one column with one label in each row. You also need to define a list of accessors (eg. email addresses of annotators) in the same format. See the db_helper/exampledata for examples.
+The data and the labels must be provided as a JSON file. The file needs the format of a pandas DataFrame as json. You also need to define a list of accessors (eg. email addresses of annotators) in the same format. See the db_helper/exampledata for examples.
 Note that you need to locate your data, samples and accessors somewhere within the db_helper folder.
 
 ## 2. Adjust the docker-compose files
