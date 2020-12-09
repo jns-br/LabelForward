@@ -19,9 +19,9 @@ spec:
             - containerPort: 5000
           env:
             - name: NO_VOTE
-              value: false
+              value: 'false'
             - name: ACTIVE_LEARNING
-              value: true
+              value: 'true'
             - name: REDIS_HOST
               value: redis-cluster-ip-service
             - name: REDIS_PORT
