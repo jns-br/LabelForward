@@ -1,6 +1,7 @@
 module.exports = {
   insertUser: "INSERT INTO users(email, password) VALUES ($1, $2)",
   insertText:  "UPDATE text_data SET labels = array_append(labels, $1), users = array_append(users, $2) WHERE text_id = $3",
+  inserTimestampe: "INSERT INTO sample_timestamps(user_id, text_id, start_time) VALUES($1, $2, to_timestamp($3))",
   deleteAccessor:  "DELETE FROM accessors WHERE email = $1",
   selectAccesor: "SELECT * FROM accessors WHERE email = $1",
   selectClfData: "SELECT clf_id, precision_score, created_at, download FROM classifiers",
