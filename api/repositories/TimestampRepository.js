@@ -1,6 +1,5 @@
 const keys = require('../keys');
 const statements = require('./statements');
-const TextRepository = require('./TextRepository');
 const { Pool } = require('pg');
 
 class TimestampRepository {
@@ -12,6 +11,21 @@ class TimestampRepository {
       password: keys.pgPassword,
       port: keys.pgPort
     });
+  }
+
+  async insertStartTime (email, textId) {
+    try {
+      const statementUser = statements.selectUserByEmail;
+      const resultUser = await this.pgClient.query(statementUser, [email]);
+      const userId = parseInt(resultUser.rows[0].user_id);
+
+      const date = Date.now() / 1000;
+      const statmentInsert = statements.inserTimestamp;
+      await this.pgClient.query(statmentInsert, [date, textId, userId]);
+    } catch (err) {
+      console.error('DB err', err.message);
+      throw err;
+    }
   }
 }
 
