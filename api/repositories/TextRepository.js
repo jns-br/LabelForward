@@ -40,17 +40,17 @@ class TextRepository {
             const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
             if (uncertainty_ignore && uncertainty) {
               if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
-                await TextRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+                await TimestampRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
                 return result_ignore.rows[0];
               } else {
-                await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
+                await TimestampRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
                 return result.rows[0];
               }
             } else if (uncertainty) {
-              await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
+              await TimestampRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else if (uncertainty_ignore) {
-              await TextRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+              await TimestampRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
               return result_ignore.rows[0];
             } else {
               return {};
@@ -59,7 +59,7 @@ class TextRepository {
             const statement = keys.noVote === 'true' ? statements.selectNextTextNonALNoVote : statements.selectNextTextNonAL;
             const result = await this.pgClient.query(statement, [email]);
             if (result.rowCount > 0) {
-              await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
+              await TimestampRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else {
               return {};
@@ -82,7 +82,7 @@ class TextRepository {
       if (queryFlag == constants.keyAvailable) {
         const statment = statements.insertText;
         await this.pgClient.query(statment, [label, email, text_id]);
-        await TextRepository.insertEndTime(email, text_id);
+        await TimestampRepository.insertEndTime(email, text_id);
         const queryCounter = parseInt(await redisClient.get(constants.keyQueryCounter));
         await redisClient.set(constants.keyQueryCounter, (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
