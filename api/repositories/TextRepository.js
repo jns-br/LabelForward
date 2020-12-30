@@ -3,6 +3,7 @@ const statements = require('./statements');
 const constants = require('../constants');
 const Redis = require('ioredis');
 const { Pool } = require('pg');
+const TimestampRepository = require('./TimestampRepository');
 
 class TextRepository {
   constructor() {
@@ -39,17 +40,17 @@ class TextRepository {
             const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
             if (uncertainty_ignore && uncertainty) {
               if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
-                await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+                await TextRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
                 return result_ignore.rows[0];
               } else {
-                await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+                await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
                 return result.rows[0];
               }
             } else if (uncertainty) {
-              await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+              await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else if (uncertainty_ignore) {
-              await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+              await TextRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
               return result_ignore.rows[0];
             } else {
               return {};
@@ -58,7 +59,7 @@ class TextRepository {
             const statement = keys.noVote === 'true' ? statements.selectNextTextNonALNoVote : statements.selectNextTextNonAL;
             const result = await this.pgClient.query(statement, [email]);
             if (result.rowCount > 0) {
-              await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+              await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else {
               return {};
