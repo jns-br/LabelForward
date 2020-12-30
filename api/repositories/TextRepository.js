@@ -82,7 +82,7 @@ class TextRepository {
       if (queryFlag == constants.keyAvailable) {
         const statment = statements.insertText;
         await this.pgClient.query(statment, [label, email, text_id]);
-        await this.insertEndTime(email, text_id);
+        await TextRepository.insertEndTime(email, text_id);
         const queryCounter = parseInt(await redisClient.get(constants.keyQueryCounter));
         await redisClient.set(constants.keyQueryCounter, (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
@@ -104,36 +104,6 @@ class TextRepository {
       const statement = statements.selectLabels;
       const results = await this.pgClient.query(statement);
       return Array.from(results.rows, result => result.label);
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async insertStartTime(email, textId) {
-    try {
-      const statementUser = 'SELECT user_id FROM users WHERE email = $1'
-      const resultUser = await this.pgClient.query(statementUser, [email]);
-      const userId = parseInt(resultUser.rows[0].user_id);
-
-      const date = Date.now() / 1000;
-      const statementInsert = 'INSERT INTO sample_timestamps(user_id, text_id, start_time) VALUES($1, $2, to_timestamp($3))';
-      await this.pgClient.query(statementInsert, [userId, textId, date])
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async insertEndTime(email, textId) {
-    try {
-      const statementUser = 'SELECT user_id FROM users WHERE email = $1'
-      const resultUser = await this.pgClient.query(statementUser, [email]);
-      const userId = parseInt(resultUser.rows[0].user_id);
-
-      const date = Date.now() / 1000;
-      const statementInsert = 'UPDATE sample_timestamps SET end_time = to_timestamp($1) WHERE text_id = $2 AND user_id = $3';
-      await this.pgClient.query(statementInsert, [date, textId, userId]);
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
