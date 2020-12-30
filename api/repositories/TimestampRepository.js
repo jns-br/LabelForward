@@ -44,4 +44,4 @@ class TimestampRepository {
   }
 }
 
-module.exports = new TextRepository();
+module.exports = new TimestampRepository();
