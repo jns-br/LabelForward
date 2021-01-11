@@ -18,9 +18,13 @@ Redis channel.
 
 ## Events: init
 
-This event is triggered by the init message from the dedicated Redis channel. The message is triggered by the db_helper microservice after it is done inserting all necessary data into the PostgreSQL database, as described in the README of the db_helper microservice. After the receiving this message, the mircoservice will check if any init data is available, eg. a small set of prelabeled data. If init data
+This event is triggered by the init message from the dedicated Redis channel. The message is triggered by the db_helper microservice after it is done inserting all necessary data into the PostgreSQL database, as described in the README of the db_helper microservice. 
+
+After the receiving this message, the mircoservice will check if any init data is available, eg. a small set of prelabeled data. If init data
 is available, it will train a classifier based on this dataset. If there is no init data available, the
-classifier will be trained with a randomly labeled subset of the dataset to be labeled. After this initial training of a classifier, the microservice publishes an update message on the Redis channel dedicated to the al_predictor microservice.
+classifier will be trained with a randomly labeled subset of the dataset to be labeled. 
+
+After this initial training of a classifier, the microservice publishes an update message on the Redis channel dedicated to the al_predictor microservice.
 
 ## Events: update
 
@@ -33,7 +37,7 @@ When the major label update is finished, a new classifier is trained on all avai
 
 # Environment variables
 
-These section covers environment variables for configuration of this microservice. Standard PostgreSQL and Redis environment variables will be omitted.
+This section covers environment variables for configuration of this microservice. Standard PostgreSQL and Redis environment variables will be omitted.
 
 ## BATCH_SIZE
 
