@@ -21,7 +21,7 @@ class TimestampRepository {
 
       const date = Date.now() / 1000;
       const statmentInsert = statements.inserTimestamp;
-      await this.pgClient.query(statmentInsert, [date, textId, userId]);
+      await this.pgClient.query(statmentInsert, [userId, textId, date]);
     } catch (err) {
       console.error('DB err', err.message);
       throw err;
@@ -44,4 +44,4 @@ class TimestampRepository {
   }
 }
 
-module.exports = new TextRepository();
+module.exports = new TimestampRepository();
