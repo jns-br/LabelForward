@@ -37,7 +37,7 @@ When the major label update is finished, a new classifier is trained on all avai
 
 # Environment variables
 
-This section covers environment variables for configuration of this microservice. Standard PostgreSQL and Redis environment variables will be omitted.
+This section covers environment variables for configuration of this microservice. Standard PostgreSQL and Redis environment variables will be omitted here (see the docker-compose.yaml).
 
 ## BATCH_SIZE
 
