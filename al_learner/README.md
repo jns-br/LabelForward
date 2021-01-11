@@ -29,7 +29,7 @@ This event is triggered by the update message from the dedicated Redis channel. 
 
 After receiving this message, the service will first check the number of new samples again, which is defined by an env var (see list of env vars below). If there are enough new samples, the service will update the major label, which is determined by choosing the most frequent label the annotators have assigned to the datapoint. You can configure a minimal label count through an env var to limit these updates to datapoints which have at least this number of labels given by annotators. If all labels have the same frequency, an arbitrary label will be chosen. 
 
-When the major label update is finished, a new classifier is trained on all available data with a major label. This also includes any init data if available. After training a new classifier, the microservice publishes an update message on the Redis channel dedicated to the al_predictor microservice.
+When the major label update is finished, a new classifier is trained on all available data with a major label. This also includes any init data if available. After training a new classifier and persisting it to the PostgreSQL database, the microservice publishes an update message on the Redis channel dedicated to the al_predictor microservice.
 
 # Environment variables
 
