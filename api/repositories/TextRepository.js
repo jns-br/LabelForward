@@ -3,6 +3,7 @@ const statements = require('./statements');
 const constants = require('../constants');
 const Redis = require('ioredis');
 const { Pool } = require('pg');
+const TimestampRepository = require('./TimestampRepository');
 
 class TextRepository {
   constructor() {
@@ -39,17 +40,17 @@ class TextRepository {
             const uncertainty_threshold = parseFloat(keys.uncertaintyThreshold);
             if (uncertainty_ignore && uncertainty) {
               if (uncertainty_ignore - uncertainty >= uncertainty_threshold) {
-                await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+                await TextRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
                 return result_ignore.rows[0];
               } else {
-                await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+                await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
                 return result.rows[0];
               }
             } else if (uncertainty) {
-              await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+              await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else if (uncertainty_ignore) {
-              await this.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
+              await TextRepository.insertStartTime(email, parseInt(result_ignore.rows[0].text_id));
               return result_ignore.rows[0];
             } else {
               return {};
@@ -58,7 +59,7 @@ class TextRepository {
             const statement = keys.noVote === 'true' ? statements.selectNextTextNonALNoVote : statements.selectNextTextNonAL;
             const result = await this.pgClient.query(statement, [email]);
             if (result.rowCount > 0) {
-              await this.insertStartTime(email, parseInt(result.rows[0].text_id));
+              await TextRepository.insertStartTime(email, parseInt(result.rows[0].text_id));
               return result.rows[0];
             } else {
               return {};
@@ -81,7 +82,7 @@ class TextRepository {
       if (queryFlag == constants.keyAvailable) {
         const statment = statements.insertText;
         await this.pgClient.query(statment, [label, email, text_id]);
-        await this.insertEndTime(email, text_id);
+        await TextRepository.insertEndTime(email, text_id);
         const queryCounter = parseInt(await redisClient.get(constants.keyQueryCounter));
         await redisClient.set(constants.keyQueryCounter, (queryCounter + 1));
         if ((queryCounter + 1) % parseInt(keys.batchSize) === 0) {
@@ -103,36 +104,6 @@ class TextRepository {
       const statement = statements.selectLabels;
       const results = await this.pgClient.query(statement);
       return Array.from(results.rows, result => result.label);
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async insertStartTime(email, textId) {
-    try {
-      const statementUser = 'SELECT user_id FROM users WHERE email = $1'
-      const resultUser = await this.pgClient.query(statementUser, [email]);
-      const userId = parseInt(resultUser.rows[0].user_id);
-
-      const date = Date.now() / 1000;
-      const statementInsert = 'INSERT INTO sample_timestamps(user_id, text_id, start_time) VALUES($1, $2, to_timestamp($3))';
-      await this.pgClient.query(statementInsert, [userId, textId, date])
-    } catch (err) {
-      console.error('DB error', err.message);
-      throw err;
-    }
-  }
-
-  async insertEndTime(email, textId) {
-    try {
-      const statementUser = 'SELECT user_id FROM users WHERE email = $1'
-      const resultUser = await this.pgClient.query(statementUser, [email]);
-      const userId = parseInt(resultUser.rows[0].user_id);
-
-      const date = Date.now() / 1000;
-      const statementInsert = 'UPDATE sample_timestamps SET end_time = to_timestamp($1) WHERE text_id = $2 AND user_id = $3';
-      await this.pgClient.query(statementInsert, [date, textId, userId]);
     } catch (err) {
       console.error('DB error', err.message);
       throw err;
