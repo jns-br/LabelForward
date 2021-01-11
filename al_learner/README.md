@@ -9,7 +9,7 @@ This section describes the basic workflow of this microservice.
 ## Initialization
 
 On startup, this microservice initializes a connection to a PostgreSQL server and a Redis server. When both connections where established successfully, the service subsrcibes to a dedicated Redis channel and 
-listens for two types of messages described below.
+listens for two types of messages/events described below.
 
 ## Events
 
