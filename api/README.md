@@ -22,7 +22,11 @@ In the default approach for sample selection and label aggregation provides ever
 
 ## Datapoint & timestamp persistence
 
-When a labeled datapoint is received by the API, it will persist the datapoints with one or more label, depending on the chosen label aggregation approach. The API also measures the time each annotator took to label each provided datapoint and persists them to the database.  
+When a labeled datapoint is received by the API, it will persist the datapoints with one or more label, depending on the chosen label aggregation approach. The API also measures the time each annotator took to label each provided datapoint and persists them to the database. 
+
+## Download requests
+
+The API will also handle download requests send from the frontend with a selected classifier id. On receiving a download request, the API will send a message with the classifier id to the dl_manager microservice and provide a downloadable zip-archive when the dl_manager created it. For further information see the dl_manager README.
 
 ## Authentication & Authorization
 
