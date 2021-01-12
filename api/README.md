@@ -20,6 +20,10 @@ When choosing the the ranking approach, the API will select the text sample the 
 
 In the default approach for sample selection and label aggregation provides every annotator with every text sample that was determined to labeled. This can be quite cost intensive, especially on a large dataset and/or few annotators. Therefore the label aggregation can be turned off, so that every text sample will be labeled by one annotator only. This can be configured by an environment variable described below.
 
+## Datapoint & timestamp persistence
+
+When a labeled datapoint is received by the API, it will persist the datapoints with one or more label, depending on the chosen label aggregation approach. The API also measures the time each annotator took to label each provided datapoint and persists them to the database.  
+
 ## Authentication & Authorization
 
 The LabelForward App features multi-user support, so an authentication and authorization method is required. The API uses a combination of JSON Web Tokens and Http-Only Cookies to offer a secure approach for authorization & authentication.
