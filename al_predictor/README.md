@@ -4,8 +4,6 @@ A Python microservice for the LabelForward App. Its task is to create and persis
 
 # Workflow
 
-# Workflow
-
 This section describes the basic workflow of this microservice. 
 
 ## Initialization
@@ -15,7 +13,7 @@ listens for one type of message/event described below.
 
 ## Events
 
-The microservice handles one main type of events, update, which is received via the dedicated
+The microservice handles one type of event, update, which is received via the dedicated
 Redis channel.
 
 ## Events: update
