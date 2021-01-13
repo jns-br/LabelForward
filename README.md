@@ -61,4 +61,4 @@ The data and the labels must be provided as a JSON file. The file needs the form
 Note that you need to locate your data, samples and accessors somewhere within the db_helper folder.
 
 ## 2. Adjust the docker-compose files
-In the docker-compose files, you need to adjust the paths DATA_PATH, LABEL_PATH AND ACCESSOR_PATH to your CSV file paths. 
+In the docker-compose files, you need to adjust the paths DATA_PATH, LABEL_PATH AND ACCESSOR_PATH to your JSON file paths. 
